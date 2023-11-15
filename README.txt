@@ -1,1 +1,1 @@
-Initial project stat
+Ne pas inclure de fichiers ressource dans le repo sinon on aura plus de place! (15 Go max)
