@@ -1,3 +1,13 @@
-[gd_scene format=3 uid="uid://ds3j7kf44ec40"]
+[gd_scene load_steps=2 format=3 uid="uid://ds3j7kf44ec40"]
+
+[ext_resource type="PackedScene" uid="uid://bafgat3hsv4uh" path="res://Scenes/Lilian/Template-Tiles/tile1.tscn" id="1_mbxms"]
 
 [node name="Lilian-main" type="Node3D"]
+
+[node name="tile1" parent="." instance=ExtResource("1_mbxms")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.915613, 0.40206, 0, -0.40206, 0.915613, 0, 0.996469, 1.96587)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.455576, 0.890197, 0, -0.890197, 0.455576, 0, 2.38451, 1.15002)

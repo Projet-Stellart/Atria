@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://bafgat3hsv4uh"]
+
+[ext_resource type="Script" path="res://Scripts/ProceduralGeneration/GenerateRoom.cs" id="1_6j58w"]
+[ext_resource type="Script" path="res://Scripts/ProceduralGeneration/SpawnPointS1.cs" id="1_b5bka"]
+[ext_resource type="Script" path="res://Scripts/ProceduralGeneration/SpawnPointS2.cs" id="3_tyspb"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_7nxne"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_n8r0p"]
+
+[node name="tile1" type="Node3D"]
+script = ExtResource("1_6j58w")
+
+[node name="Floor" type="Node3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 0.044, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_7nxne")
+
+[node name="Table" type="Node3D" parent="."]
+transform = Transform3D(0.462, 0, 0, 0, 0.385, 0, 0, 0, 0.462, 0.741944, 0.206069, -0.550263)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Table"]
+mesh = SubResource("BoxMesh_n8r0p")
+
+[node name="SpawnPointS1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.742, 0.499413, -0.55)
+script = ExtResource("1_b5bka")
+
+[node name="SpawnPointS2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.843316, 0.229271, -0.0166547)
+script = ExtResource("3_tyspb")
