@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bnpp13k1an1r8"]
+
+[ext_resource type="PackedScene" uid="uid://dbc5a3nhu3bxy" path="res://Ressources/Objects/S1/M1911.fbx" id="1_55eny"]
+
+[node name="M1911" type="Node3D"]
+
+[node name="M1911" parent="." instance=ExtResource("1_55eny")]
+transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, 0, 0, 0)

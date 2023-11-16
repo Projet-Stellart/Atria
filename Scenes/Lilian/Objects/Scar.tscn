@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cl3jfg2mgjpb0"]
-
-[ext_resource type="PackedScene" uid="uid://bjk1haw8w6078" path="res://Ressources/Model/SCAR-H.fbx" id="1_xlcfm"]
-
-[node name="Scar" type="Node3D"]
-
-[node name="SCAR-H" parent="." instance=ExtResource("1_xlcfm")]
