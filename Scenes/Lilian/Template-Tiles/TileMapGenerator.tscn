@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://i51t24e333ts"]
+
+[node name="TileMapGenerator" type="Node3D"]
