@@ -1,4 +1,10 @@
-[gd_scene format=3 uid="uid://ds3j7kf44ec40"]
+[gd_scene load_steps=6 format=3 uid="uid://ds3j7kf44ec40"]
+
+[ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Tile/TileMeshGeneration.cs" id="1_l4c1j"]
+[ext_resource type="PackedScene" uid="uid://cflg7utmi23t8" path="res://Ressources/StraitRoad/StraitRoad.tscn" id="2_c1ioq"]
+[ext_resource type="PackedScene" uid="uid://d1dg4q3qe7kvl" path="res://Ressources/CurvedRoad/CurvedRoad.tscn" id="2_gmf7v"]
+[ext_resource type="PackedScene" uid="uid://qu15rgfdwwam" path="res://Ressources/TRoad/TRoad.tscn" id="3_bb8of"]
+[ext_resource type="PackedScene" uid="uid://up20wqyqj23k" path="res://Ressources/XRoad/XRoad.tscn" id="4_riu5r"]
 
 [node name="Lilian-main" type="Node3D"]
 
@@ -7,3 +13,8 @@ transform = Transform3D(1, 0, 0, 0, 0.915613, 0.40206, 0, -0.40206, 0.915613, 0,
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.455576, 0.890197, 0, -0.890197, 0.455576, 0, 2.38451, 1.15002)
+
+[node name="TileMesh" type="Node3D" parent="."]
+script = ExtResource("1_l4c1j")
+metadata/TileTemplate = [ExtResource("2_c1ioq"), ExtResource("2_gmf7v"), ExtResource("3_bb8of"), ExtResource("4_riu5r")]
+metadata/TileParams = ["StraitRoad;road;road;grass;grass", "CurvedRoad;grass;road;road;grass", "TRoad;road;road;road;grass", "XRoad;road;road;road;road"]
