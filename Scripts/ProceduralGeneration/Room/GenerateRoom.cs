@@ -41,8 +41,6 @@ public partial class GenerateRoom : Node
             prefabS2[i] = (PackedScene)s2collec[i];
         }
 
-        //Debug.Print(GetMeta("prefabS1").AsGodotArray().Count.ToString());
-
         GenerateObjectsRoom(prefabS1, prefabS2);
     }
 }
