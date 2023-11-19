@@ -45,10 +45,10 @@ public partial class TileMeshGeneration : Node
         }
 
         //Debug print to visualize data
-        /*foreach(TilePrefa tile in tileTemplates) 
+        foreach(TilePrefa tile in tileTemplates) 
         {
             Debug.Print(tile.ToString());
-        }*/
+        }
     }
 
     //Function to rotate tiles by 90 deg clockwise
