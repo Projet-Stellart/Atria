@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://i51t24e333ts"]
 
 [ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Tile/TileMeshGeneration.cs" id="1_47gua"]
-[ext_resource type="PackedScene" uid="uid://cflg7utmi23t8" path="res://Ressources/StraitRoad/StraitRoad.tscn" id="1_nnrbl"]
-[ext_resource type="PackedScene" uid="uid://d1dg4q3qe7kvl" path="res://Ressources/CurvedRoad/CurvedRoad.tscn" id="2_qoid5"]
-[ext_resource type="PackedScene" uid="uid://qu15rgfdwwam" path="res://Ressources/TRoad/TRoad.tscn" id="3_6r101"]
-[ext_resource type="PackedScene" uid="uid://up20wqyqj23k" path="res://Ressources/XRoad/XRoad.tscn" id="4_5wnr8"]
+[ext_resource type="PackedScene" uid="uid://b7eyx0qoan16w" path="res://Ressources/StraitRoad/StraitRoad.tscn" id="1_nnrbl"]
+[ext_resource type="PackedScene" uid="uid://t6gmutqm75t5" path="res://Ressources/CurvedRoad/CurvedRoad.tscn" id="2_qoid5"]
+[ext_resource type="PackedScene" uid="uid://cujf1hqu6op2p" path="res://Ressources/TRoad/TRoad.tscn" id="3_6r101"]
+[ext_resource type="PackedScene" uid="uid://b7f448o7l7hf6" path="res://Ressources/XRoad/XRoad.tscn" id="4_5wnr8"]
 
 [node name="TileMapGenerator" type="Node3D"]
 script = ExtResource("1_47gua")

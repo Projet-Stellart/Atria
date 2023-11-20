@@ -11,14 +11,21 @@ public partial class GenerateRoom : Node
 		{
             if (node.Name == "SpawnPointS1")
 			{
-				Node tObj = prefabS1[rand.Next(prefabS1.Length)].Instantiate();
-				node.AddChild(tObj);
+                if (rand.NextSingle() < (float)node.GetMeta("proba"))
+                {
+                    Node tObj = prefabS1[rand.Next(prefabS1.Length)].Instantiate();
+                    node.AddChild(tObj);
+                }
+				
             }
 
             if (node.Name == "SpawnPointS2")
             {
-                Node tObj = prefabS2[rand.Next(prefabS2.Length)].Instantiate();
-                node.AddChild(tObj);
+                if (rand.NextSingle() < (float)node.GetMeta("proba"))
+                {
+                    Node tObj = prefabS2[rand.Next(prefabS2.Length)].Instantiate();
+                    node.AddChild(tObj);
+                }
             }
         }
 	}

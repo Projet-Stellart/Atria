@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -14,6 +15,141 @@ public partial class TileMeshGeneration : Node
 	{
         //Prototype call
 		GetData();
+        GenerateGrid(10, 10);
+    }
+
+    public void GenerateGrid(int sizex, int sizey) 
+    {
+        Random rand = new Random();
+
+        tileGrid = new Node[sizex, sizey];
+        int[,] tGrid = new int[sizex, sizey];
+        int i = 0;
+
+        while (GetNbUndefinedTiles(tGrid) > 0 && i < 1000) 
+        {
+            (int, int) wTilePos = GetMostRestrictedTile(tGrid);
+            int[] posibility = GetGridPossiblity(wTilePos.Item1, wTilePos.Item2, tGrid);
+            tGrid[wTilePos.Item1, wTilePos.Item2] = posibility[rand.Next(posibility.Length)];
+            Debug.Print("Nb of undefined tiles: "+GetNbUndefinedTiles(tGrid));
+            i++;
+        }
+        Debug.Print("End of Generation");
+        //Debug.Print("Nb of undefined tiles: " + GetNbUndefinedTiles(tGrid));
+    }
+
+    public (int,int) GetMostRestrictedTile(int[,] grid)
+    {
+        (int, int) res = (0, 0);
+        int pos = -1;
+        for (int x = 0; x < tileGrid.GetLength(0); x++)
+        {
+            for (int y = 0; y < tileGrid.GetLength(1); y++)
+            {
+                int val = GetGridPossiblity(x, y, grid).Length;
+                if (pos <= 0)
+                {
+                    if (val > 0)
+                    {
+                        res = (x, y);
+                        pos = val;
+                    }
+                }else if (val < pos && val != 0)
+                {
+                    res = (x, y);
+                    pos = val;
+                }
+            }
+        }
+        return res;
+    }
+    public int GetNbUndefinedTiles(int[,] grid)
+    {
+        int res = 0;
+        foreach (int t in grid)
+        {
+            if (t == 0)
+            {
+                res += 1;
+            }
+        }
+        return res;
+    }
+
+    public int[] GetGridPossiblity(int x, int y, int[,] grid)
+    {
+        //Getting adjacent ids
+        int idN = 0;
+        int idS = 0;
+        int idE = 0;
+        int idW = 0;
+        //Verify x limit and get value
+        if (x == 0)
+        {
+            idW = grid[grid.GetLength(0)-1, y];
+        }
+        else
+        {
+            idW = grid[x - 1, y];
+        }
+        if (x == grid.GetLength(0) - 1)
+        {
+            idE = grid[0, y];
+        }
+        else
+        {
+            idE = grid[x + 1, y];
+        }
+        //Verify y limit and get value
+        if (y == 0)
+        {
+            idN = grid[x, grid.GetLength(1) - 1];
+        }
+        else
+        {
+            idN = grid[x, y - 1];
+        }
+        if (y == grid.GetLength(0) - 1)
+        {
+            idS = grid[x, 0];
+        }
+        else
+        {
+            idS = grid[x, y + 1];
+        }
+        //Getting tile's restrictions
+        string n = idN == 0 ? "" : tileTemplates[idN - 1].south;
+        string s = idS == 0 ? "" : tileTemplates[idS - 1].north;
+        string e = idE == 0 ? "" : tileTemplates[idE - 1].west;
+        string w = idW == 0 ? "" : tileTemplates[idW - 1].est;
+        //Checking wich tile's template is valid for this tile
+        List<int> validTemplates = new List<int>();
+        for (int i = 0; i < tileTemplates.Length; i++)
+        {
+            TilePrefa templ = tileTemplates[i];
+            if (n != "" && templ.north != n)
+            {
+                continue;
+            }
+            if (s != "" && templ.south != s)
+            {
+                continue;
+            }
+            if (e != "" && templ.est != e)
+            {
+                continue;
+            }
+            if (w != "" && templ.west != w)
+            {
+                continue;
+            }
+            validTemplates.Add(i+1);
+        }
+        if (validTemplates.Count == 0)
+        {
+            Debug.Print("n:" + n + "; s:" + s + "; e:" + e + "; w:" + w);
+        }
+        return validTemplates.ToArray();
     }
 
     //Get data from metadata and generate tileTemplates with rotation of inputed tiles template
@@ -30,7 +166,6 @@ public partial class TileMeshGeneration : Node
 		{
             //Original tile
 			string[] par = tilesParams[i].Split(';');
-            Debug.Print((par.Length).ToString());
             tileTemplates[i * 4] = new TilePrefa(tiles[i], par[0], par[1], par[2], par[3], par[4]);
 			tileTemplates[i * 4].rotation = 0;
 
@@ -45,10 +180,10 @@ public partial class TileMeshGeneration : Node
         }
 
         //Debug print to visualize data
-        foreach(TilePrefa tile in tileTemplates) 
+        /*foreach(TilePrefa tile in tileTemplates) 
         {
             Debug.Print(tile.ToString());
-        }
+        }*/
     }
 
     //Function to rotate tiles by 90 deg clockwise
