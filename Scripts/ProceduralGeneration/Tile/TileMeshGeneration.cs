@@ -11,13 +11,22 @@ public partial class TileMeshGeneration : Node
     //The generated tile grid
     private Node3D[,] tileGrid;
 
-    private float tileSize = 16f;
+    private float tileSize = 2f;
 
     public override void _Ready()
 	{
         //Prototype call
 		GetData();
-        GenerateGrid(10, 10);
+        //GenerateGrid(10, 10);
+        int[,] tgr = new int[,] { 
+            { 17, 17, 17 },
+            { 17, 0, 17 },
+            { 17, 17, 17 },
+        };
+        foreach (int i in GetGridPossiblity(1, 1, tgr))
+        {
+            //Debug.Print(tileTemplates[i-1].name);
+        }
     }
 
     public void GenerateGrid(int sizex, int sizey) 
@@ -30,20 +39,24 @@ public partial class TileMeshGeneration : Node
         while (GetNbUndefinedTiles(tGrid) > 0) 
         {
             (int, int) wTilePos = GetMostRestrictedTile(tGrid);
-            //Debug.Print("val = " + tGrid[wTilePos.Item1, wTilePos.Item2]);
             int[] posibility = GetGridPossiblity(wTilePos.Item1, wTilePos.Item2, tGrid);
             tGrid[wTilePos.Item1, wTilePos.Item2] = posibility[rand.Next(posibility.Length)];
-            //Debug.Print("Nb of undefined tiles: "+GetNbUndefinedTiles(tGrid));
+            if (wTilePos.Item1 == 5 && wTilePos.Item2 == 4)
+            {
+                Debug.Print("\ndebug: " + tileTemplates[tGrid[wTilePos.Item1, wTilePos.Item2]-1].name);
+            }
         }
 
         for (int x = 0;x < sizex;x++)
         {
             for (int y = 0; y < sizey; y++)
             {
-                tileGrid[x, y] = tileTemplates[tGrid[x, y]].tile.Instantiate<Node3D>();
-                tileGrid[x,y].Name = tGrid[]
+                TilePrefa template = tileTemplates[tGrid[x, y] - 1];
+                tileGrid[x, y] = template.tile.Instantiate<Node3D>();
+                tileGrid[x, y].Name = template.name;
                 AddChild(tileGrid[x, y]);
-                tileGrid[x, y].Position = new Vector3(x * tileSize, y * tileSize, 0);
+                tileGrid[x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
+                tileGrid[x, y].GlobalPosition = new Vector3(x * tileSize, 0, y * tileSize);
             }
         }
     }
@@ -81,6 +94,10 @@ public partial class TileMeshGeneration : Node
 
     public int[] GetGridPossiblity(int x, int y, int[,] grid)
     {
+        /*if (x == 5 && y == 4)
+        {
+            Debug.Print("" + '\n');
+        }*/
         //Getting adjacent ids
         int idN = 0;
         int idS = 0;
@@ -125,6 +142,14 @@ public partial class TileMeshGeneration : Node
         string s = idS == 0 ? "" : tileTemplates[idS - 1].north;
         string e = idE == 0 ? "" : tileTemplates[idE - 1].west;
         string w = idW == 0 ? "" : tileTemplates[idW - 1].est;
+        /*Debug.Print("n:" + tileTemplates[idN-1].name);
+        Debug.Print("s:" + tileTemplates[idS-1].name);
+        Debug.Print("e:" + tileTemplates[idE-1].name);
+        Debug.Print("w:" + tileTemplates[idW-1].name);*/
+        /*Debug.Print("n:" + n);
+        Debug.Print("s:" + s);
+        Debug.Print("e:" + e);
+        Debug.Print("w:" + w);*/
         //Checking wich tile's template is valid for this tile
         List<int> validTemplates = new List<int>();
         for (int i = 0; i < tileTemplates.Length; i++)
@@ -148,10 +173,21 @@ public partial class TileMeshGeneration : Node
             }
             validTemplates.Add(i+1);
         }
-        if (validTemplates.Count == 0)
+
+        foreach (int i in validTemplates)
+        {
+            Debug.Print("" + tileTemplates[i - 1].name);
+        }
+
+        /*if (x == 5 && y == 4 && validTemplates.Count == 1)
+        {
+            Debug.Print(validTemplates.ToString());
+        }*/
+        /*if (validTemplates.Count == 0)
         {
             Debug.Print("n:" + n + "; s:" + s + "; e:" + e + "; w:" + w);
-        }
+        }*/
+
         return validTemplates.ToArray();
     }
 

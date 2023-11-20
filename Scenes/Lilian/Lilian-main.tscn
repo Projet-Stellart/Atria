@@ -5,9 +5,10 @@
 [node name="Lilian-main" type="Node3D"]
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.915613, 0.40206, 0, -0.40206, 0.915613, 0, 0.996469, 1.96587)
+transform = Transform3D(1, 0, 0, 0, 0.595454, 0.80339, 0, -0.80339, 0.595454, 9.61556, 11.2877, 20.5084)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.455576, 0.890197, 0, -0.890197, 0.455576, 0, 2.38451, 1.15002)
 
 [node name="TileMapGenerator" parent="." instance=ExtResource("7_wd73j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
