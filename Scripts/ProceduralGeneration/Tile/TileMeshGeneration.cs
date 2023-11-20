@@ -17,8 +17,8 @@ public partial class TileMeshGeneration : Node
 	{
         //Prototype call
 		GetData();
-        //GenerateGrid(10, 10);
-        int[,] tgr = new int[,] { 
+        GenerateGrid(10, 10);
+        /*int[,] tgr = new int[,] { 
             { 17, 17, 17 },
             { 17, 0, 17 },
             { 17, 17, 17 },
@@ -26,7 +26,7 @@ public partial class TileMeshGeneration : Node
         foreach (int i in GetGridPossiblity(1, 1, tgr))
         {
             //Debug.Print(tileTemplates[i-1].name);
-        }
+        }*/
     }
 
     public void GenerateGrid(int sizex, int sizey) 
@@ -43,7 +43,7 @@ public partial class TileMeshGeneration : Node
             tGrid[wTilePos.Item1, wTilePos.Item2] = posibility[rand.Next(posibility.Length)];
             if (wTilePos.Item1 == 5 && wTilePos.Item2 == 4)
             {
-                Debug.Print("\ndebug: " + tileTemplates[tGrid[wTilePos.Item1, wTilePos.Item2]-1].name);
+                //Debug.Print("\ndebug: " + tileTemplates[tGrid[wTilePos.Item1, wTilePos.Item2]-1].name);
             }
         }
 
@@ -55,7 +55,7 @@ public partial class TileMeshGeneration : Node
                 tileGrid[x, y] = template.tile.Instantiate<Node3D>();
                 tileGrid[x, y].Name = template.name;
                 AddChild(tileGrid[x, y]);
-                tileGrid[x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
+                tileGrid[x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation+180), 0f);
                 tileGrid[x, y].GlobalPosition = new Vector3(x * tileSize, 0, y * tileSize);
             }
         }
@@ -174,10 +174,10 @@ public partial class TileMeshGeneration : Node
             validTemplates.Add(i+1);
         }
 
-        foreach (int i in validTemplates)
+        /*foreach (int i in validTemplates)
         {
             Debug.Print("" + tileTemplates[i - 1].name);
-        }
+        }*/
 
         /*if (x == 5 && y == 4 && validTemplates.Count == 1)
         {
@@ -234,10 +234,10 @@ public partial class TileMeshGeneration : Node
 
         newTile.name = tile.name;
 		newTile.rotation = (tile.rotation + 90)%360;
-		newTile.north = tile.west;
-		newTile.south = tile.est;
-		newTile.west = tile.south;
-		newTile.est = tile.north;
+		newTile.north = tile.est;
+		newTile.south = tile.west;
+		newTile.west = tile.north;
+		newTile.est = tile.south;
 
         return newTile;
     }
