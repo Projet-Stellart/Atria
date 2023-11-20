@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dghf5ok2k8wla"
+path="res://.godot/imported/XRoad.obj-99c1daf32549656715f80630a929b9d8.mesh"
+
+[deps]
+
+files=["res://.godot/imported/XRoad.obj-99c1daf32549656715f80630a929b9d8.mesh"]
+
+source_file="res://Ressources/ProceduralGenerationTempRes/XRoad/XRoad.obj"
+dest_files=["res://.godot/imported/XRoad.obj-99c1daf32549656715f80630a929b9d8.mesh", "res://.godot/imported/XRoad.obj-99c1daf32549656715f80630a929b9d8.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

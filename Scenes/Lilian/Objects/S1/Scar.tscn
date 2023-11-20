@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cwaublm3q4l76"]
 
-[ext_resource type="PackedScene" uid="uid://dxogkowry3mio" path="res://Ressources/Objects/S1/SCAR-H.fbx" id="1_nr8pk"]
+[ext_resource type="PackedScene" uid="uid://dxogkowry3mio" path="res://Ressources/ProceduralGenerationTempRes/Objects/S1/SCAR-H.fbx" id="1_nr8pk"]
 
 [node name="Scar" type="Node3D"]
 

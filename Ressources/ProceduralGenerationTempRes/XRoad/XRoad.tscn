@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://up20wqyqj23k"]
+
+[ext_resource type="ArrayMesh" uid="uid://dghf5ok2k8wla" path="res://Ressources/ProceduralGenerationTempRes/XRoad/XRoad.obj" id="1_he5ra"]
+
+[node name="XRoad" type="Node3D"]
+
+[node name="XRoad" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_he5ra")

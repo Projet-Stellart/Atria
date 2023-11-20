@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bnpp13k1an1r8"]
 
-[ext_resource type="PackedScene" uid="uid://dbc5a3nhu3bxy" path="res://Ressources/Objects/S1/M1911.fbx" id="1_55eny"]
+[ext_resource type="PackedScene" uid="uid://dbc5a3nhu3bxy" path="res://Ressources/ProceduralGenerationTempRes/Objects/S1/M1911.fbx" id="1_55eny"]
 
 [node name="M1911" type="Node3D"]
 

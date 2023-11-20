@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1dg4q3qe7kvl"]
+
+[ext_resource type="ArrayMesh" uid="uid://dai22nke5j5rb" path="res://Ressources/ProceduralGenerationTempRes/CurvedRoad/CurvedRoad.obj" id="1_2wd44"]
+
+[node name="CurvedRoad" type="Node3D"]
+
+[node name="CurvedRoad" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_2wd44")

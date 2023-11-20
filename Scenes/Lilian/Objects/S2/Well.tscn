@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b1hn1vc3ggdnc"]
 
-[ext_resource type="ArrayMesh" uid="uid://btd8713hxgsia" path="res://Ressources/Objects/S2/Prop_Well_1.obj" id="1_1dc07"]
+[ext_resource type="ArrayMesh" uid="uid://btd8713hxgsia" path="res://Ressources/ProceduralGenerationTempRes/Objects/S2/Prop_Well_1.obj" id="1_1dc07"]
 
 [node name="LampStreet" type="Node3D"]
 

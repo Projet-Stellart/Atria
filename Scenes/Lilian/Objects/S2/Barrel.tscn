@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cn4w4m641aigi"]
 
-[ext_resource type="ArrayMesh" uid="uid://dtoc2jaxewbvm" path="res://Ressources/Objects/S2/Prop_Barrel_1.obj" id="1_jrc36"]
+[ext_resource type="ArrayMesh" uid="uid://dtoc2jaxewbvm" path="res://Ressources/ProceduralGenerationTempRes/Objects/S2/Prop_Barrel_1.obj" id="1_jrc36"]
 
 [node name="Barrel" type="Node3D"]
 

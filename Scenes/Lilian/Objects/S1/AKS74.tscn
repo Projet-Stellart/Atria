@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://balagxy4nv3kk"]
 
-[ext_resource type="PackedScene" uid="uid://dbxp5k7pcbfkv" path="res://Ressources/Objects/S1/AKS74.fbx" id="1_0lr74"]
+[ext_resource type="PackedScene" uid="uid://dbxp5k7pcbfkv" path="res://Ressources/ProceduralGenerationTempRes/Objects/S1/AKS74.fbx" id="1_0lr74"]
 
 [node name="AKS74" type="Node3D"]
 
