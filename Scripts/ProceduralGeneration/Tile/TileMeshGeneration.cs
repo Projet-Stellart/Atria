@@ -9,7 +9,9 @@ public partial class TileMeshGeneration : Node
     //Array of all tiles template for frid generation
 	private TilePrefa[] tileTemplates;
     //The generated tile grid
-    private Node[,] tileGrid;
+    private Node3D[,] tileGrid;
+
+    private float tileSize = 16f;
 
     public override void _Ready()
 	{
@@ -22,39 +24,40 @@ public partial class TileMeshGeneration : Node
     {
         Random rand = new Random();
 
-        tileGrid = new Node[sizex, sizey];
+        tileGrid = new Node3D[sizex, sizey];
         int[,] tGrid = new int[sizex, sizey];
-        int i = 0;
 
-        while (GetNbUndefinedTiles(tGrid) > 0 && i < 1000) 
+        while (GetNbUndefinedTiles(tGrid) > 0) 
         {
             (int, int) wTilePos = GetMostRestrictedTile(tGrid);
+            //Debug.Print("val = " + tGrid[wTilePos.Item1, wTilePos.Item2]);
             int[] posibility = GetGridPossiblity(wTilePos.Item1, wTilePos.Item2, tGrid);
             tGrid[wTilePos.Item1, wTilePos.Item2] = posibility[rand.Next(posibility.Length)];
-            Debug.Print("Nb of undefined tiles: "+GetNbUndefinedTiles(tGrid));
-            i++;
+            //Debug.Print("Nb of undefined tiles: "+GetNbUndefinedTiles(tGrid));
         }
-        Debug.Print("End of Generation");
-        //Debug.Print("Nb of undefined tiles: " + GetNbUndefinedTiles(tGrid));
+
+        for (int x = 0;x < sizex;x++)
+        {
+            for (int y = 0; y < sizey; y++)
+            {
+                tileGrid[x, y] = tileTemplates[tGrid[x, y]].tile.Instantiate<Node3D>();
+                tileGrid[x,y].Name = tGrid[]
+                AddChild(tileGrid[x, y]);
+                tileGrid[x, y].Position = new Vector3(x * tileSize, y * tileSize, 0);
+            }
+        }
     }
 
     public (int,int) GetMostRestrictedTile(int[,] grid)
     {
         (int, int) res = (0, 0);
-        int pos = -1;
+        int pos = int.MaxValue;
         for (int x = 0; x < tileGrid.GetLength(0); x++)
         {
             for (int y = 0; y < tileGrid.GetLength(1); y++)
             {
                 int val = GetGridPossiblity(x, y, grid).Length;
-                if (pos <= 0)
-                {
-                    if (val > 0)
-                    {
-                        res = (x, y);
-                        pos = val;
-                    }
-                }else if (val < pos && val != 0)
+                if (grid[x, y] == 0 && val < pos)
                 {
                     res = (x, y);
                     pos = val;
