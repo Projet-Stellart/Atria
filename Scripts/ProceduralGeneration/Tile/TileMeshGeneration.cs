@@ -11,6 +11,8 @@ public partial class TileMeshGeneration : Node
     //The generated tile grid
     private Node3D[,] tileGrid;
 
+    private string borderType = "grass";
+
     private float tileSize = 2f;
 
     public override void _Ready()
@@ -18,15 +20,6 @@ public partial class TileMeshGeneration : Node
         //Prototype call
 		GetData();
         GenerateGrid(10, 10);
-        /*int[,] tgr = new int[,] { 
-            { 17, 17, 17 },
-            { 17, 0, 17 },
-            { 17, 17, 17 },
-        };
-        foreach (int i in GetGridPossiblity(1, 1, tgr))
-        {
-            //Debug.Print(tileTemplates[i-1].name);
-        }*/
     }
 
     public void GenerateGrid(int sizex, int sizey) 
@@ -40,7 +33,30 @@ public partial class TileMeshGeneration : Node
         {
             (int, int) wTilePos = GetMostRestrictedTile(tGrid);
             int[] posibility = GetGridPossiblity(wTilePos.Item1, wTilePos.Item2, tGrid);
-            tGrid[wTilePos.Item1, wTilePos.Item2] = posibility[rand.Next(posibility.Length)];
+            int totalWeight = 0;
+            foreach (int i in posibility)
+            {
+                totalWeight += tileTemplates[i-1].weight;
+            }
+            int selected = rand.Next(totalWeight);
+            //Debug.Print(selected.ToString());
+            int chosenTile = 0;
+            int val = 0;
+            for (int i = 0; i < posibility.Length; i++)
+            {
+                val += tileTemplates[posibility[i] - 1].weight;
+                if (val > selected)
+                {
+                    chosenTile = posibility[i];
+                    break;
+                }
+            }
+            if (chosenTile == 0)
+            {
+                //Debug.Print(selected.ToString() + " | " + totalWeight);
+                throw new Exception("not defined");
+            }
+            tGrid[wTilePos.Item1, wTilePos.Item2] = chosenTile; 
             if (wTilePos.Item1 == 5 && wTilePos.Item2 == 4)
             {
                 //Debug.Print("\ndebug: " + tileTemplates[tGrid[wTilePos.Item1, wTilePos.Item2]-1].name);
@@ -99,49 +115,55 @@ public partial class TileMeshGeneration : Node
             Debug.Print("" + '\n');
         }*/
         //Getting adjacent ids
-        int idN = 0;
-        int idS = 0;
-        int idE = 0;
-        int idW = 0;
         //Verify x limit and get value
-        if (x == 0)
+        string n = borderType;
+        string s = borderType;
+        string e = borderType;
+        string w = borderType;
+        /*if (x == 0)
         {
-            idW = grid[grid.GetLength(0)-1, y];
+            int idW = grid[grid.GetLength(0)-1, y];
+            w = idW == 0 ? "" : tileTemplates[idW - 1].est;
+        }*/
+        if (x != 0)
+        {
+            int idW = grid[x - 1, y];
+            w = idW == 0 ? "" : tileTemplates[idW - 1].est;
         }
-        else
+        /*if (x == grid.GetLength(0) - 1)
         {
-            idW = grid[x - 1, y];
-        }
-        if (x == grid.GetLength(0) - 1)
+            int idE = grid[0, y];
+            e = idE == 0 ? "" : tileTemplates[idE - 1].west;
+        }*/
+        if (x != grid.GetLength(0) - 1)
         {
-            idE = grid[0, y];
-        }
-        else
-        {
-            idE = grid[x + 1, y];
+            int idE = grid[x + 1, y];
+            e = idE == 0 ? "" : tileTemplates[idE - 1].west;
         }
         //Verify y limit and get value
-        if (y == 0)
+        /*if (y == 0)
         {
-            idN = grid[x, grid.GetLength(1) - 1];
+            
+            int idN = grid[x, grid.GetLength(1) - 1];
+            n = idN == 0 ? "" : tileTemplates[idN - 1].south;
+        }*/
+        if (y != 0)
+        {
+            int idN = grid[x, y - 1];
+            n = idN == 0 ? "" : tileTemplates[idN - 1].south;
         }
-        else
+        /*if (y == grid.GetLength(0) - 1)
         {
-            idN = grid[x, y - 1];
-        }
-        if (y == grid.GetLength(0) - 1)
+            int idS = grid[x, 0];
+            s = idS == 0 ? "" : tileTemplates[idS - 1].north;
+        }*/
+        if (y != grid.GetLength(0) - 1)
         {
-            idS = grid[x, 0];
-        }
-        else
-        {
-            idS = grid[x, y + 1];
+            int idS = grid[x, y + 1];
+            s = idS == 0 ? "" : tileTemplates[idS - 1].north;
         }
         //Getting tile's restrictions
-        string n = idN == 0 ? "" : tileTemplates[idN - 1].south;
-        string s = idS == 0 ? "" : tileTemplates[idS - 1].north;
-        string e = idE == 0 ? "" : tileTemplates[idE - 1].west;
-        string w = idW == 0 ? "" : tileTemplates[idW - 1].est;
+        
         /*Debug.Print("n:" + tileTemplates[idN-1].name);
         Debug.Print("s:" + tileTemplates[idS-1].name);
         Debug.Print("e:" + tileTemplates[idE-1].name);
@@ -183,10 +205,10 @@ public partial class TileMeshGeneration : Node
         {
             Debug.Print(validTemplates.ToString());
         }*/
-        /*if (validTemplates.Count == 0)
+        if (validTemplates.Count == 0)
         {
             Debug.Print("n:" + n + "; s:" + s + "; e:" + e + "; w:" + w);
-        }*/
+        }
 
         return validTemplates.ToArray();
     }
@@ -205,8 +227,8 @@ public partial class TileMeshGeneration : Node
 		{
             //Original tile
 			string[] par = tilesParams[i].Split(';');
-            tileTemplates[i * 4] = new TilePrefa(tiles[i], par[0], par[1], par[2], par[3], par[4]);
-			tileTemplates[i * 4].rotation = 0;
+            tileTemplates[i * 4] = new TilePrefa(tiles[i], par[0], int.Parse(par[1]), par[2], par[3], par[4], par[5]);
+            tileTemplates[i * 4].rotation = 0;
 
             //Add rotated tiles
             TilePrefa rotatingTile = new TilePrefa(tileTemplates[i * 4]);
@@ -246,6 +268,7 @@ public partial class TileMeshGeneration : Node
 public class TilePrefa
 {
 	public PackedScene tile;
+    public int weight;
     public string name;
 	public int rotation;
 	public string north;
@@ -257,6 +280,7 @@ public class TilePrefa
     public TilePrefa()
     {
         this.tile = null;
+        this.weight = 1;
         this.name = "";
         this.rotation = 0;
         this.north = "";
@@ -275,6 +299,7 @@ public class TilePrefa
     public TilePrefa(TilePrefa copy)
     {
         this.tile = copy.tile;
+        this.weight = copy.weight;
         this.name = copy.name;
         this.rotation = copy.rotation;
         this.north = copy.north;
@@ -284,9 +309,10 @@ public class TilePrefa
     }
 
     //Construct TilePrefa from a data
-    public TilePrefa(PackedScene t, string na, string no, string s, string e, string w)
+    public TilePrefa(PackedScene t, string na, int weight, string no, string s, string e, string w)
     {
         this.tile = t;
+        this.weight = weight;
         this.name = na;
         this.north = no;
         this.south = s;
@@ -296,6 +322,6 @@ public class TilePrefa
 
     public override string ToString()
     {
-        return $"Tile {name}:\n    rotation: {rotation}\n    north: {north}\n    south: {south}\n    est: {est}\n    west: {west}";
+        return $"Tile {name}:\n    weight: {weight}\n    rotation: {rotation}\n    north: {north}\n    south: {south}\n    est: {est}\n    west: {west}";
     }
 }
