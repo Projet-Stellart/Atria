@@ -11,7 +11,7 @@ public partial class TileMeshGeneration : Node
     //The generated tile grid
     private Node3D[,] tileGrid;
 
-    private float tileSize = 2f;
+    private float tileSize = 6f;
 
     public override void _Ready()
 	{

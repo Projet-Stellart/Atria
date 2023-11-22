@@ -1,14 +1,11 @@
 [gd_scene load_steps=2 format=3 uid="uid://ds3j7kf44ec40"]
 
-[ext_resource type="PackedScene" uid="uid://i51t24e333ts" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="7_wd73j"]
+[ext_resource type="PackedScene" uid="uid://i51t24e333ts" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="2_17x0g"]
 
 [node name="Lilian-main" type="Node3D"]
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.595454, 0.80339, 0, -0.80339, 0.595454, 9.61556, 11.2877, 20.5084)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.455576, 0.890197, 0, -0.890197, 0.455576, 0, 2.38451, 1.15002)
-
-[node name="TileMapGenerator" parent="." instance=ExtResource("7_wd73j")]
+[node name="TileMapGenerator" parent="." instance=ExtResource("2_17x0g")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
