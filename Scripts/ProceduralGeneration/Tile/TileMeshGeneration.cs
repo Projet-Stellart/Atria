@@ -8,21 +8,22 @@ public partial class TileMeshGeneration : Node
 {
     //Array of all tiles template for frid generation
 	private TilePrefa[] tileTemplates;
+    private PackedScene playerTemplate;
     //The generated tile grid
     private Node3D[,] tileGrid;
 
-    private string borderType = "grass";
+    private string borderType = "space";
 
-    private float tileSize = 2f;
+    private float tileSize = 9f;
 
     public override void _Ready()
 	{
         //Prototype call
 		GetData();
-        GenerateGrid(10, 10);
+        GenerateGrid(20, 20);
     }
 
-    public void GenerateGrid(int sizex, int sizey) 
+    public void GenerateGrid(int sizex, int sizey)
     {
         Random rand = new Random();
 
@@ -63,6 +64,19 @@ public partial class TileMeshGeneration : Node
             }
         }
 
+        //Spawn player temporary
+        Node3D player = playerTemplate.Instantiate<Node3D>();
+        AddChild(player);
+        (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
+        TilePrefa tile = tileTemplates[tGrid[px, py] - 1];
+        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor"))
+        {
+            (px, py) = (rand.Next(sizex), rand.Next(sizey));
+            tile = tileTemplates[tGrid[px, py] - 1];
+        }
+        player.Position = new Vector3(px * tileSize, 0, py * tileSize);
+        //End of temporary script
+
         for (int x = 0;x < sizex;x++)
         {
             for (int y = 0; y < sizey; y++)
@@ -71,7 +85,7 @@ public partial class TileMeshGeneration : Node
                 tileGrid[x, y] = template.tile.Instantiate<Node3D>();
                 tileGrid[x, y].Name = template.name;
                 AddChild(tileGrid[x, y]);
-                tileGrid[x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation+180), 0f);
+                tileGrid[x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
                 tileGrid[x, y].GlobalPosition = new Vector3(x * tileSize, 0, y * tileSize);
             }
         }
@@ -217,6 +231,8 @@ public partial class TileMeshGeneration : Node
     public void GetData()
 	{
         //Get metadata
+        playerTemplate = (PackedScene)GetMeta("PlayerTemplate");
+
         Godot.Collections.Array<PackedScene> tiles = GetMeta("TileTemplate").AsGodotArray<PackedScene>();
 		Godot.Collections.Array<string> tilesParams = GetMeta("TileParams").AsGodotArray<string>();
 

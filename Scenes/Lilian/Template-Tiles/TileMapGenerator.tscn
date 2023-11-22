@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://i51t24e333ts"]
+[gd_scene load_steps=9 format=3 uid="uid://i51t24e333ts"]
 
 [ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Tile/TileMeshGeneration.cs" id="1_47gua"]
 [ext_resource type="PackedScene" uid="uid://kfagsisbvgc5" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridor.tscn" id="2_k50b4"]
@@ -7,9 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://c3mpm4ft5sjrk" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/XCorridor/XCorridor.tscn" id="5_ej41e"]
 [ext_resource type="PackedScene" uid="uid://q56qc2tujrp0" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/Space/Space.tscn" id="6_0vhu6"]
 [ext_resource type="PackedScene" uid="uid://bea4i6d85n505" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/EndCorridor.tscn" id="6_aeu1b"]
+[ext_resource type="PackedScene" uid="uid://jfa5n2awq3l8" path="res://Scenes/Lilian/TempAssets/Player.tscn" id="8_ntvs2"]
 
 [node name="TileMapGenerator" type="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_47gua")
 metadata/TileTemplate = [ExtResource("2_k50b4"), ExtResource("3_s2kh5"), ExtResource("4_rwr70"), ExtResource("5_ej41e"), ExtResource("6_aeu1b"), ExtResource("6_0vhu6")]
 metadata/TileParams = ["StraitCorridor;75;corridor;corridor;space;space", "CurvedCorridor;60;space;corridor;corridor;space", "TCorridor;30;corridor;corridor;corridor;space", "XCorridor;1;corridor;corridor;corridor;corridor", "EndCorridor;1;space;corridor;space;space", "Space;750;space;space;space;space"]
+metadata/PlayerTemplate = ExtResource("8_ntvs2")

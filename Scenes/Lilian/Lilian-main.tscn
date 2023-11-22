@@ -5,7 +5,7 @@
 [node name="Lilian-main" type="Node3D"]
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.595454, 0.80339, 0, -0.80339, 0.595454, 9.61556, 11.2877, 20.5084)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 90, 150, 90)
+current = true
 
 [node name="TileMapGenerator" parent="." instance=ExtResource("2_17x0g")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

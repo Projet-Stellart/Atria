@@ -5,13 +5,19 @@ public partial class playerScript : CharacterBody3D
 {
 	public const float Speed = 5.0f;
 	public const float JumpVelocity = 4.5f;
+	public const float MouseSensitivity = 1f;
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
-	public override void _PhysicsProcess(double delta)
+    public override void _Ready()
+    {
+        Input.MouseMode = Input.MouseModeEnum.Captured;
+    }
+
+    public override void _PhysicsProcess(double delta)
 	{
-		Vector3 velocity = Velocity;
+        Vector3 velocity = Velocity;
 
 		// Add the gravity.
 		if (!IsOnFloor())
@@ -23,6 +29,14 @@ public partial class playerScript : CharacterBody3D
 
 		// Get the input direction and handle the movement/deceleration.
 		// As good practice, you should replace UI actions with custom gameplay actions.
+		if (Input.IsActionPressed("ui_focus_next"))
+		{
+            ((Camera3D)GetParent().GetParent().GetChild(0)).MakeCurrent();
+		}
+		else
+		{
+            ((Camera3D)GetChild(0)).MakeCurrent();
+        }
 		Vector2 inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
 		if (direction != Vector3.Zero)
@@ -39,4 +53,20 @@ public partial class playerScript : CharacterBody3D
 		Velocity = velocity;
 		MoveAndSlide();
 	}
+
+    public override void _Input(InputEvent @event)
+    {
+        // Mouse in viewport coordinates.
+        if (@event is InputEventMouseMotion eventMouseMotion)
+		{
+			Vector2 mouseDelta = eventMouseMotion.Relative * -0.003f;
+
+			eventMouseMotion.Position = new Vector2(0, 0);
+
+            GlobalRotation += new Vector3(0, mouseDelta.X, 0);
+			((Node3D)GetChild(0)).Rotation += new Vector3(mouseDelta.Y, 0, 0);
+        }
+
+        // Print the size of the viewport.
+    }
 }
