@@ -29,13 +29,13 @@ public partial class playerScript : CharacterBody3D
 
 		// Get the input direction and handle the movement/deceleration.
 		// As good practice, you should replace UI actions with custom gameplay actions.
-		if (Input.IsActionPressed("ui_focus_next"))
+		if (Input.IsActionPressed("map"))
 		{
             ((Camera3D)GetParent().GetParent().GetChild(0)).MakeCurrent();
 		}
 		else
 		{
-            ((Camera3D)GetChild(0)).MakeCurrent();
+            ((Camera3D)GetParent().GetParent().GetChild(0)).Current = false;
         }
 		Vector2 inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
@@ -63,8 +63,10 @@ public partial class playerScript : CharacterBody3D
 
 			eventMouseMotion.Position = new Vector2(0, 0);
 
-            GlobalRotation += new Vector3(0, mouseDelta.X, 0);
-			((Node3D)GetChild(0)).Rotation += new Vector3(mouseDelta.Y, 0, 0);
+			RotateY(mouseDelta.X);
+
+            //GlobalRotation += new Vector3(0,, 0);
+			((Node3D)GetChild(0)).RotateX(mouseDelta.Y)/* += new Vector3(mouseDelta.Y, 0, 0)*/;
         }
 
         // Print the size of the viewport.
