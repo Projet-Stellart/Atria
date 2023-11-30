@@ -12,5 +12,6 @@
 [node name="TileMapGenerator" type="Node3D"]
 script = ExtResource("1_47gua")
 metadata/TileTemplate = [ExtResource("2_k50b4"), ExtResource("3_s2kh5"), ExtResource("4_rwr70"), ExtResource("5_ej41e"), ExtResource("6_aeu1b"), ExtResource("6_0vhu6")]
-metadata/TileParams = ["StraitCorridor;75;corridor;corridor;space;space", "CurvedCorridor;60;space;corridor;corridor;space", "TCorridor;30;corridor;corridor;corridor;space", "XCorridor;1;corridor;corridor;corridor;corridor", "EndCorridor;1;space;corridor;space;space", "Space;750;space;space;space;space"]
+metadata/TileParams = ["StraitCorridor;75;0;corridor;corridor;space;space", "CurvedCorridor;60;0;space;corridor;corridor;space", "TCorridor;30;0;corridor;corridor;corridor;space", "XCorridor;1;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;space;corridor;space;space", "Space;750;0;space;space;space;space"]
 metadata/PlayerTemplate = ExtResource("8_ntvs2")
+metadata/mapHeight = 3

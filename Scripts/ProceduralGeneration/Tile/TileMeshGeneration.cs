@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using static System.Formats.Asn1.AsnWriter;
@@ -7,10 +8,11 @@ using static System.Formats.Asn1.AsnWriter;
 public partial class TileMeshGeneration : Node
 {
     //Array of all tiles template for frid generation
+    private GameParam gameParam;
 	private TilePrefa[] tileTemplates;
     private PackedScene playerTemplate;
     //The generated tile grid
-    private Node3D[,] tileGrid;
+    private Node3D[,,] tileGrid;
 
     private string borderType = "space";
 
@@ -23,21 +25,63 @@ public partial class TileMeshGeneration : Node
         GenerateGrid(20, 20);
     }
 
+    public IEnumerator Process()
+    {
+        yield return null;
+    }
+
     public void GenerateGrid(int sizex, int sizey)
     {
         Random rand = new Random();
 
-        tileGrid = new Node3D[sizex, sizey];
-        int[,] tGrid = new int[sizex, sizey];
+        tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
+        int[,,] tGrid = new int[gameParam.mapHeight, sizex, sizey];
 
-        while (GetNbUndefinedTiles(tGrid) > 0) 
+        for (int i = 0; i < gameParam.mapHeight; i++)
         {
-            (int, int) wTilePos = GetMostRestrictedTile(tGrid);
-            int[] posibility = GetGridPossiblity(wTilePos.Item1, wTilePos.Item2, tGrid);
+            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, gameParam.startHeight), rand);
+        }
+
+        //Spawn player temporary
+        /*Node3D player = playerTemplate.Instantiate<Node3D>();
+        AddChild(player);
+        (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
+        TilePrefa tile = tileTemplates[tGrid[gameParam.startHeight, px, py] - 1];
+        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor"))
+        {
+            (px, py) = (rand.Next(sizex), rand.Next(sizey));
+            tile = tileTemplates[tGrid[gameParam.startHeight, px, py] - 1];
+        }
+        player.Position = new Vector3(px * tileSize, 0, py * tileSize);*/
+        //End of temporary script
+
+        for (int height = 0; height < tGrid.GetLength(0); height++)
+        {
+            for (int x = 0; x < sizex; x++)
+            {
+                for (int y = 0; y < sizey; y++)
+                {
+                    TilePrefa template = tileTemplates[tGrid[height, x, y] - 1];
+                    tileGrid[height, x, y] = template.tile.Instantiate<Node3D>();
+                    tileGrid[height, x, y].Name = template.name;
+                    AddChild(tileGrid[height, x, y]);
+                    tileGrid[height, x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
+                    tileGrid[height, x, y].GlobalPosition = new Vector3(x * tileSize, height * tileSize, y * tileSize);
+                }
+            }
+        }
+    }
+
+    public void GenerateGridLayer(int[,,] tGrid, int layer, Random rand)
+    {
+        while (GetNbUndefinedTiles(tGrid, layer) > 0)
+        {
+            (int, int) wTilePos = GetMostRestrictedTile(tGrid, layer);
+            int[] posibility = GetGridPossiblity(wTilePos.Item1, wTilePos.Item2, layer, tGrid);
             int totalWeight = 0;
             foreach (int i in posibility)
             {
-                totalWeight += tileTemplates[i-1].weight;
+                totalWeight += tileTemplates[i - 1].weight;
             }
             int selected = rand.Next(totalWeight);
             //Debug.Print(selected.ToString());
@@ -57,50 +101,28 @@ public partial class TileMeshGeneration : Node
                 //Debug.Print(selected.ToString() + " | " + totalWeight);
                 throw new Exception("not defined");
             }
-            tGrid[wTilePos.Item1, wTilePos.Item2] = chosenTile; 
+            tGrid[layer, wTilePos.Item1, wTilePos.Item2] = chosenTile;
+            if (tileTemplates[chosenTile-1].transition != 0)
+            {
+                tGrid[layer + tileTemplates[chosenTile - 1].transition, wTilePos.Item1, wTilePos.Item2] = tileTemplates[chosenTile - 1].conjugate + 1;
+            }
             if (wTilePos.Item1 == 5 && wTilePos.Item2 == 4)
             {
                 //Debug.Print("\ndebug: " + tileTemplates[tGrid[wTilePos.Item1, wTilePos.Item2]-1].name);
             }
         }
-
-        //Spawn player temporary
-        Node3D player = playerTemplate.Instantiate<Node3D>();
-        AddChild(player);
-        (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
-        TilePrefa tile = tileTemplates[tGrid[px, py] - 1];
-        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor"))
-        {
-            (px, py) = (rand.Next(sizex), rand.Next(sizey));
-            tile = tileTemplates[tGrid[px, py] - 1];
-        }
-        player.Position = new Vector3(px * tileSize, 0, py * tileSize);
-        //End of temporary script
-
-        for (int x = 0;x < sizex;x++)
-        {
-            for (int y = 0; y < sizey; y++)
-            {
-                TilePrefa template = tileTemplates[tGrid[x, y] - 1];
-                tileGrid[x, y] = template.tile.Instantiate<Node3D>();
-                tileGrid[x, y].Name = template.name;
-                AddChild(tileGrid[x, y]);
-                tileGrid[x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
-                tileGrid[x, y].GlobalPosition = new Vector3(x * tileSize, 0, y * tileSize);
-            }
-        }
     }
 
-    public (int,int) GetMostRestrictedTile(int[,] grid)
+    public (int,int) GetMostRestrictedTile(int[,,] grid, int height)
     {
         (int, int) res = (0, 0);
         int pos = int.MaxValue;
-        for (int x = 0; x < tileGrid.GetLength(0); x++)
+        for (int x = 0; x < tileGrid.GetLength(1); x++)
         {
-            for (int y = 0; y < tileGrid.GetLength(1); y++)
+            for (int y = 0; y < tileGrid.GetLength(2); y++)
             {
-                int val = GetGridPossiblity(x, y, grid).Length;
-                if (grid[x, y] == 0 && val < pos)
+                int val = GetGridPossiblity(x, y, height, grid).Length;
+                if (grid[height, x, y] == 0 && val < pos)
                 {
                     res = (x, y);
                     pos = val;
@@ -109,20 +131,23 @@ public partial class TileMeshGeneration : Node
         }
         return res;
     }
-    public int GetNbUndefinedTiles(int[,] grid)
+    public static int GetNbUndefinedTiles(int[,,] grid, int height)
     {
         int res = 0;
-        foreach (int t in grid)
+        for (int y = 0; y < grid.GetLength(1); y++)
         {
-            if (t == 0)
+            for (int x = 0; x < grid.GetLength(2); x++)
             {
-                res += 1;
+                if (grid[height, y, x] == 0)
+                {
+                    res += 1;
+                }
             }
         }
         return res;
     }
 
-    public int[] GetGridPossiblity(int x, int y, int[,] grid)
+    public int[] GetGridPossiblity(int x, int y, int height, int[,,] grid)
     {
         /*if (x == 5 && y == 4)
         {
@@ -136,44 +161,44 @@ public partial class TileMeshGeneration : Node
         string w = borderType;
         /*if (x == 0)
         {
-            int idW = grid[grid.GetLength(0)-1, y];
+            int idW = grid[grid.GetLength(1)-1, y];
             w = idW == 0 ? "" : tileTemplates[idW - 1].est;
         }*/
         if (x != 0)
         {
-            int idW = grid[x - 1, y];
+            int idW = grid[height, x - 1, y];
             w = idW == 0 ? "" : tileTemplates[idW - 1].est;
         }
-        /*if (x == grid.GetLength(0) - 1)
+        /*if (x == grid.GetLength(1) - 1)
         {
             int idE = grid[0, y];
             e = idE == 0 ? "" : tileTemplates[idE - 1].west;
         }*/
-        if (x != grid.GetLength(0) - 1)
+        if (x != grid.GetLength(1) - 1)
         {
-            int idE = grid[x + 1, y];
+            int idE = grid[height, x + 1, y];
             e = idE == 0 ? "" : tileTemplates[idE - 1].west;
         }
         //Verify y limit and get value
         /*if (y == 0)
         {
             
-            int idN = grid[x, grid.GetLength(1) - 1];
+            int idN = grid[x, grid.GetLength(2) - 1];
             n = idN == 0 ? "" : tileTemplates[idN - 1].south;
         }*/
         if (y != 0)
         {
-            int idN = grid[x, y - 1];
+            int idN = grid[height, x, y - 1];
             n = idN == 0 ? "" : tileTemplates[idN - 1].south;
         }
-        /*if (y == grid.GetLength(0) - 1)
+        /*if (y == grid.GetLength(1) - 1)
         {
             int idS = grid[x, 0];
             s = idS == 0 ? "" : tileTemplates[idS - 1].north;
         }*/
-        if (y != grid.GetLength(0) - 1)
+        if (y != grid.GetLength(1) - 1)
         {
-            int idS = grid[x, y + 1];
+            int idS = grid[height, x, y + 1];
             s = idS == 0 ? "" : tileTemplates[idS - 1].north;
         }
         //Getting tile's restrictions
@@ -207,6 +232,14 @@ public partial class TileMeshGeneration : Node
             {
                 continue;
             }
+            if (templ.transition * (height - gameParam.startHeight) < 0)
+            {
+                continue;
+            }
+            if (height + templ.transition < 0 || height + templ.transition >= grid.GetLength(0))
+            {
+                continue;
+            }
             validTemplates.Add(i+1);
         }
 
@@ -233,6 +266,8 @@ public partial class TileMeshGeneration : Node
         //Get metadata
         playerTemplate = (PackedScene)GetMeta("PlayerTemplate");
 
+        gameParam = new GameParam((int)GetMeta("mapHeight"), (int)GetMeta("mapHeight")>>1);
+
         Godot.Collections.Array<PackedScene> tiles = GetMeta("TileTemplate").AsGodotArray<PackedScene>();
 		Godot.Collections.Array<string> tilesParams = GetMeta("TileParams").AsGodotArray<string>();
 
@@ -243,8 +278,9 @@ public partial class TileMeshGeneration : Node
 		{
             //Original tile
 			string[] par = tilesParams[i].Split(';');
-            tileTemplates[i * 4] = new TilePrefa(tiles[i], par[0], int.Parse(par[1]), par[2], par[3], par[4], par[5]);
+            tileTemplates[i * 4] = new TilePrefa(tiles[i], par[0], int.Parse(par[1]), par[3], par[4], par[5], par[6]);
             tileTemplates[i * 4].rotation = 0;
+            tileTemplates[i * 4].transition = int.Parse(par[2]);
 
             //Add rotated tiles
             TilePrefa rotatingTile = new TilePrefa(tileTemplates[i * 4]);
@@ -253,6 +289,11 @@ public partial class TileMeshGeneration : Node
                 rotatingTile = RotateTile(rotatingTile);
                 tileTemplates[i * 4 + j] = new TilePrefa(rotatingTile);
                 tileTemplates[i * 4 + j].name = rotatingTile.name + rotatingTile.rotation;
+                if (j > 1)
+                {
+                    tileTemplates[i * 4 + (j - 2)].conjugate = i * 4 + j;
+                    tileTemplates[i * 4 + j].conjugate = i * 4 + (j - 2);
+                }
             }
         }
 
@@ -261,6 +302,11 @@ public partial class TileMeshGeneration : Node
         {
             Debug.Print(tile.ToString());
         }*/
+    }
+
+    public static int TwoStepsOscillatoryFunction(int i, int stp)
+    {
+        return stp + (i % 2 == 0 ? 1 : -1) * ((i + 1) >> 1);
     }
 
     //Function to rotate tiles by 90 deg clockwise
@@ -281,12 +327,26 @@ public partial class TileMeshGeneration : Node
     }
 }
 
+public class GameParam
+{
+    public int mapHeight;
+    public int startHeight;
+
+    public GameParam(int mapHeight, int startHeight)
+    {
+        this.mapHeight = mapHeight;
+        this.startHeight = startHeight;
+    }
+}
+
 public class TilePrefa
 {
 	public PackedScene tile;
     public int weight;
     public string name;
 	public int rotation;
+    public int transition;
+    public int conjugate;
 	public string north;
     public string south;
     public string est;
@@ -299,6 +359,7 @@ public class TilePrefa
         this.weight = 1;
         this.name = "";
         this.rotation = 0;
+        this.transition = 0;
         this.north = "";
         this.south = "";
         this.est = "";
@@ -318,6 +379,7 @@ public class TilePrefa
         this.weight = copy.weight;
         this.name = copy.name;
         this.rotation = copy.rotation;
+        this.transition = copy.transition;
         this.north = copy.north;
         this.south = copy.south;
         this.est = copy.est;
@@ -338,6 +400,6 @@ public class TilePrefa
 
     public override string ToString()
     {
-        return $"Tile {name}:\n    weight: {weight}\n    rotation: {rotation}\n    north: {north}\n    south: {south}\n    est: {est}\n    west: {west}";
+        return $"Tile {name}:\n    weight: {weight}\n    rotation: {rotation}\n    transition: {transition}\n    north: {north}\n    south: {south}\n    est: {est}\n    west: {west}";
     }
 }
