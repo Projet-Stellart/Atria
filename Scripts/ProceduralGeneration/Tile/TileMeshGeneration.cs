@@ -234,6 +234,10 @@ public partial class TileMeshGeneration : Node
             }
             if (templ.transition * (height - gameParam.startHeight) < 0)
             {
+                if (height == 0)
+                {
+                    Debug.Print(height - gameParam.startHeight.ToString());
+                }
                 continue;
             }
             if (height + templ.transition < 0 || height + templ.transition >= grid.GetLength(0))
@@ -311,11 +315,11 @@ public partial class TileMeshGeneration : Node
         }
 
         //Debug print to visualize data
-        for (int i = 0; i < tileTemplates.Length; i++) 
+        /*for (int i = 0; i < tileTemplates.Length; i++) 
         {
             TilePrefa tile = tileTemplates[i];
             Debug.Print(i + ":\n" + tile.ToString());
-        }
+        }*/
     }
 
     public static int TwoStepsOscillatoryFunction(int i, int stp)
