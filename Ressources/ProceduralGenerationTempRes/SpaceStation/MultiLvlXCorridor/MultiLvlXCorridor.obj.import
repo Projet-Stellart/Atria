@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://0f6ltciqpldy"
+path="res://.godot/imported/MultiLvlXCorridor.obj-92b25b15394d2711c655e9e12a961c4b.mesh"
+
+[deps]
+
+files=["res://.godot/imported/MultiLvlXCorridor.obj-92b25b15394d2711c655e9e12a961c4b.mesh"]
+
+source_file="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridor.obj"
+dest_files=["res://.godot/imported/MultiLvlXCorridor.obj-92b25b15394d2711c655e9e12a961c4b.mesh", "res://.godot/imported/MultiLvlXCorridor.obj-92b25b15394d2711c655e9e12a961c4b.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
