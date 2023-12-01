@@ -278,10 +278,15 @@ public partial class TileMeshGeneration : Node
 		{
             //Original tile
 			string[] par = tilesParams[i].Split(';');
-            tileTemplates[i * 4] = new TilePrefa(tiles[i], par[0], int.Parse(par[1]), par[3], par[4], par[5], par[6]);
+            tileTemplates[i * 4] = new TilePrefa(tiles[i], par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);
             tileTemplates[i * 4].rotation = 0;
             tileTemplates[i * 4].transition = int.Parse(par[2]);
-
+            int conjugateRef = int.Parse(par[3]);
+            if (conjugateRef * 4 + 2 < i * 4)
+            {
+                tileTemplates[conjugateRef * 4 + 2].conjugate = i * 4;
+                tileTemplates[i * 4].conjugate = conjugateRef * 4 + 2;
+            }
             //Add rotated tiles
             TilePrefa rotatingTile = new TilePrefa(tileTemplates[i * 4]);
             for (int j = 1; j <= 3; j++)
@@ -289,19 +294,28 @@ public partial class TileMeshGeneration : Node
                 rotatingTile = RotateTile(rotatingTile);
                 tileTemplates[i * 4 + j] = new TilePrefa(rotatingTile);
                 tileTemplates[i * 4 + j].name = rotatingTile.name + rotatingTile.rotation;
-                if (j > 1)
+                if (conjugateRef < i)
                 {
-                    tileTemplates[i * 4 + (j - 2)].conjugate = i * 4 + j;
-                    tileTemplates[i * 4 + j].conjugate = i * 4 + (j - 2);
+                    if (j == 1)
+                    {
+                        tileTemplates[conjugateRef * 4 + 3].conjugate = i * 4 + j;
+                        tileTemplates[i * 4 + j].conjugate = conjugateRef * 4 + 3;
+                    }
+                    else
+                    {
+                        tileTemplates[conjugateRef * 4 + (j - 2)].conjugate = i * 4 + j;
+                        tileTemplates[i * 4 + j].conjugate = conjugateRef * 4 + (j - 2);
+                    }
                 }
             }
         }
 
         //Debug print to visualize data
-        /*foreach(TilePrefa tile in tileTemplates) 
+        for (int i = 0; i < tileTemplates.Length; i++) 
         {
-            Debug.Print(tile.ToString());
-        }*/
+            TilePrefa tile = tileTemplates[i];
+            Debug.Print(i + ":\n" + tile.ToString());
+        }
     }
 
     public static int TwoStepsOscillatoryFunction(int i, int stp)
@@ -400,6 +414,6 @@ public class TilePrefa
 
     public override string ToString()
     {
-        return $"Tile {name}:\n    weight: {weight}\n    rotation: {rotation}\n    transition: {transition}\n    north: {north}\n    south: {south}\n    est: {est}\n    west: {west}";
+        return $"Tile {name}:\n    weight: {weight}\n    rotation: {rotation}\n    transition: {transition}\n    north: {north}\n    south: {south}\n    est: {est}\n    west: {west}\n    Ref to: {conjugate}";
     }
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://i51t24e333ts"]
+[gd_scene load_steps=11 format=3 uid="uid://i51t24e333ts"]
 
 [ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Tile/TileMeshGeneration.cs" id="1_47gua"]
 [ext_resource type="PackedScene" uid="uid://kfagsisbvgc5" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridor.tscn" id="2_k50b4"]
@@ -7,11 +7,13 @@
 [ext_resource type="PackedScene" uid="uid://c3mpm4ft5sjrk" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/XCorridor/XCorridor.tscn" id="5_ej41e"]
 [ext_resource type="PackedScene" uid="uid://q56qc2tujrp0" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/Space/Space.tscn" id="6_0vhu6"]
 [ext_resource type="PackedScene" uid="uid://bea4i6d85n505" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/EndCorridor.tscn" id="6_aeu1b"]
+[ext_resource type="PackedScene" uid="uid://dey0q3k23rp54" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairDownCorridor/StairDownCorridor.tscn" id="8_fy2x2"]
 [ext_resource type="PackedScene" uid="uid://jfa5n2awq3l8" path="res://Scenes/Lilian/TempAssets/Player.tscn" id="8_ntvs2"]
+[ext_resource type="PackedScene" uid="uid://c3hckqfirl1ht" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairUpCorridor/StairUpCorridor.tscn" id="9_uag5d"]
 
 [node name="TileMapGenerator" type="Node3D"]
 script = ExtResource("1_47gua")
-metadata/TileTemplate = [ExtResource("2_k50b4"), ExtResource("3_s2kh5"), ExtResource("4_rwr70"), ExtResource("5_ej41e"), ExtResource("6_aeu1b"), ExtResource("6_0vhu6")]
-metadata/TileParams = ["StraitCorridor;75;0;corridor;corridor;space;space", "CurvedCorridor;60;0;space;corridor;corridor;space", "TCorridor;30;0;corridor;corridor;corridor;space", "XCorridor;1;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;space;corridor;space;space", "Space;750;0;space;space;space;space"]
+metadata/TileTemplate = [ExtResource("2_k50b4"), ExtResource("3_s2kh5"), ExtResource("4_rwr70"), ExtResource("5_ej41e"), ExtResource("6_aeu1b"), ExtResource("6_0vhu6"), ExtResource("8_fy2x2"), ExtResource("9_uag5d")]
+metadata/TileParams = ["StraitCorridor;75;0;0;corridor;corridor;space;space", "CurvedCorridor;60;0;0;space;corridor;corridor;space", "TCorridor;30;0;0;corridor;corridor;corridor;space", "XCorridor;1;0;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;0;space;corridor;space;space", "Space;750;0;0;space;space;space;space", "StairDownCorridor;10;-1;7;space;corridor;space;space", "StairUpCorridor;10;1;6;space;corridor;space;space"]
 metadata/PlayerTemplate = ExtResource("8_ntvs2")
 metadata/mapHeight = 3
