@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class playerScript : CharacterBody3D
 {
@@ -27,16 +28,15 @@ public partial class playerScript : CharacterBody3D
 		if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
 			velocity.Y = JumpVelocity;
 
-		// Get the input direction and handle the movement/deceleration.
-		// As good practice, you should replace UI actions with custom gameplay actions.
-		/*if (Input.IsActionPressed("map"))
+        if (Input.IsActionJustPressed("map"))
 		{
-            ((Camera3D)GetParent().GetParent().GetChild(0)).MakeCurrent();
+            ((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
 		}
-		else
-		{
-            ((Camera3D)GetParent().GetParent().GetChild(0)).Current = false;
-        }*/
+        if (Input.IsActionJustReleased("map"))
+        {
+            ((Camera3D)GetChild(0)).MakeCurrent();
+        }
+
 		Vector2 inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
 		if (direction != Vector3.Zero)

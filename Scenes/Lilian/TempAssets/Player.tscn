@@ -26,5 +26,5 @@ mesh = SubResource("CapsuleMesh_w7em1")
 shape = SubResource("CapsuleShape3D_0qoxc")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 6.21247, 0)
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 4.65716, 0)
 mesh = SubResource("SphereMesh_sxner")

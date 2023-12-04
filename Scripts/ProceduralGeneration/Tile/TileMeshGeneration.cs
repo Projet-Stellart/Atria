@@ -16,7 +16,7 @@ public partial class TileMeshGeneration : Node
 
     private string borderType = "space";
 
-    private float tileSize = 9f;
+    private float tileSize = 6.4f;
 
     public override void _Ready()
 	{
@@ -43,16 +43,16 @@ public partial class TileMeshGeneration : Node
         }
 
         //Spawn player temporary
-        /*Node3D player = playerTemplate.Instantiate<Node3D>();
+        Node3D player = playerTemplate.Instantiate<Node3D>();
         AddChild(player);
         (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
         TilePrefa tile = tileTemplates[tGrid[gameParam.startHeight, px, py] - 1];
-        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor"))
+        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") && tile.transition == 0)
         {
             (px, py) = (rand.Next(sizex), rand.Next(sizey));
             tile = tileTemplates[tGrid[gameParam.startHeight, px, py] - 1];
         }
-        player.Position = new Vector3(px * tileSize, 0, py * tileSize);*/
+        player.Position = new Vector3(px * tileSize, gameParam.startHeight * tileSize, py * tileSize);
         //End of temporary script
 
         for (int height = 0; height < tGrid.GetLength(0); height++)
@@ -63,7 +63,7 @@ public partial class TileMeshGeneration : Node
                 {
                     TilePrefa template = tileTemplates[tGrid[height, x, y] - 1];
                     tileGrid[height, x, y] = template.tile.Instantiate<Node3D>();
-                    tileGrid[height, x, y].Name = template.name;
+                    tileGrid[height, x, y].Name = template.name + "|id:" + (x+y*sizex+height*sizex*sizey);
                     AddChild(tileGrid[height, x, y]);
                     tileGrid[height, x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
                     tileGrid[height, x, y].GlobalPosition = new Vector3(x * tileSize, height * tileSize, y * tileSize);

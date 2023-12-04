@@ -5,12 +5,12 @@
 
 [node name="Lilian-main" type="Node3D"]
 
-[node name="TileMapGenerator" parent="." instance=ExtResource("2_17x0g")]
-
 [node name="OrbitingCam" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 45)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 30)
 script = ExtResource("2_acby8")
 
 [node name="Camera3D" type="Camera3D" parent="OrbitingCam"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 50)
 size = 200.0
+
+[node name="TileMapGenerator" parent="." instance=ExtResource("2_17x0g")]
