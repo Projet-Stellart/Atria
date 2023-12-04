@@ -1,12 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://ds3j7kf44ec40"]
+[gd_scene load_steps=3 format=3 uid="uid://ds3j7kf44ec40"]
 
 [ext_resource type="PackedScene" uid="uid://i51t24e333ts" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="2_17x0g"]
+[ext_resource type="Script" path="res://Scenes/Lilian/TempAssets/orbitiongCam.cs" id="2_acby8"]
 
 [node name="Lilian-main" type="Node3D"]
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 9, 250)
-current = true
-size = 200.0
-
 [node name="TileMapGenerator" parent="." instance=ExtResource("2_17x0g")]
+
+[node name="OrbitingCam" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 45)
+script = ExtResource("2_acby8")
+
+[node name="Camera3D" type="Camera3D" parent="OrbitingCam"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 75)
+size = 200.0

@@ -22,7 +22,7 @@ public partial class TileMeshGeneration : Node
 	{
         //Prototype call
 		GetData();
-        GenerateGrid(20, 20);
+        GenerateGrid(10, 10);
     }
 
     public IEnumerator Process()
@@ -104,6 +104,7 @@ public partial class TileMeshGeneration : Node
             tGrid[layer, wTilePos.Item1, wTilePos.Item2] = chosenTile;
             if (tileTemplates[chosenTile-1].transition != 0)
             {
+                Debug.Print(tileTemplates[chosenTile - 1].name + ":" + (tileTemplates[tileTemplates[chosenTile - 1].conjugate].name));
                 tGrid[layer + tileTemplates[chosenTile - 1].transition, wTilePos.Item1, wTilePos.Item2] = tileTemplates[chosenTile - 1].conjugate + 1;
             }
             if (wTilePos.Item1 == 5 && wTilePos.Item2 == 4)
@@ -216,6 +217,26 @@ public partial class TileMeshGeneration : Node
         for (int i = 0; i < tileTemplates.Length; i++)
         {
             TilePrefa templ = tileTemplates[i];
+            if (templ.transition != 0)
+            {
+                TilePrefa conju = tileTemplates[templ.conjugate];
+                if (conju.south != "space" && y + 1 >= grid.GetLength(2))
+                {
+                    continue;
+                }
+                if (conju.est != "space" && x + 1 >= grid.GetLength(1))
+                {
+                    continue;
+                }
+                if (conju.north != "space" && y - 1 <= 0)
+                {
+                    continue;
+                }
+                if (conju.west != "space" && x - 1 <= 0)
+                {
+                    continue;
+                }
+            }
             if (n != "" && templ.north != n)
             {
                 continue;
@@ -234,11 +255,11 @@ public partial class TileMeshGeneration : Node
             }
             if (templ.transition * (height - gameParam.startHeight) < 0)
             {
-                if (height == 0)
-                {
-                    Debug.Print(height - gameParam.startHeight.ToString());
-                }
                 continue;
+            }
+            if (height == 0 && templ.transition == 1)
+            {
+                Debug.Print((height - gameParam.startHeight).ToString());
             }
             if (height + templ.transition < 0 || height + templ.transition >= grid.GetLength(0))
             {
@@ -336,6 +357,7 @@ public partial class TileMeshGeneration : Node
 
         newTile.name = tile.name;
 		newTile.rotation = (tile.rotation + 90)%360;
+        newTile.transition = tile.transition;
 		newTile.north = tile.est;
 		newTile.south = tile.west;
 		newTile.west = tile.north;
