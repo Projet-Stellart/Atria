@@ -22,7 +22,7 @@ public partial class TileMeshGeneration : Node
 	{
         //Prototype call
 		GetData();
-        GenerateGrid(10, 10);
+        GenerateGrid(20, 20);
     }
 
     public IEnumerator Process()
