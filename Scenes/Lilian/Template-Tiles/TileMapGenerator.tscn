@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://i51t24e333ts"]
+[gd_scene load_steps=13 format=3 uid="uid://i51t24e333ts"]
 
 [ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Tile/TileMeshGeneration.cs" id="1_47gua"]
 [ext_resource type="PackedScene" uid="uid://kfagsisbvgc5" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridor.tscn" id="2_k50b4"]
@@ -10,10 +10,12 @@
 [ext_resource type="PackedScene" uid="uid://cp2k7ghni5rt4" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorHigh.tscn" id="7_f81mn"]
 [ext_resource type="PackedScene" uid="uid://dhe4pk44yu6l" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorLow.tscn" id="8_mfmig"]
 [ext_resource type="PackedScene" uid="uid://jfa5n2awq3l8" path="res://Scenes/Lilian/TempAssets/Player.tscn" id="8_ntvs2"]
+[ext_resource type="PackedScene" uid="uid://bcfda48sknxyd" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLow.tscn" id="9_iif0w"]
+[ext_resource type="PackedScene" uid="uid://bc70yrulkw3sa" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHigh.tscn" id="10_sngcm"]
 
 [node name="TileMapGenerator" type="Node3D"]
 script = ExtResource("1_47gua")
-metadata/TileTemplate = [ExtResource("2_k50b4"), ExtResource("3_s2kh5"), ExtResource("4_rwr70"), ExtResource("5_ej41e"), ExtResource("6_aeu1b"), ExtResource("7_f81mn"), ExtResource("8_mfmig"), ExtResource("6_0vhu6")]
-metadata/TileParams = ["StraitCorridor;75;0;0;corridor;corridor;space;space", "CurvedCorridor;60;0;0;space;corridor;corridor;space", "TCorridor;30;0;0;corridor;corridor;corridor;space", "XCorridor;1;0;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;0;space;corridor;space;space", "StairHighCorridor;10;-1;6;space;corridor;space;space", "StairLowCorridor;10;1;5;space;corridor;space;space", "Space;850;0;0;space;space;space;space"]
+metadata/TileTemplate = [ExtResource("2_k50b4"), ExtResource("3_s2kh5"), ExtResource("4_rwr70"), ExtResource("5_ej41e"), ExtResource("6_aeu1b"), ExtResource("7_f81mn"), ExtResource("8_mfmig"), ExtResource("9_iif0w"), ExtResource("10_sngcm"), ExtResource("6_0vhu6")]
+metadata/TileParams = ["StraitCorridor;75;0;0;corridor;corridor;space;space", "CurvedCorridor;60;0;0;space;corridor;corridor;space", "TCorridor;30;0;0;corridor;corridor;corridor;space", "XCorridor;1;0;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;0;space;corridor;space;space", "StairHighCorridor;10;-1;6;space;corridor;space;space", "StairLowCorridor;10;1;5;space;corridor;space;space", "MultiXLowCorridor;5;1;8;corridor;corridor;space;space", "MultiXHighCorridor;5;-1;7;space;space;corridor;corridor", "Space;850;0;0;space;space;space;space"]
 metadata/PlayerTemplate = ExtResource("8_ntvs2")
 metadata/mapHeight = 3

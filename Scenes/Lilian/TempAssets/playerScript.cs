@@ -28,6 +28,7 @@ public partial class playerScript : CharacterBody3D
 		if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
 			velocity.Y = JumpVelocity;
 
+		//Map
         if (Input.IsActionJustPressed("map"))
 		{
             ((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
@@ -37,7 +38,19 @@ public partial class playerScript : CharacterBody3D
             ((Camera3D)GetChild(0)).MakeCurrent();
         }
 
-		Vector2 inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+		//Crouch
+        if (Input.IsActionJustPressed("crouch"))
+        {
+			Scale = new Vector3(1, 0.5f, 1);
+			Position = new Vector3(Position.X, Position.Y - 0.5f, Position.Z);
+        }
+        if (Input.IsActionJustReleased("crouch"))
+        {
+            Scale = new Vector3(1, 1, 1);
+            Position = new Vector3(Position.X, Position.Y + 0.5f, Position.Z);
+        }
+
+        Vector2 inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
 		if (direction != Vector3.Zero)
 		{
