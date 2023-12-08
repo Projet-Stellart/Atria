@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ftsfe6d1rcgs"
-path.s3tc="res://.godot/imported/MultiLvlXCorridor.png-77b0011fbd394aaebf70d1baa7e01be5.s3tc.ctex"
+uid="uid://dgrrrwp66tuqe"
+path.s3tc="res://.godot/imported/MultiLvlXCorridorLow.png-46ee7f7a7dd52169fddecc0bd0a7afce.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridor.png"
-dest_files=["res://.godot/imported/MultiLvlXCorridor.png-77b0011fbd394aaebf70d1baa7e01be5.s3tc.ctex"]
+source_file="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorLow.png"
+dest_files=["res://.godot/imported/MultiLvlXCorridorLow.png-46ee7f7a7dd52169fddecc0bd0a7afce.s3tc.ctex"]
 
 [params]
 
