@@ -32,8 +32,3 @@ jobs:
           name: ${{ matrix.platform.file }}
           preset: ${{ matrix.platform.name }}
           debugMode: "true"
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: Client DEV - ${{ matrix.platform.name }}
-          path: ${{ github.workspace }}/${{ steps.build.outputs.build }}
