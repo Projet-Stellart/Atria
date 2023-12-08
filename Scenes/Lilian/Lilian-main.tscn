@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ds3j7kf44ec40"]
 
-[ext_resource type="PackedScene" uid="uid://i51t24e333ts" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="2_17x0g"]
+[ext_resource type="PackedScene" uid="uid://dh3olwlvda6ut" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="2_17x0g"]
 [ext_resource type="Script" path="res://Scenes/Lilian/TempAssets/orbitiongCam.cs" id="2_acby8"]
 
 [node name="Lilian-main" type="Node3D"]
