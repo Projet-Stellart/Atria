@@ -18,6 +18,11 @@ config/icon="res://icon.svg"
 
 project/assembly_name="Atria"
 
+[filesystem]
+
+import/blender/enabled=false
+import/fbx/enabled=false
+
 [input]
 
 ui_left={
