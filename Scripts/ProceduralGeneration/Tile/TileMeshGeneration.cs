@@ -28,6 +28,7 @@ public partial class TileMeshGeneration : Node
         //Debug.Print("Ok");
     }
 
+    //Debug only
     public override void _Process(double delta)
     {
         if (isGenerating && ((int)(Time.GetTicksMsec()/10)*10) % 200 == 0)
@@ -36,6 +37,7 @@ public partial class TileMeshGeneration : Node
         }
     }
 
+    //Main function to generate the map asynchronously
     public Task GenerateMapAsync()
     {
         GetData();
@@ -54,6 +56,7 @@ public partial class TileMeshGeneration : Node
         return generating;
     }
 
+    //Everything that need to be done after the generation of the grid
     private async void PostGenerationProcess(Task<int[,,]> generation, Random rand)
     {
         await generation;
@@ -65,6 +68,7 @@ public partial class TileMeshGeneration : Node
         InstantiateGrid(tGrid, rand);
     }
 
+    //Entry point to generate the grid
     private int[,,] GenerateGrid(int sizex, int sizey, Random rand)
     {
         //tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
@@ -78,6 +82,7 @@ public partial class TileMeshGeneration : Node
         return tGrid;
     }
 
+    //Function that spawn the tiles from a grid matrix
     private void InstantiateGrid(int[,,] tGrid, Random rand)
     {
 
@@ -115,6 +120,7 @@ public partial class TileMeshGeneration : Node
         }
     }
 
+    //Generate a layer of the grid, the baseStatus is the percentage of finished work before generating this layer
     public void GenerateGridLayer(int[,,] tGrid, int layer, float baseStatus, Random rand)
     {
         while (GetNbUndefinedTiles(tGrid, layer) > 0)
@@ -161,6 +167,12 @@ public partial class TileMeshGeneration : Node
         }
     }
 
+    /// <summary>
+    /// Get the position of the most restricted tile on the layer
+    /// </summary>
+    /// <param name="grid"></param>
+    /// <param name="height"></param>
+    /// <returns>Position: (x,y) of the most restricted tile</returns>
     public (int,int) GetMostRestrictedTile(int[,,] grid, int height)
     {
         (int, int) res = (0, 0);
@@ -179,6 +191,13 @@ public partial class TileMeshGeneration : Node
         }
         return res;
     }
+
+    /// <summary>
+    /// Get the number of tile tat have not been defined on the layer, their values are equal to 0
+    /// </summary>
+    /// <param name="grid"></param>
+    /// <param name="height"></param>
+    /// <returns>The number of undefined tiles</returns>
     public static int GetNbUndefinedTiles(int[,,] grid, int height)
     {
         int res = 0;
@@ -195,6 +214,15 @@ public partial class TileMeshGeneration : Node
         return res;
     }
 
+    /// <summary>
+    /// Get all the possible tiles for a position on the grid
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="height"></param>
+    /// <param name="grid"></param>
+    /// <returns>a list of possible tile template's id</returns>
+    
     public int[] GetGridPossiblity(int x, int y, int height, int[,,] grid)
     {
         /*if (x == 5 && y == 4)
@@ -250,16 +278,6 @@ public partial class TileMeshGeneration : Node
             s = idS == 0 ? "" : tileTemplates[idS - 1].north;
         }
         //Getting tile's restrictions
-        
-        /*Debug.Print("n:" + tileTemplates[idN-1].name);
-        Debug.Print("s:" + tileTemplates[idS-1].name);
-        Debug.Print("e:" + tileTemplates[idE-1].name);
-        Debug.Print("w:" + tileTemplates[idW-1].name);*/
-        /*Debug.Print("n:" + n);
-        Debug.Print("s:" + s);
-        Debug.Print("e:" + e);
-        Debug.Print("w:" + w);*/
-        //Checking wich tile's template is valid for this tile
         List<int> validTemplates = new List<int>();
         for (int i = 0; i < tileTemplates.Length; i++)
         {
@@ -300,10 +318,12 @@ public partial class TileMeshGeneration : Node
             {
                 continue;
             }
+            //Rule: stairs point to the correct next layer
             if (templ.transition * (height - gameParam.startHeight) < 0)
             {
                 continue;
             }
+            //Rule: stairs do not go out of bound
             if (height + templ.transition < 0 || height + templ.transition >= grid.GetLength(0))
             {
                 continue;
@@ -311,15 +331,13 @@ public partial class TileMeshGeneration : Node
             validTemplates.Add(i+1);
         }
 
+        //Debug: print all possibilities
         /*foreach (int i in validTemplates)
         {
             Debug.Print("" + tileTemplates[i - 1].name);
         }*/
 
-        /*if (x == 5 && y == 4 && validTemplates.Count == 1)
-        {
-            Debug.Print(validTemplates.ToString());
-        }*/
+        //Debug: no possiblities
         /*if (validTemplates.Count == 0)
         {
             Debug.Print("n:" + n + "; s:" + s + "; e:" + e + "; w:" + w);
@@ -328,7 +346,9 @@ public partial class TileMeshGeneration : Node
         return validTemplates.ToArray();
     }
 
-    //Get data from metadata and generate tileTemplates with rotation of inputed tiles template
+    /// <summary>
+    /// Get data from metadata and generate tileTemplates with rotation of inputed tiles template
+    /// </summary>
     public void GetData()
 	{
         //Get metadata
@@ -386,12 +406,22 @@ public partial class TileMeshGeneration : Node
         }*/
     }
 
-    public static int TwoStepsOscillatoryFunction(int i, int stp)
+    /// <summary>
+    /// Function that alows GenerateGrid to process down then up.
+    /// </summary>
+    /// <param name="i"></param>
+    /// <param name="middle"></param>
+    /// <returns>The layer to process</returns>
+    public static int TwoStepsOscillatoryFunction(int i, int middle)
     {
-        return stp + (i % 2 == 0 ? 1 : -1) * ((i + 1) >> 1);
+        return middle + (i % 2 == 0 ? 1 : -1) * ((i + 1) >> 1);
     }
 
-    //Function to rotate tiles by 90 deg clockwise
+    /// <summary>
+    /// Function to rotate tiles by 90 deg clockwise
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <returns>The rotated tile (copy of the original)</returns>
     public TilePrefa RotateTile(TilePrefa tile)
 	{
         TilePrefa newTile = new TilePrefa();
