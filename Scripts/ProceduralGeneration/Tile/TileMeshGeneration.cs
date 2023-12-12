@@ -8,23 +8,32 @@ using static System.Formats.Asn1.AsnWriter;
 
 public partial class TileMeshGeneration : Node
 {
-    //Array of all tiles template for frid generation
-    private GameParam gameParam;
-	private TilePrefa[] tileTemplates;
+    private MapParam mapParam;
+    /// <summary>
+    /// Array of all tiles template for grid generation
+    /// </summary>
+    private TilePrefa[] tileTemplates;
+
     private PackedScene playerTemplate;
-    //The generated tile grid
-    //private Node3D[,,] tileGrid;
+
+    //Dependant on the map generation Task
     private float gridGenerationAdvencement;
     private bool isGenerating;
 
+    /// <summary>
+    /// The type that is used when accessing a tile outside the grid.
+    /// </summary>
     private string borderType = "space";
 
+    /// <summary>
+    /// Size of one dimension of a cubicle tile.
+    /// </summary>
     private float tileSize = 6.4f;
 
     public override void _Ready()
 	{
         //Prototype call
-        Task generating = GenerateMapAsync();
+        Task generating = GenerateMapAsync(20, 20);
         //Debug.Print("Ok");
     }
 
@@ -37,8 +46,13 @@ public partial class TileMeshGeneration : Node
         }
     }
 
-    //Main function to generate the map asynchronously
-    public Task GenerateMapAsync()
+    /// <summary>
+    /// Main function to generate the map asynchronously
+    /// </summary>
+    /// <param name="sizex"></param>
+    /// <param name="sizey"></param>
+    /// <returns>The asynchronous task to generate the grid</returns>
+    public Task GenerateMapAsync(int sizex, int sizey)
     {
         GetData();
 
@@ -48,7 +62,7 @@ public partial class TileMeshGeneration : Node
 
         Task<int[,,]> generating = Task.Run(() =>
         {
-            return GenerateGrid(50, 50, rand);
+            return GenerateGrid(sizex, sizey, rand);
         });
 
         PostGenerationProcess(generating, rand);
@@ -56,7 +70,14 @@ public partial class TileMeshGeneration : Node
         return generating;
     }
 
-    //Everything that need to be done after the generation of the grid
+    /// <summary>
+    /// Everything that need to be done after the generation of the grid.
+    /// </summary>
+    /// <remarks>
+    /// Will get rid of the generation task!
+    /// </remarks>
+    /// <param name="generation"></param>
+    /// <param name="rand"></param>
     private async void PostGenerationProcess(Task<int[,,]> generation, Random rand)
     {
         await generation;
@@ -66,23 +87,35 @@ public partial class TileMeshGeneration : Node
         isGenerating = false;
 
         InstantiateGrid(tGrid, rand);
+
+        generation.Dispose();
     }
 
-    //Entry point to generate the grid
+    /// <summary>
+    /// Entry point to generate the grid
+    /// </summary>
+    /// <param name="sizex"></param>
+    /// <param name="sizey"></param>
+    /// <param name="rand"></param>
+    /// <returns>The generated grid matrix</returns>
     private int[,,] GenerateGrid(int sizex, int sizey, Random rand)
     {
         //tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
-        int[,,] tGrid = new int[gameParam.mapHeight, sizex, sizey];
+        int[,,] tGrid = new int[mapParam.mapHeight, sizex, sizey];
 
-        for (int i = 0; i < gameParam.mapHeight; i++)
+        for (int i = 0; i < mapParam.mapHeight; i++)
         {
-            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, gameParam.startHeight), (float)i / gameParam.mapHeight, rand);
+            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, mapParam.startHeight), (float)i / mapParam.mapHeight, rand);
         }
 
         return tGrid;
     }
 
-    //Function that spawn the tiles from a grid matrix
+    /// <summary>
+    /// Function that spawn the tiles from a grid matrix
+    /// </summary>
+    /// <param name="tGrid"></param>
+    /// <param name="rand"></param>
     private void InstantiateGrid(int[,,] tGrid, Random rand)
     {
 
@@ -93,13 +126,13 @@ public partial class TileMeshGeneration : Node
         Node3D player = playerTemplate.Instantiate<Node3D>();
         AddChild(player);
         (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
-        TilePrefa tile = tileTemplates[tGrid[gameParam.startHeight, px, py] - 1];
+        TilePrefa tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
         while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") && tile.transition == 0)
         {
             (px, py) = (rand.Next(sizex), rand.Next(sizey));
-            tile = tileTemplates[tGrid[gameParam.startHeight, px, py] - 1];
+            tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
         }
-        player.Position = new Vector3(px * tileSize, gameParam.startHeight * tileSize, py * tileSize);
+        player.Position = new Vector3(px * tileSize, mapParam.startHeight * tileSize, py * tileSize);
         //End of temporary script
 
         for (int height = 0; height < tGrid.GetLength(0); height++)
@@ -120,8 +153,17 @@ public partial class TileMeshGeneration : Node
         }
     }
 
-    //Generate a layer of the grid, the baseStatus is the percentage of finished work before generating this layer
-    public void GenerateGridLayer(int[,,] tGrid, int layer, float baseStatus, Random rand)
+    /// <summary>
+    /// Generate a layer of the grid. 
+    /// </summary>
+    /// <remarks>
+    /// The baseStatus parameter is the percentage of finished work before generating this layer
+    /// </remarks>
+    /// <param name="tGrid"></param>
+    /// <param name="layer"></param>
+    /// <param name="baseStatus"></param>
+    /// <param name="rand"></param>
+    private void GenerateGridLayer(int[,,] tGrid, int layer, float baseStatus, Random rand)
     {
         while (GetNbUndefinedTiles(tGrid, layer) > 0)
         {
@@ -173,7 +215,7 @@ public partial class TileMeshGeneration : Node
     /// <param name="grid"></param>
     /// <param name="height"></param>
     /// <returns>Position: (x,y) of the most restricted tile</returns>
-    public (int,int) GetMostRestrictedTile(int[,,] grid, int height)
+    private (int,int) GetMostRestrictedTile(int[,,] grid, int height)
     {
         (int, int) res = (0, 0);
         int pos = int.MaxValue;
@@ -198,7 +240,7 @@ public partial class TileMeshGeneration : Node
     /// <param name="grid"></param>
     /// <param name="height"></param>
     /// <returns>The number of undefined tiles</returns>
-    public static int GetNbUndefinedTiles(int[,,] grid, int height)
+    private static int GetNbUndefinedTiles(int[,,] grid, int height)
     {
         int res = 0;
         for (int y = 0; y < grid.GetLength(2); y++)
@@ -223,7 +265,7 @@ public partial class TileMeshGeneration : Node
     /// <param name="grid"></param>
     /// <returns>a list of possible tile template's id</returns>
     
-    public int[] GetGridPossiblity(int x, int y, int height, int[,,] grid)
+    private int[] GetGridPossiblity(int x, int y, int height, int[,,] grid)
     {
         /*if (x == 5 && y == 4)
         {
@@ -319,7 +361,7 @@ public partial class TileMeshGeneration : Node
                 continue;
             }
             //Rule: stairs point to the correct next layer
-            if (templ.transition * (height - gameParam.startHeight) < 0)
+            if (templ.transition * (height - mapParam.startHeight) < 0)
             {
                 continue;
             }
@@ -354,7 +396,7 @@ public partial class TileMeshGeneration : Node
         //Get metadata
         playerTemplate = (PackedScene)GetMeta("PlayerTemplate");
 
-        gameParam = new GameParam((int)GetMeta("mapHeight"), (int)GetMeta("mapHeight")>>1);
+        mapParam = new MapParam((int)GetMeta("mapHeight"), (int)GetMeta("mapHeight")>>1);
 
         Godot.Collections.Array<PackedScene> tiles = GetMeta("TileTemplate").AsGodotArray<PackedScene>();
 		Godot.Collections.Array<string> tilesParams = GetMeta("TileParams").AsGodotArray<string>();
@@ -407,11 +449,11 @@ public partial class TileMeshGeneration : Node
     }
 
     /// <summary>
-    /// Function that alows GenerateGrid to process down then up.
+    /// Function that allows to process a array by alternation (starting from the middle then down then up) using a increasing argument of delta 1.
     /// </summary>
     /// <param name="i"></param>
     /// <param name="middle"></param>
-    /// <returns>The layer to process</returns>
+    /// <returns>The index to process</returns>
     public static int TwoStepsOscillatoryFunction(int i, int middle)
     {
         return middle + (i % 2 == 0 ? 1 : -1) * ((i + 1) >> 1);
@@ -422,7 +464,7 @@ public partial class TileMeshGeneration : Node
     /// </summary>
     /// <param name="tile"></param>
     /// <returns>The rotated tile (copy of the original)</returns>
-    public TilePrefa RotateTile(TilePrefa tile)
+    public static TilePrefa RotateTile(TilePrefa tile)
 	{
         TilePrefa newTile = new TilePrefa();
 
@@ -440,18 +482,24 @@ public partial class TileMeshGeneration : Node
     }
 }
 
-public class GameParam
+/// <summary>
+/// Parameters of the map.
+/// </summary>
+public class MapParam
 {
     public int mapHeight;
     public int startHeight;
 
-    public GameParam(int mapHeight, int startHeight)
+    public MapParam(int mapHeight, int startHeight)
     {
         this.mapHeight = mapHeight;
         this.startHeight = startHeight;
     }
 }
 
+/// <summary>
+/// Templates for the map.
+/// </summary>
 public class TilePrefa
 {
 	public PackedScene tile;
@@ -465,7 +513,9 @@ public class TilePrefa
     public string est;
     public string west;
 
-    //Construct TilePrefa from nothing
+    /// <summary>
+    /// Construct TilePrefa from nothing
+    /// </summary>
     public TilePrefa()
     {
         this.tile = null;
@@ -479,13 +529,19 @@ public class TilePrefa
         this.west = "";
     }
 
-    //Construct TilePrefa from a tile
+    /// <summary>
+    /// Construct TilePrefa from a tile
+    /// </summary>
+    /// <param name="t"></param>
     public TilePrefa(PackedScene t)
     {
 		this.tile = t;
     }
 
-    //Copy a TilePrefa
+    /// <summary>
+    /// Copy a TilePrefa
+    /// </summary>
+    /// <param name="copy"></param>
     public TilePrefa(TilePrefa copy)
     {
         this.tile = copy.tile;
@@ -499,7 +555,16 @@ public class TilePrefa
         this.west = copy.west;
     }
 
-    //Construct TilePrefa from a data
+    /// <summary>
+    /// Construct TilePrefa from a data
+    /// </summary>
+    /// <param name="t"></param>
+    /// <param name="na"></param>
+    /// <param name="weight"></param>
+    /// <param name="no"></param>
+    /// <param name="s"></param>
+    /// <param name="e"></param>
+    /// <param name="w"></param>
     public TilePrefa(PackedScene t, string na, int weight, string no, string s, string e, string w)
     {
         this.tile = t;
