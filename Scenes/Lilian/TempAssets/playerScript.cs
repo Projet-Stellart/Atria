@@ -14,6 +14,7 @@ public partial class playerScript : CharacterBody3D
     public override void _Ready()
     {
         Input.MouseMode = Input.MouseModeEnum.Captured;
+        ((Camera3D)GetChild(0)).MakeCurrent();
     }
 
     public override void _PhysicsProcess(double delta)

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
 public partial class TileMeshGeneration : Node
@@ -12,7 +13,9 @@ public partial class TileMeshGeneration : Node
 	private TilePrefa[] tileTemplates;
     private PackedScene playerTemplate;
     //The generated tile grid
-    private Node3D[,,] tileGrid;
+    //private Node3D[,,] tileGrid;
+    private float gridGenerationAdvencement;
+    private bool isGenerating;
 
     private string borderType = "space";
 
@@ -21,26 +24,65 @@ public partial class TileMeshGeneration : Node
     public override void _Ready()
 	{
         //Prototype call
-		GetData();
-        GenerateGrid(20, 20);
+        Task generating = GenerateMapAsync();
+        //Debug.Print("Ok");
     }
 
-    public IEnumerator Process()
+    public override void _Process(double delta)
     {
-        yield return null;
+        if (isGenerating && ((int)(Time.GetTicksMsec()/10)*10) % 200 == 0)
+        {
+            Debug.Print("Generation advencement: " + (gridGenerationAdvencement * 100) + "%");
+        }
     }
 
-    public void GenerateGrid(int sizex, int sizey)
+    public Task GenerateMapAsync()
     {
+        GetData();
+
         Random rand = new Random();
 
-        tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
+        isGenerating = true;
+
+        Task<int[,,]> generating = Task.Run(() =>
+        {
+            return GenerateGrid(50, 50, rand);
+        });
+
+        PostGenerationProcess(generating, rand);
+
+        return generating;
+    }
+
+    private async void PostGenerationProcess(Task<int[,,]> generation, Random rand)
+    {
+        await generation;
+
+        int[,,] tGrid = generation.Result;
+
+        isGenerating = false;
+
+        InstantiateGrid(tGrid, rand);
+    }
+
+    private int[,,] GenerateGrid(int sizex, int sizey, Random rand)
+    {
+        //tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
         int[,,] tGrid = new int[gameParam.mapHeight, sizex, sizey];
 
         for (int i = 0; i < gameParam.mapHeight; i++)
         {
-            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, gameParam.startHeight), rand);
+            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, gameParam.startHeight), (float)i / gameParam.mapHeight, rand);
         }
+
+        return tGrid;
+    }
+
+    private void InstantiateGrid(int[,,] tGrid, Random rand)
+    {
+
+        int sizex = tGrid.GetLength(1);
+        int sizey = tGrid.GetLength(2);
 
         //Spawn player temporary
         Node3D player = playerTemplate.Instantiate<Node3D>();
@@ -62,17 +104,18 @@ public partial class TileMeshGeneration : Node
                 for (int y = 0; y < sizey; y++)
                 {
                     TilePrefa template = tileTemplates[tGrid[height, x, y] - 1];
-                    tileGrid[height, x, y] = template.tile.Instantiate<Node3D>();
-                    tileGrid[height, x, y].Name = template.name + "|id:" + (x+y*sizex+height*sizex*sizey);
-                    AddChild(tileGrid[height, x, y]);
-                    tileGrid[height, x, y].Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
-                    tileGrid[height, x, y].GlobalPosition = new Vector3(x * tileSize, height * tileSize, y * tileSize);
+                    Node3D tmpTile = template.tile.Instantiate<Node3D>();
+                    //tileGrid[height, x, y] = template.tile.Instantiate<Node3D>();
+                    tmpTile.Name = template.name + "|id:" + (x+y*sizex+height*sizex*sizey);
+                    AddChild(tmpTile);
+                    tmpTile.Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
+                    tmpTile.GlobalPosition = new Vector3(x * tileSize, height * tileSize, y * tileSize);
                 }
             }
         }
     }
 
-    public void GenerateGridLayer(int[,,] tGrid, int layer, Random rand)
+    public void GenerateGridLayer(int[,,] tGrid, int layer, float baseStatus, Random rand)
     {
         while (GetNbUndefinedTiles(tGrid, layer) > 0)
         {
@@ -104,13 +147,17 @@ public partial class TileMeshGeneration : Node
             tGrid[layer, wTilePos.Item1, wTilePos.Item2] = chosenTile;
             if (tileTemplates[chosenTile-1].transition != 0)
             {
-                Debug.Print(tileTemplates[chosenTile - 1].name + ":" + (tileTemplates[tileTemplates[chosenTile - 1].conjugate].name));
+                //Debug.Print(tileTemplates[chosenTile - 1].name + ":" + (tileTemplates[tileTemplates[chosenTile - 1].conjugate].name));
                 tGrid[layer + tileTemplates[chosenTile - 1].transition, wTilePos.Item1, wTilePos.Item2] = tileTemplates[chosenTile - 1].conjugate + 1;
             }
             if (wTilePos.Item1 == 5 && wTilePos.Item2 == 4)
             {
                 //Debug.Print("\ndebug: " + tileTemplates[tGrid[wTilePos.Item1, wTilePos.Item2]-1].name);
             }
+            //gridGenerationAdvencement = ;
+            int nbLayerTiles = (tGrid.GetLength(1) * tGrid.GetLength(2));
+            int tHeight = tGrid.GetLength(0);
+            gridGenerationAdvencement = baseStatus + (((float)nbLayerTiles - GetNbUndefinedTiles(tGrid, layer)) / (nbLayerTiles * tHeight));
         }
     }
 
@@ -118,9 +165,9 @@ public partial class TileMeshGeneration : Node
     {
         (int, int) res = (0, 0);
         int pos = int.MaxValue;
-        for (int x = 0; x < tileGrid.GetLength(1); x++)
+        for (int x = 0; x < grid.GetLength(1); x++)
         {
-            for (int y = 0; y < tileGrid.GetLength(2); y++)
+            for (int y = 0; y < grid.GetLength(2); y++)
             {
                 int val = GetGridPossiblity(x, y, height, grid).Length;
                 if (grid[height, x, y] == 0 && val < pos)
@@ -135,11 +182,11 @@ public partial class TileMeshGeneration : Node
     public static int GetNbUndefinedTiles(int[,,] grid, int height)
     {
         int res = 0;
-        for (int y = 0; y < grid.GetLength(1); y++)
+        for (int y = 0; y < grid.GetLength(2); y++)
         {
-            for (int x = 0; x < grid.GetLength(2); x++)
+            for (int x = 0; x < grid.GetLength(1); x++)
             {
-                if (grid[height, y, x] == 0)
+                if (grid[height, x, y] == 0)
                 {
                     res += 1;
                 }
@@ -197,7 +244,7 @@ public partial class TileMeshGeneration : Node
             int idS = grid[x, 0];
             s = idS == 0 ? "" : tileTemplates[idS - 1].north;
         }*/
-        if (y != grid.GetLength(1) - 1)
+        if (y != grid.GetLength(2) - 1)
         {
             int idS = grid[height, x, y + 1];
             s = idS == 0 ? "" : tileTemplates[idS - 1].north;
@@ -257,10 +304,6 @@ public partial class TileMeshGeneration : Node
             {
                 continue;
             }
-            if (height == 0 && templ.transition == 1)
-            {
-                Debug.Print((height - gameParam.startHeight).ToString());
-            }
             if (height + templ.transition < 0 || height + templ.transition >= grid.GetLength(0))
             {
                 continue;
@@ -277,10 +320,10 @@ public partial class TileMeshGeneration : Node
         {
             Debug.Print(validTemplates.ToString());
         }*/
-        if (validTemplates.Count == 0)
+        /*if (validTemplates.Count == 0)
         {
             Debug.Print("n:" + n + "; s:" + s + "; e:" + e + "; w:" + w);
-        }
+        }*/
 
         return validTemplates.ToArray();
     }
@@ -349,7 +392,7 @@ public partial class TileMeshGeneration : Node
     }
 
     //Function to rotate tiles by 90 deg clockwise
-	public TilePrefa RotateTile(TilePrefa tile)
+    public TilePrefa RotateTile(TilePrefa tile)
 	{
         TilePrefa newTile = new TilePrefa();
 
