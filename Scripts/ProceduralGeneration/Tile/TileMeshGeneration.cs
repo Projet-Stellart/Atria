@@ -127,7 +127,7 @@ public partial class TileMeshGeneration : Node
         AddChild(player);
         (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
         TilePrefa tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
-        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") && tile.transition == 0)
+        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)
         {
             (px, py) = (rand.Next(sizex), rand.Next(sizey));
             tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
@@ -180,6 +180,11 @@ public partial class TileMeshGeneration : Node
             int val = 0;
             for (int i = 0; i < posibility.Length; i++)
             {
+                if (totalWeight == 0)
+                {
+                    chosenTile = posibility[i];
+                    break;
+                }
                 val += tileTemplates[posibility[i] - 1].weight;
                 if (val > selected)
                 {
@@ -191,6 +196,10 @@ public partial class TileMeshGeneration : Node
             {
                 //Debug.Print(selected.ToString() + " | " + totalWeight);
                 throw new Exception("not defined");
+            }
+            if (tileTemplates[chosenTile - 1].weight == 0)
+            {
+                Debug.Print("Error");
             }
             tGrid[layer, wTilePos.Item1, wTilePos.Item2] = chosenTile;
             if (tileTemplates[chosenTile-1].transition != 0)
@@ -466,13 +475,8 @@ public partial class TileMeshGeneration : Node
     /// <returns>The rotated tile (copy of the original)</returns>
     public static TilePrefa RotateTile(TilePrefa tile)
 	{
-        TilePrefa newTile = new TilePrefa();
-
-		newTile.tile = tile.tile;
-
-        newTile.name = tile.name;
+        TilePrefa newTile = new TilePrefa(tile);
 		newTile.rotation = (tile.rotation + 90)%360;
-        newTile.transition = tile.transition;
 		newTile.north = tile.est;
 		newTile.south = tile.west;
 		newTile.west = tile.north;

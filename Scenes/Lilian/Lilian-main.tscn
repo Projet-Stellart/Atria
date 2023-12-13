@@ -14,3 +14,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 100)
 size = 200.0
 
 [node name="TileMapGenerator" parent="." instance=ExtResource("2_17x0g")]
+metadata/TileParams = ["StraitCorridor;75;0;0;corridor;corridor;space;space", "CurvedCorridor;60;0;0;space;corridor;corridor;space", "TCorridor;30;0;0;corridor;corridor;corridor;space", "XCorridor;1;0;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;0;space;corridor;space;space", "StairHighCorridor;10;-1;6;space;corridor;space;space", "StairLowCorridor;10;1;5;space;corridor;space;space", "MultiXLowCorridor;1;1;8;corridor;corridor;space;space", "MultiXHighCorridor;1;-1;7;space;space;corridor;corridor", "Empty;700;0;0;space;space;space;space"]
