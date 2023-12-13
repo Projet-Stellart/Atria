@@ -34,7 +34,6 @@ public partial class TileMeshGeneration : Node
 	{
         //Prototype call
         Task generating = GenerateMapAsync(20, 20);
-        //Debug.Print("Ok");
     }
 
     //Debug only
@@ -286,43 +285,22 @@ public partial class TileMeshGeneration : Node
         string s = borderType;
         string e = borderType;
         string w = borderType;
-        /*if (x == 0)
-        {
-            int idW = grid[grid.GetLength(1)-1, y];
-            w = idW == 0 ? "" : tileTemplates[idW - 1].est;
-        }*/
         if (x != 0)
         {
             int idW = grid[height, x - 1, y];
             w = idW == 0 ? "" : tileTemplates[idW - 1].est;
         }
-        /*if (x == grid.GetLength(1) - 1)
-        {
-            int idE = grid[0, y];
-            e = idE == 0 ? "" : tileTemplates[idE - 1].west;
-        }*/
         if (x != grid.GetLength(1) - 1)
         {
             int idE = grid[height, x + 1, y];
             e = idE == 0 ? "" : tileTemplates[idE - 1].west;
         }
         //Verify y limit and get value
-        /*if (y == 0)
-        {
-            
-            int idN = grid[x, grid.GetLength(2) - 1];
-            n = idN == 0 ? "" : tileTemplates[idN - 1].south;
-        }*/
         if (y != 0)
         {
             int idN = grid[height, x, y - 1];
             n = idN == 0 ? "" : tileTemplates[idN - 1].south;
         }
-        /*if (y == grid.GetLength(1) - 1)
-        {
-            int idS = grid[x, 0];
-            s = idS == 0 ? "" : tileTemplates[idS - 1].north;
-        }*/
         if (y != grid.GetLength(2) - 1)
         {
             int idS = grid[height, x, y + 1];
