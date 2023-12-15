@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://Scenes/Lilian/TempAssets/playerScript.cs" id="1_vjbgm"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_w7em1"]
-
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0qoxc"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_w7em1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n3303"]
 albedo_color = Color(1, 0, 0, 1)
@@ -19,11 +19,12 @@ script = ExtResource("1_vjbgm")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -0.2)
 fov = 90.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_w7em1")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_0qoxc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
+mesh = SubResource("CapsuleMesh_w7em1")
+skeleton = NodePath("../..")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 4.65716, 0)

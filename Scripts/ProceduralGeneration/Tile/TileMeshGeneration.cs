@@ -20,6 +20,8 @@ public partial class TileMeshGeneration : Node
     private float gridGenerationAdvencement;
     private bool isGenerating;
 
+    private int[,,] tileMap;
+
     /// <summary>
     /// The type that is used when accessing a tile outside the grid.
     /// </summary>
@@ -85,9 +87,31 @@ public partial class TileMeshGeneration : Node
 
         isGenerating = false;
 
-        InstantiateGrid(tGrid, rand);
+        //InstantiateGrid(tGrid, rand);
 
         generation.Dispose();
+
+        tileMap = tGrid;
+
+        string[,,] tRes = new string[tGrid.GetLength(0), tGrid.GetLength(1), tGrid.GetLength(2)];
+        int[,,] tRot = new int[tGrid.GetLength(0), tGrid.GetLength(1), tGrid.GetLength(2)];
+
+        for (int h = 0; h < tGrid.GetLength(0); h++)
+        {
+            for (int x = 0; x < tGrid.GetLength(1); x++)
+            {
+                for (int y = 0; y < tGrid.GetLength(2); y++)
+                {
+                    tRes[h, x, y] = tileTemplates[tGrid[h, x, y] - 1].mapRes;
+                    tRot[h, x, y] = tileTemplates[tGrid[h, x, y] - 1].rotation;
+                }
+            }
+        }
+
+        MapManager.singleton.mapRes = tRes;
+        MapManager.singleton.mapRot = tRot;
+
+        MapManager.singleton.DisplayMap(mapParam.startHeight);
     }
 
     /// <summary>
@@ -386,6 +410,7 @@ public partial class TileMeshGeneration : Node
         mapParam = new MapParam((int)GetMeta("mapHeight"), (int)GetMeta("mapHeight")>>1);
 
         Godot.Collections.Array<PackedScene> tiles = GetMeta("TileTemplate").AsGodotArray<PackedScene>();
+        Godot.Collections.Array<Resource> mpRes = GetMeta("TileImage").AsGodotArray<Resource>();
 		Godot.Collections.Array<string> tilesParams = GetMeta("TileParams").AsGodotArray<string>();
 
         //Create array: inputed tiles + 3 other rotated tile
@@ -395,7 +420,7 @@ public partial class TileMeshGeneration : Node
 		{
             //Original tile
 			string[] par = tilesParams[i].Split(';');
-            tileTemplates[i * 4] = new TilePrefa(tiles[i], par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);
+            tileTemplates[i * 4] = new TilePrefa(tiles[i], mpRes[i].ResourcePath, par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);
             tileTemplates[i * 4].rotation = 0;
             tileTemplates[i * 4].transition = int.Parse(par[2]);
             int conjugateRef = int.Parse(par[3]);
@@ -485,6 +510,7 @@ public class MapParam
 public class TilePrefa
 {
 	public PackedScene tile;
+    public string mapRes;
     public int weight;
     public string name;
 	public int rotation;
@@ -501,6 +527,7 @@ public class TilePrefa
     public TilePrefa()
     {
         this.tile = null;
+        this.mapRes = null;
         this.weight = 1;
         this.name = "";
         this.rotation = 0;
@@ -527,6 +554,7 @@ public class TilePrefa
     public TilePrefa(TilePrefa copy)
     {
         this.tile = copy.tile;
+        this.mapRes = copy.mapRes;
         this.weight = copy.weight;
         this.name = copy.name;
         this.rotation = copy.rotation;
@@ -547,9 +575,10 @@ public class TilePrefa
     /// <param name="s"></param>
     /// <param name="e"></param>
     /// <param name="w"></param>
-    public TilePrefa(PackedScene t, string na, int weight, string no, string s, string e, string w)
+    public TilePrefa(PackedScene t, string mapRes, string na, int weight, string no, string s, string e, string w)
     {
         this.tile = t;
+        this.mapRes = mapRes;
         this.weight = weight;
         this.name = na;
         this.north = no;
