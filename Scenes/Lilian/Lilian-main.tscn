@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://ds3j7kf44ec40"]
+[gd_scene load_steps=6 format=3 uid="uid://ds3j7kf44ec40"]
 
 [ext_resource type="PackedScene" uid="uid://dh3olwlvda6ut" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="2_17x0g"]
 [ext_resource type="Script" path="res://Scenes/Lilian/TempAssets/orbitiongCam.cs" id="2_acby8"]
 [ext_resource type="Script" path="res://Scripts/UI/Map/MapManager.cs" id="3_hin1h"]
 [ext_resource type="PackedScene" uid="uid://csm33w1x8n0ia" path="res://Scenes/Lilian/Template-Tiles/UI/ImageTemplate.tscn" id="4_kur6i"]
+[ext_resource type="Texture2D" uid="uid://dycx7tkdsk7nk" path="res://Ressources/UI/Map/PlayerPoint.png" id="5_2yvt0"]
 
 [node name="Lilian-main" type="Node3D"]
 
@@ -18,28 +19,53 @@ size = 200.0
 
 [node name="TileMapGenerator" parent="." instance=ExtResource("2_17x0g")]
 metadata/TileParams = ["StraitCorridor;75;0;0;corridor;corridor;space;space", "CurvedCorridor;60;0;0;space;corridor;corridor;space", "TCorridor;30;0;0;corridor;corridor;corridor;space", "XCorridor;1;0;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;0;space;corridor;space;space", "StairHighCorridor;10;-1;6;space;corridor;space;space", "StairLowCorridor;10;1;5;space;corridor;space;space", "MultiXLowCorridor;1;1;8;corridor;corridor;space;space", "MultiXHighCorridor;1;-1;7;space;space;corridor;corridor", "Empty;700;0;0;space;space;space;space"]
-metadata/mapHeight = 1
 metadata/Map = NodePath("../MiniMap")
 
 [node name="MiniMap" type="Control" parent="."]
 layout_mode = 3
-anchor_right = 1.111
-anchor_bottom = 1.975
-offset_right = 0.128052
-offset_bottom = 0.199951
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.3, 0.3)
+pivot_offset = Vector2(960, 540)
 script = ExtResource("3_hin1h")
 metadata/ImageTemplate = ExtResource("4_kur6i")
 
 [node name="GridContainer" type="GridContainer" parent="MiniMap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -540.0
+offset_right = 540.0
+offset_bottom = 540.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 20
+
+[node name="Player" type="Control" parent="MiniMap"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+pivot_offset = Vector2(20, 20)
+
+[node name="TextureRect" type="TextureRect" parent="MiniMap/Player"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/h_separation = 0
-theme_override_constants/v_separation = 0
-columns = 20
+texture = ExtResource("5_2yvt0")

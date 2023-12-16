@@ -15,6 +15,7 @@ public partial class playerScript : CharacterBody3D
     {
         Input.MouseMode = Input.MouseModeEnum.Captured;
         ((Camera3D)GetChild(0)).MakeCurrent();
+		MapManager.singleton.HideMap();
     }
 
     public override void _PhysicsProcess(double delta)
@@ -31,11 +32,15 @@ public partial class playerScript : CharacterBody3D
 
         if (Input.IsActionJustPressed("map"))
 		{
-            ((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
-		}
+			//((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
+			MapManager.singleton.UpdateMap((int)((Position.Y+3.2f) / 6.4f));
+            MapManager.singleton.ShowMap();
+
+        }
         if (Input.IsActionJustReleased("map"))
         {
-            ((Camera3D)GetChild(0)).MakeCurrent();
+            //((Camera3D)GetChild(0)).MakeCurrent();
+            MapManager.singleton.HideMap();
         }
 
 		Vector2 inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
@@ -65,7 +70,10 @@ public partial class playerScript : CharacterBody3D
 
 		Velocity = velocity;
 		MoveAndSlide();
-	}
+
+		if (Input.IsActionPressed("map"))
+			MapManager.singleton.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
+    }
 
     public override void _Input(InputEvent @event)
     {

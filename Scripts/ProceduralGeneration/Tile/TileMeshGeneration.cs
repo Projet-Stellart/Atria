@@ -16,6 +16,9 @@ public partial class TileMeshGeneration : Node
 
     private PackedScene playerTemplate;
 
+    //TempVariable
+    Node3D player;
+
     //Dependant on the map generation Task
     private float gridGenerationAdvencement;
     private bool isGenerating;
@@ -87,7 +90,7 @@ public partial class TileMeshGeneration : Node
 
         isGenerating = false;
 
-        //InstantiateGrid(tGrid, rand);
+        InstantiateGrid(tGrid, rand);
 
         generation.Dispose();
 
@@ -111,7 +114,7 @@ public partial class TileMeshGeneration : Node
         MapManager.singleton.mapRes = tRes;
         MapManager.singleton.mapRot = tRot;
 
-        MapManager.singleton.DisplayMap(mapParam.startHeight);
+        MapManager.singleton.UpdateMap(mapParam.startHeight);
     }
 
     /// <summary>
@@ -146,7 +149,7 @@ public partial class TileMeshGeneration : Node
         int sizey = tGrid.GetLength(2);
 
         //Spawn player temporary
-        Node3D player = playerTemplate.Instantiate<Node3D>();
+        player = playerTemplate.Instantiate<Node3D>();
         AddChild(player);
         (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
         TilePrefa tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
