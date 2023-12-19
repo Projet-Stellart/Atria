@@ -37,25 +37,58 @@ public partial class MapManager : Control
 
     public void UpdatePlayerPos(Vector2 relativePosition, float rotation)
     {
-        GridContainer Container = (GridContainer)GetChild(0);
+        Control Container = (Control)GetChild(0).GetChild(0);
         Control PlayerPos = (Control)GetChild(1);
 
         PlayerPos.Position = Container.Position + new Vector2(8, 8) + (relativePosition * 54);
         PlayerPos.Rotation = -rotation/*-(Mathf.Pi/2)*/;
     }
 
-    public void UpdateMap(int height)
+    public void SelectLayer(int height)
+    {
+        Node Container = GetChild(0);
+
+        Godot.Collections.Array<Node> children = Container.GetChildren();
+        for (int i = 0; i < children.Count; i++)
+        {
+            Control item = (Control)children[i];
+            if (i == height)
+            {
+                item.Show();
+            }
+            else
+            {
+                item.Hide();
+            }
+        }
+    }
+
+    public void LoadMap()
+    {
+        Control Container = (Control)GetChild(0);
+        PackedScene GridTemplate = (PackedScene)GetMeta("GridTemplate");
+        for (int i = 0; i < mapRes.GetLength(0); i++)
+        {
+            Node tGrid = GridTemplate.Instantiate();
+            Container.AddChild(tGrid);
+            LoadMapLayerMap(i);
+            ((Control)tGrid).Hide();
+        }
+    }
+
+    public void LoadMapLayerMap(int height)
 	{
         PackedScene ImageTemplate = (PackedScene)GetMeta("ImageTemplate");
 
-        GridContainer Container = (GridContainer)GetChild(0);
+        Control Container = (Control)GetChild(0);
+        GridContainer Grid = (GridContainer)Container.GetChild(height);
 
-        foreach (var item in Container.GetChildren())
+        foreach (var item in Grid.GetChildren())
         {
             item.QueueFree();
         }
 
-        Container.Columns = mapRes.GetLength(1);
+        Grid.Columns = mapRes.GetLength(1);
 
         for (int y = 0; y < mapRes.GetLength(2); y++)
         {
@@ -63,9 +96,8 @@ public partial class MapManager : Control
             {
             
                 Control tNode = ImageTemplate.Instantiate<Control>();
-                Container.AddChild(tNode);
+                Grid.AddChild(tNode);
                 TextureRect displayer = (TextureRect)tNode.GetChild(0);
-                //Debug.Print((ResourceLoader.Load(mapRes[height, x, y])).GetType().ToString());
                 Texture2D texture = GD.Load<Texture2D>(mapRes[height, x, y]);
                 displayer.Texture = texture;
                 displayer.RotationDegrees = -mapRot[height, x, y];

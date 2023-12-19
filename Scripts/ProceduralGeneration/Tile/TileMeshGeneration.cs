@@ -114,7 +114,7 @@ public partial class TileMeshGeneration : Node
         MapManager.singleton.mapRes = tRes;
         MapManager.singleton.mapRot = tRot;
 
-        MapManager.singleton.UpdateMap(mapParam.startHeight);
+        MapManager.singleton.LoadMap();
     }
 
     /// <summary>
