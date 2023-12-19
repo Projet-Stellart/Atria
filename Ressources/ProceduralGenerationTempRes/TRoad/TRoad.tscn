@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://qu15rgfdwwam"]
-
-[ext_resource type="ArrayMesh" uid="uid://dnf0nerokj8ae" path="res://Ressources/ProceduralGenerationTempRes/TRoad/TRoad.obj" id="1_duloy"]
-
-[node name="TRoad" type="Node3D"]
-
-[node name="TRoad" type="MeshInstance3D" parent="."]
-mesh = ExtResource("1_duloy")

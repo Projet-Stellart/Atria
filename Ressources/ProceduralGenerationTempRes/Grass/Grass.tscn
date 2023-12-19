@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bw0kmmvkigu8c"]
-
-[ext_resource type="ArrayMesh" uid="uid://b8axv7mb8ju1q" path="res://Ressources/ProceduralGenerationTempRes/Grass/Grass.obj" id="1_agdvg"]
-
-[node name="Grass" type="Node3D"]
-
-[node name="Grass" type="MeshInstance3D" parent="."]
-mesh = ExtResource("1_agdvg")

@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cflg7utmi23t8"]
-
-[ext_resource type="ArrayMesh" uid="uid://irjcpnpnsk6n" path="res://Ressources/ProceduralGenerationTempRes/StraitRoad/StraitRoad.obj" id="1_qp2t8"]
-
-[node name="StraitRoad" type="Node3D"]
-
-[node name="StraitRoad" type="MeshInstance3D" parent="."]
-mesh = ExtResource("1_qp2t8")
