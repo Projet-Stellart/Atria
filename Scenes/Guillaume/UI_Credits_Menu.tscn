@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=3 uid="uid://ck6kcpa8nb6x"]
+
+[ext_resource type="Script" path="res://Scenes/Guillaume/UI_Credits_Menu.gd" id="1_k83ut"]
+
+[node name="Credits_Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_k83ut")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Matteo Dupond" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Matteo Dupond
+"
+
+[node name="Lilian Labat" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Lilian Labat
+"
+
+[node name="Guillaume Dufour" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Guillaume Dufour"
+
+[node name="Nelson Rudent" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Nelson Rudent
+"
+
+[node name="Luan Ray-Chagas" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Luan Ray-Chagas
+"
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer2"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="MarginContainer2/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Matteo Dupond" to="." method="_on_matteo_dupond_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Lilian Labat" to="." method="_on_lilian_labat_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Guillaume Dufour" to="." method="_on_guillaume_dufour_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Nelson Rudent" to="." method="_on_nelson_rudent_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Luan Ray-Chagas" to="." method="_on_luan_ray_chagas_pressed"]
+[connection signal="pressed" from="MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
