@@ -1,0 +1,112 @@
+[gd_scene load_steps=10 format=3 uid="uid://ca3lsnpxnpxbw"]
+
+[ext_resource type="Script" path="res://Scenes/player.cs" id="1_52npy"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_w4c5b"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_yvytj"]
+size = Vector3(0.1, 0.2, 1.5)
+
+[sub_resource type="Animation" id="Animation_dccq0"]
+resource_name = "RESET"
+length = 0.5
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0, 0.75, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+
+[sub_resource type="Animation" id="Animation_xyomk"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_f2boy"]
+_data = {
+"Crouch": SubResource("Animation_dccq0"),
+"RESET": SubResource("Animation_xyomk")
+}
+
+[sub_resource type="Animation" id="Animation_c6vnw"]
+resource_name = "GunTest"
+length = 0.08
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head/Camera3D/Hand/MeshInstance3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0244179, 0.0789062),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 0.15), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_gomh1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head/Camera3D/Hand/MeshInstance3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4w6x1"]
+_data = {
+"GunTest": SubResource("Animation_c6vnw"),
+"RESET": SubResource("Animation_gomh1")
+}
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_52npy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_w4c5b")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+
+[node name="Hand" type="Node3D" parent="Head/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, -0.25, -0.25)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Head/Camera3D/Hand"]
+mesh = SubResource("BoxMesh_yvytj")
+
+[node name="Aim" type="RayCast3D" parent="Head/Camera3D"]
+target_position = Vector3(0, 0, -200)
+
+[node name="Crouching" type="AnimationPlayer" parent="."]
+speed_scale = 2.0
+libraries = {
+"": SubResource("AnimationLibrary_f2boy")
+}
+
+[node name="Gunfire" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_4w6x1")
+}
