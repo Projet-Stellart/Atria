@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cuy2ukvgr6ptt"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_d7qbx"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rxcwv"]
+
+[node name="RoadTemplate" type="Node3D"]
+
+[node name="Ground" type="Node3D" parent="."]
+transform = Transform3D(4, 0, 0, 0, 0.01, 0, 0, 0, 4, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("BoxMesh_d7qbx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_rxcwv")
