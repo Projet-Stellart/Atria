@@ -9,10 +9,11 @@ using static System.Formats.Asn1.AsnWriter;
 public partial class TileMeshGeneration : Node
 {
     private MapParam mapParam;
+    //Switch from public to private
     /// <summary>
-    /// Array of all tiles template for grid generation
+    /// Array of all tiles template for grid generation. Will be set to private in the final version
     /// </summary>
-    private TilePrefa[] tileTemplates;
+    public TilePrefa[] tileTemplates;
 
     private PackedScene playerTemplate;
 
@@ -38,6 +39,11 @@ public partial class TileMeshGeneration : Node
     public override void _Ready()
 	{
         //Prototype call
+        Init();
+    }
+
+    public void Init()
+    {
         Task generating = GenerateMapAsync(20, 20);
     }
 
@@ -117,14 +123,15 @@ public partial class TileMeshGeneration : Node
         MapManager.singleton.LoadMap();
     }
 
+    //Switch from public to private
     /// <summary>
-    /// Entry point to generate the grid
+    /// Entry point to generate the grid. Will be set to private on the final version
     /// </summary>
     /// <param name="sizex"></param>
     /// <param name="sizey"></param>
     /// <param name="rand"></param>
     /// <returns>The generated grid matrix</returns>
-    private int[,,] GenerateGrid(int sizex, int sizey, Random rand)
+    public int[,,] GenerateGrid(int sizex, int sizey, Random rand)
     {
         //tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
         int[,,] tGrid = new int[mapParam.mapHeight, sizex, sizey];
@@ -149,7 +156,7 @@ public partial class TileMeshGeneration : Node
         int sizey = tGrid.GetLength(2);
 
         //Spawn player temporary
-        player = playerTemplate.Instantiate<Node3D>();
+        /*player = playerTemplate.Instantiate<Node3D>();
         AddChild(player);
         (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
         TilePrefa tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
@@ -158,7 +165,7 @@ public partial class TileMeshGeneration : Node
             (px, py) = (rand.Next(sizex), rand.Next(sizey));
             tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
         }
-        player.Position = new Vector3(px * tileSize, mapParam.startHeight * tileSize, py * tileSize);
+        player.Position = new Vector3(px * tileSize, mapParam.startHeight * tileSize, py * tileSize);*/
         //End of temporary script
 
         for (int height = 0; height < tGrid.GetLength(0); height++)
