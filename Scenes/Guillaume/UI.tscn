@@ -1,0 +1,368 @@
+[gd_scene load_steps=2 format=3 uid="uid://cthdwsw2b1hp6"]
+
+[ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
+
+[node name="UI" type="CanvasLayer"]
+script = ExtResource("1_mxrpx")
+
+[node name="Main_Menu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Main_Menu"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 19.0
+offset_right = 1132.0
+offset_bottom = 627.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Main_Menu/MarginContainer"]
+layout_mode = 2
+
+[node name="Play" type="Button" parent="Main_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Play"
+
+[node name="Credits" type="Button" parent="Main_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Credits"
+
+[node name="Options" type="Button" parent="Main_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Options"
+
+[node name="MarginContainer2" type="MarginContainer" parent="Main_Menu"]
+layout_mode = 0
+offset_left = 1043.0
+offset_top = 597.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Main_Menu/MarginContainer2"]
+layout_mode = 2
+
+[node name="Quit" type="Button" parent="Main_Menu/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Quit"
+
+[node name="Controls_Menu" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Controls_Menu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -556.0
+offset_top = -304.0
+offset_right = 556.0
+offset_bottom = 304.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls_Menu/MarginContainer"]
+layout_mode = 2
+
+[node name="Mouse Settings" type="Button" parent="Controls_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Mouse Settings"
+
+[node name="Keyboard Settings" type="Button" parent="Controls_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Keyboard Settings"
+
+[node name="MarginContainer2" type="MarginContainer" parent="Controls_Menu"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls_Menu/MarginContainer2"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Controls_Menu/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[node name="Credits_Menu" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1.0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Credits_Menu"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Credits_Menu/MarginContainer"]
+layout_mode = 2
+
+[node name="Matteo Dupond" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Matteo Dupond
+"
+
+[node name="Lilian Labat" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Lilian Labat
+"
+
+[node name="Guillaume Dufour" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Guillaume Dufour"
+
+[node name="Nelson Rudent" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Nelson Rudent
+"
+
+[node name="Luan Ray-Chagas" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Luan Ray-Chagas
+"
+
+[node name="MarginContainer2" type="MarginContainer" parent="Credits_Menu"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Credits_Menu/MarginContainer2"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Credits_Menu/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[node name="Graphics_Menu" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Graphics_Menu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -276.0
+offset_top = -224.0
+offset_right = 276.0
+offset_bottom = 224.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Graphics_Menu/MarginContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Graphics_Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+step = 10.0
+value = 100.0
+
+[node name="MarginContainer2" type="MarginContainer" parent="Graphics_Menu"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Graphics_Menu/MarginContainer2"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Graphics_Menu/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[node name="Sound_Menu" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer3" type="MarginContainer" parent="Sound_Menu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -556.0
+offset_top = -304.0
+offset_right = 556.0
+offset_bottom = 304.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Sound_Menu/MarginContainer3"]
+layout_mode = 2
+
+[node name="CheckButton" type="CheckButton" parent="Sound_Menu/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+text = "Sound :"
+alignment = 1
+
+[node name="MarginContainer4" type="MarginContainer" parent="Sound_Menu"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Sound_Menu/MarginContainer4"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Sound_Menu/MarginContainer4/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[node name="Play" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer3" type="MarginContainer" parent="Play"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer3"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Play/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[node name="MarginContainer4" type="MarginContainer" parent="Play"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 570.0
+offset_bottom = 97.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer4"]
+layout_mode = 2
+
+[node name="Online" type="Button" parent="Play/MarginContainer4/VBoxContainer"]
+layout_mode = 2
+text = "
+Online
+
+"
+
+[node name="MarginContainer5" type="MarginContainer" parent="Play"]
+offset_left = 582.0
+offset_top = 20.0
+offset_right = 1132.0
+offset_bottom = 97.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer5"]
+layout_mode = 2
+
+[node name="Local" type="Button" parent="Play/MarginContainer5/VBoxContainer"]
+layout_mode = 2
+text = "
+Local
+
+"
+
+[node name="Options_Menu" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer3" type="MarginContainer" parent="Options_Menu"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Options_Menu/MarginContainer3"]
+layout_mode = 2
+
+[node name="Sound" type="Button" parent="Options_Menu/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+text = "Sound"
+
+[node name="Graphics" type="Button" parent="Options_Menu/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+text = "Graphics"
+
+[node name="Controls" type="Button" parent="Options_Menu/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+text = "Binds"
+
+[node name="MarginContainer4" type="MarginContainer" parent="Options_Menu"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Options_Menu/MarginContainer4"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Options_Menu/MarginContainer4/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[connection signal="pressed" from="Main_Menu/MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Main_Menu/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="Main_Menu/MarginContainer/VBoxContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="Main_Menu/MarginContainer2/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="Controls_Menu/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_controls"]
+[connection signal="pressed" from="Credits_Menu/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_credits"]
+[connection signal="pressed" from="Graphics_Menu/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_graphics"]
+[connection signal="pressed" from="Sound_Menu/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="Play/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_play"]
+[connection signal="pressed" from="Play/MarginContainer4/VBoxContainer/Online" to="." method="_on_online_pressed"]
+[connection signal="pressed" from="Play/MarginContainer5/VBoxContainer/Local" to="." method="_on_local_pressed"]
+[connection signal="pressed" from="Options_Menu/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
+[connection signal="pressed" from="Options_Menu/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
+[connection signal="pressed" from="Options_Menu/MarginContainer3/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
+[connection signal="pressed" from="Options_Menu/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed_options"]
