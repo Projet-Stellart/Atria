@@ -1,15 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://e2p5lt8iqt7c"]
-
-[ext_resource type="Script" path="res://Scenes/Guillaume/UI_Options_Menu.gd" id="1_lrgi6"]
+[gd_scene format=3 uid="uid://cnysnereo0pqb"]
 
 [node name="Options_Menu" type="Control"]
+visible = false
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_lrgi6")
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 0
@@ -49,8 +45,3 @@ text = "
 Exit
 
 "
-
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
-[connection signal="pressed" from="MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed"]

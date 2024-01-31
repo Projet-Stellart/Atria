@@ -1,15 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://dkntexer3susd"]
+[gd_scene format=3 uid="uid://dpo0dpr1yu5lv"]
 
-[ext_resource type="Script" path="res://Scenes/Guillaume/UI_Graphics_Menu.gd" id="1_ux3uu"]
-
-[node name="Options_Menu" type="Control"]
+[node name="Graphics_Menu" type="Control"]
+visible = false
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_ux3uu")
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -50,6 +46,3 @@ text = "
 Exit
 
 "
-
-[connection signal="value_changed" from="MarginContainer/VBoxContainer/HSlider" to="." method="_on_h_slider_value_changed"]
-[connection signal="pressed" from="MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed"]

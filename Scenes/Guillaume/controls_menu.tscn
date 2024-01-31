@@ -1,15 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxfwgwwqoiom4"]
+[gd_scene format=3 uid="uid://d1wq5r3s0w6dh"]
 
-[ext_resource type="Script" path="res://Scenes/Guillaume/UI_Sound_Menu.gd" id="1_vquqc"]
-
-[node name="Options_Menu" type="Control"]
+[node name="Controls_Menu" type="Control"]
+visible = false
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_vquqc")
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -28,12 +24,13 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="CheckButton" type="CheckButton" parent="MarginContainer/VBoxContainer"]
+[node name="Mouse Settings" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 6
-text = "Sound :"
-alignment = 1
+text = "Mouse Settings"
+
+[node name="Keyboard Settings" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Keyboard Settings"
 
 [node name="MarginContainer2" type="MarginContainer" parent="."]
 layout_mode = 0
@@ -51,6 +48,3 @@ text = "
 Exit
 
 "
-
-[connection signal="pressed" from="MarginContainer/VBoxContainer/CheckButton" to="." method="_on_check_button_pressed"]
-[connection signal="pressed" from="MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed"]

@@ -1,15 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://df283inouolho"]
+[gd_scene format=3 uid="uid://birxs8vmnnxuy"]
 
-[ext_resource type="Script" path="res://Scenes/Guillaume/UI_Controls_Menu.gd" id="1_ebui8"]
-
-[node name="Options_Menu" type="Control"]
+[node name="Keyboard_Menu" type="Control"]
+visible = false
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_ebui8")
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -30,11 +26,9 @@ layout_mode = 2
 
 [node name="Mouse Settings" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Mouse Settings"
 
 [node name="Keyboard Settings" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Keyboard Settings"
 
 [node name="MarginContainer2" type="MarginContainer" parent="."]
 layout_mode = 0
@@ -52,7 +46,3 @@ text = "
 Exit
 
 "
-
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Mouse Settings" to="." method="_on_mouse_settings_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Keyboard Settings" to="." method="_on_keyboard_settings_pressed"]
-[connection signal="pressed" from="MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
