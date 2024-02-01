@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3 uid="uid://66dt8jpsjwjw"]
+
+[ext_resource type="PackedScene" uid="uid://dh3olwlvda6ut" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="1_oxwxe"]
+[ext_resource type="Script" path="res://Scripts/Management/GameManager.cs" id="1_tuo0n"]
+[ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_73q1c"]
+[ext_resource type="Script" path="res://Scripts/UI/HudManager.cs" id="3_emm8j"]
+[ext_resource type="Script" path="res://Scripts/Multiplayer/MultiplayerManager.cs" id="4_r3f7e"]
+
+[sub_resource type="Environment" id="Environment_mntmn"]
+
+[node name="Game" type="Node"]
+script = ExtResource("1_tuo0n")
+
+[node name="TileMapGenerator" parent="." instance=ExtResource("1_oxwxe")]
+
+[node name="Players" type="Node3D" parent="."]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("3_emm8j")
+
+[node name="MiniMap" parent="HUD" instance=ExtResource("2_73q1c")]
+anchors_preset = -1
+anchor_left = 0.25
+anchor_top = 0.0
+anchor_right = 0.75
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="StartServer" type="Button" parent="HUD"]
+offset_right = 200.0
+offset_bottom = 30.0
+text = "Start server"
+
+[node name="StartClient" type="Button" parent="HUD"]
+offset_top = 36.0
+offset_right = 200.0
+offset_bottom = 67.0
+text = "Start client"
+
+[node name="Multiplayer" type="Node" parent="."]
+script = ExtResource("4_r3f7e")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -60, 0, 64)
+current = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_mntmn")

@@ -1,0 +1,49 @@
+﻿using Godot;
+
+public partial class LocalEntity : CharacterBody3D
+{
+    public void SyncEntity()
+    {
+        RpcId(1, "SendServerPosVelo", new Variant[] { Position, Velocity });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncServerPosVelo(Variant pos, Variant velo)
+    {
+        if (GameManager.singleton.multiplayerManager.playerControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        Vector3 position = pos.AsVector3();
+        Vector3 velocity = velo.AsVector3();
+        Position = position;
+        Velocity = velocity;
+        foreach (var id in Multiplayer.GetPeers())
+        {
+            if (id == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(id, "SyncPosVelo", new Variant[] { position, velocity });
+        }
+    }
+
+    public void SendServerPosVelo(Vector3 position, Vector3 velocity)
+    {
+        if (!Multiplayer.IsServer())
+            return;
+        Position = position;
+        Velocity = velocity;
+        foreach (var id in Multiplayer.GetPeers())
+        {
+            if (id == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(id, "SyncPosVelo", new Variant[] { position, velocity });
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncPosVelo(Variant pos, Variant velo)
+    {
+        Vector3 position = pos.AsVector3();
+        Vector3 velocity = velo.AsVector3();
+        Position = position;
+        Velocity = velocity;
+    }
+}
