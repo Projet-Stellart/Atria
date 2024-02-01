@@ -433,6 +433,7 @@ placeholder_text = "Target Port :"
 scroll_fit_content_height = true
 
 [node name="MarginContainer6" type="MarginContainer" parent="Custom"]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 453.0
 offset_right = 1132.0
