@@ -5,56 +5,56 @@
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_mxrpx")
 
-[node name="Main_Menu" type="Control" parent="."]
+[node name="Main" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 
-[node name="MarginContainer" type="MarginContainer" parent="Main_Menu"]
+[node name="MarginContainer" type="MarginContainer" parent="Main"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 19.0
 offset_right = 1132.0
 offset_bottom = 627.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Main_Menu/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer"]
 layout_mode = 2
 
-[node name="Play" type="Button" parent="Main_Menu/MarginContainer/VBoxContainer"]
+[node name="Play" type="Button" parent="Main/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Play"
 
-[node name="Credits" type="Button" parent="Main_Menu/MarginContainer/VBoxContainer"]
+[node name="Credits" type="Button" parent="Main/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Credits"
 
-[node name="Options" type="Button" parent="Main_Menu/MarginContainer/VBoxContainer"]
+[node name="Options" type="Button" parent="Main/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Options"
 
-[node name="MarginContainer2" type="MarginContainer" parent="Main_Menu"]
+[node name="MarginContainer2" type="MarginContainer" parent="Main"]
 layout_mode = 0
 offset_left = 1043.0
 offset_top = 597.0
 offset_right = 1132.0
 offset_bottom = 628.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Main_Menu/MarginContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer2"]
 layout_mode = 2
 
-[node name="Quit" type="Button" parent="Main_Menu/MarginContainer2/VBoxContainer"]
+[node name="Quit" type="Button" parent="Main/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 text = "Quit"
 
-[node name="Controls_Menu" type="Control" parent="."]
+[node name="Controls" type="Control" parent="."]
 visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 
-[node name="MarginContainer" type="MarginContainer" parent="Controls_Menu"]
+[node name="MarginContainer" type="MarginContainer" parent="Controls"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -68,35 +68,35 @@ offset_bottom = 304.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Controls_Menu/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls/MarginContainer"]
 layout_mode = 2
 
-[node name="Mouse Settings" type="Button" parent="Controls_Menu/MarginContainer/VBoxContainer"]
+[node name="Mouse Settings" type="Button" parent="Controls/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Mouse Settings"
 
-[node name="Keyboard Settings" type="Button" parent="Controls_Menu/MarginContainer/VBoxContainer"]
+[node name="Keyboard Settings" type="Button" parent="Controls/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Keyboard Settings"
 
-[node name="MarginContainer2" type="MarginContainer" parent="Controls_Menu"]
+[node name="MarginContainer2" type="MarginContainer" parent="Controls"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 551.0
 offset_right = 1132.0
 offset_bottom = 628.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Controls_Menu/MarginContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls/MarginContainer2"]
 layout_mode = 2
 
-[node name="Exit" type="Button" parent="Controls_Menu/MarginContainer2/VBoxContainer"]
+[node name="Exit" type="Button" parent="Controls/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 text = "
 Exit
 
 "
 
-[node name="Credits_Menu" type="Control" parent="."]
+[node name="Credits" type="Control" parent="."]
 visible = false
 layout_mode = 3
 anchors_preset = 0
@@ -104,65 +104,65 @@ offset_left = 1.0
 offset_right = 1152.0
 offset_bottom = 648.0
 
-[node name="MarginContainer" type="MarginContainer" parent="Credits_Menu"]
+[node name="MarginContainer" type="MarginContainer" parent="Credits"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 1132.0
 offset_bottom = 628.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Credits_Menu/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Credits/MarginContainer"]
 layout_mode = 2
 
-[node name="Matteo Dupond" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+[node name="Matteo Dupond" type="Button" parent="Credits/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Matteo Dupond
 "
 
-[node name="Lilian Labat" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+[node name="Lilian Labat" type="Button" parent="Credits/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Lilian Labat
 "
 
-[node name="Guillaume Dufour" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+[node name="Guillaume Dufour" type="Button" parent="Credits/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Guillaume Dufour"
 
-[node name="Nelson Rudent" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+[node name="Nelson Rudent" type="Button" parent="Credits/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Nelson Rudent
 "
 
-[node name="Luan Ray-Chagas" type="Button" parent="Credits_Menu/MarginContainer/VBoxContainer"]
+[node name="Luan Ray-Chagas" type="Button" parent="Credits/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Luan Ray-Chagas
 "
 
-[node name="MarginContainer2" type="MarginContainer" parent="Credits_Menu"]
+[node name="MarginContainer2" type="MarginContainer" parent="Credits"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 551.0
 offset_right = 1132.0
 offset_bottom = 628.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Credits_Menu/MarginContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Credits/MarginContainer2"]
 layout_mode = 2
 
-[node name="Exit" type="Button" parent="Credits_Menu/MarginContainer2/VBoxContainer"]
+[node name="Exit" type="Button" parent="Credits/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 text = "
 Exit
 
 "
 
-[node name="Graphics_Menu" type="Control" parent="."]
+[node name="Graphics" type="Control" parent="."]
 visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 
-[node name="MarginContainer" type="MarginContainer" parent="Graphics_Menu"]
+[node name="MarginContainer" type="MarginContainer" parent="Graphics"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -176,40 +176,40 @@ offset_bottom = 224.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Graphics_Menu/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Graphics/MarginContainer"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Graphics_Menu/MarginContainer/VBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Graphics/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 step = 10.0
 value = 100.0
 
-[node name="MarginContainer2" type="MarginContainer" parent="Graphics_Menu"]
+[node name="MarginContainer2" type="MarginContainer" parent="Graphics"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 551.0
 offset_right = 1132.0
 offset_bottom = 628.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Graphics_Menu/MarginContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Graphics/MarginContainer2"]
 layout_mode = 2
 
-[node name="Exit" type="Button" parent="Graphics_Menu/MarginContainer2/VBoxContainer"]
+[node name="Exit" type="Button" parent="Graphics/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 text = "
 Exit
 
 "
 
-[node name="Sound_Menu" type="Control" parent="."]
+[node name="Sound" type="Control" parent="."]
 visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 
-[node name="MarginContainer3" type="MarginContainer" parent="Sound_Menu"]
+[node name="MarginContainer3" type="MarginContainer" parent="Sound"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -223,27 +223,27 @@ offset_bottom = 304.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Sound_Menu/MarginContainer3"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Sound/MarginContainer3"]
 layout_mode = 2
 
-[node name="CheckButton" type="CheckButton" parent="Sound_Menu/MarginContainer3/VBoxContainer"]
+[node name="CheckButton" type="CheckButton" parent="Sound/MarginContainer3/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 text = "Sound :"
 alignment = 1
 
-[node name="MarginContainer4" type="MarginContainer" parent="Sound_Menu"]
+[node name="MarginContainer4" type="MarginContainer" parent="Sound"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 551.0
 offset_right = 1132.0
 offset_bottom = 628.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Sound_Menu/MarginContainer4"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Sound/MarginContainer4"]
 layout_mode = 2
 
-[node name="Exit" type="Button" parent="Sound_Menu/MarginContainer4/VBoxContainer"]
+[node name="Exit" type="Button" parent="Sound/MarginContainer4/VBoxContainer"]
 layout_mode = 2
 text = "
 Exit
@@ -251,6 +251,7 @@ Exit
 "
 
 [node name="Play" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
@@ -274,6 +275,7 @@ Exit
 "
 
 [node name="MarginContainer4" type="MarginContainer" parent="Play"]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 570.0
@@ -290,6 +292,7 @@ Online
 "
 
 [node name="MarginContainer5" type="MarginContainer" parent="Play"]
+layout_mode = 0
 offset_left = 582.0
 offset_top = 20.0
 offset_right = 1132.0
@@ -298,71 +301,193 @@ offset_bottom = 97.0
 [node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer5"]
 layout_mode = 2
 
-[node name="Local" type="Button" parent="Play/MarginContainer5/VBoxContainer"]
+[node name="Custom" type="Button" parent="Play/MarginContainer5/VBoxContainer"]
 layout_mode = 2
 text = "
-Local
+Custom
 
 "
 
-[node name="Options_Menu" type="Control" parent="."]
+[node name="Options" type="Control" parent="."]
 visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 
-[node name="MarginContainer3" type="MarginContainer" parent="Options_Menu"]
+[node name="MarginContainer3" type="MarginContainer" parent="Options"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 1132.0
 offset_bottom = 628.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Options_Menu/MarginContainer3"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Options/MarginContainer3"]
 layout_mode = 2
 
-[node name="Sound" type="Button" parent="Options_Menu/MarginContainer3/VBoxContainer"]
+[node name="Sound" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
 layout_mode = 2
 text = "Sound"
 
-[node name="Graphics" type="Button" parent="Options_Menu/MarginContainer3/VBoxContainer"]
+[node name="Graphics" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
 layout_mode = 2
 text = "Graphics"
 
-[node name="Controls" type="Button" parent="Options_Menu/MarginContainer3/VBoxContainer"]
+[node name="Controls" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
 layout_mode = 2
 text = "Binds"
 
-[node name="MarginContainer4" type="MarginContainer" parent="Options_Menu"]
+[node name="MarginContainer4" type="MarginContainer" parent="Options"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 551.0
 offset_right = 1132.0
 offset_bottom = 628.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Options_Menu/MarginContainer4"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Options/MarginContainer4"]
 layout_mode = 2
 
-[node name="Exit" type="Button" parent="Options_Menu/MarginContainer4/VBoxContainer"]
+[node name="Exit" type="Button" parent="Options/MarginContainer4/VBoxContainer"]
 layout_mode = 2
 text = "
 Exit
 
 "
 
-[connection signal="pressed" from="Main_Menu/MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="Main_Menu/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
-[connection signal="pressed" from="Main_Menu/MarginContainer/VBoxContainer/Options" to="." method="_on_options_pressed"]
-[connection signal="pressed" from="Main_Menu/MarginContainer2/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="Controls_Menu/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_controls"]
-[connection signal="pressed" from="Credits_Menu/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_credits"]
-[connection signal="pressed" from="Graphics_Menu/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_graphics"]
-[connection signal="pressed" from="Sound_Menu/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
+[node name="Online" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer3" type="MarginContainer" parent="Online"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Online/MarginContainer3"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Online/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[node name="Custom" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer3" type="MarginContainer" parent="Custom"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer3"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[node name="MarginContainer4" type="MarginContainer" parent="Custom"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 570.0
+offset_bottom = 97.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer4"]
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="Custom/MarginContainer4/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Target IP Adress : "
+scroll_fit_content_height = true
+
+[node name="MarginContainer5" type="MarginContainer" parent="Custom"]
+layout_mode = 0
+offset_left = 582.0
+offset_top = 20.0
+offset_right = 1132.0
+offset_bottom = 97.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer5"]
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="Custom/MarginContainer5/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Target Port :"
+scroll_fit_content_height = true
+
+[node name="MarginContainer6" type="MarginContainer" parent="Custom"]
+offset_left = 20.0
+offset_top = 453.0
+offset_right = 1132.0
+offset_bottom = 530.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer6"]
+layout_mode = 2
+
+[node name="Join" type="Button" parent="Custom/MarginContainer6/VBoxContainer"]
+layout_mode = 2
+text = "
+Join
+
+"
+
+[node name="Joined" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="MarginContainer3" type="MarginContainer" parent="Joined"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 551.0
+offset_right = 1132.0
+offset_bottom = 628.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Joined/MarginContainer3"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="Joined/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+text = "
+Exit
+
+"
+
+[connection signal="pressed" from="Main/MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Main/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="Main/MarginContainer/VBoxContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="Main/MarginContainer2/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="Controls/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_controls"]
+[connection signal="pressed" from="Credits/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_credits"]
+[connection signal="pressed" from="Graphics/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_graphics"]
+[connection signal="pressed" from="Sound/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
 [connection signal="pressed" from="Play/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_play"]
 [connection signal="pressed" from="Play/MarginContainer4/VBoxContainer/Online" to="." method="_on_online_pressed"]
-[connection signal="pressed" from="Play/MarginContainer5/VBoxContainer/Local" to="." method="_on_local_pressed"]
-[connection signal="pressed" from="Options_Menu/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
-[connection signal="pressed" from="Options_Menu/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
-[connection signal="pressed" from="Options_Menu/MarginContainer3/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
-[connection signal="pressed" from="Options_Menu/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed_options"]
+[connection signal="pressed" from="Play/MarginContainer5/VBoxContainer/Custom" to="." method="_on_custom_pressed"]
+[connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
+[connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
+[connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
+[connection signal="pressed" from="Options/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed_options"]
+[connection signal="pressed" from="Online/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_online"]
+[connection signal="pressed" from="Custom/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_custom"]
+[connection signal="pressed" from="Custom/MarginContainer6/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Joined/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_custom_joined"]
