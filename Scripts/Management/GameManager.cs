@@ -39,14 +39,14 @@ public partial class GameManager : Node
 
         LoadData();
 
+        //Temp script
         ((Button)hudManager.GetChild(1)).ButtonUp += () => { InitMultiplayer(new string[]
         {
             "--server"
         }); };
         ((Button)hudManager.GetChild(2)).ButtonUp += () => { InitMultiplayer(new string[]
         {
-            "--port",
-            "5556"
+
         }); };
 
         if (args.Contains("--server"))
@@ -76,7 +76,7 @@ public partial class GameManager : Node
         }
         else
         {
-            multiplayerManager.InitClient("141.145.217.236", port);
+            multiplayerManager.InitClient("127.0.0.1", port);
         }
         ((Control)hudManager.GetChild(1)).Visible = false;
         ((Control)hudManager.GetChild(2)).Visible = false;

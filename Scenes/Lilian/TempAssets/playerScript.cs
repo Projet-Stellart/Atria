@@ -8,8 +8,6 @@ public partial class playerScript : LocalEntity
 	public const float JumpVelocity = 4.5f;
 	public const float MouseSensitivity = 1f;
 
-	public bool IsLocalPlayer;
-
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
@@ -21,22 +19,8 @@ public partial class playerScript : LocalEntity
 		MapManager.singleton.LoadMap();
     }
 
-    public override void _PhysicsProcess(double delta)
+	public override void InputProcess(double delta)
 	{
-		ActionProcess(delta);
-
-		MoveAndSlide();
-
-        if (IsLocalPlayer)
-        {
-            SyncEntity();
-        }
-    }
-
-	public void ActionProcess(double delta)
-	{
-        if (!IsLocalPlayer)
-            return;
         Vector3 velocity = Velocity;
 
         // Add the gravity.

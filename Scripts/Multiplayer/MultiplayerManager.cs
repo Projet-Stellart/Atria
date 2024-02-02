@@ -82,6 +82,8 @@ public partial class MultiplayerManager : Node
         else
         {
             //Client OnClientDisconnect
+            //Temp quit -> need to be change to load main menu
+            GetTree().Quit();
         }
     }
 
