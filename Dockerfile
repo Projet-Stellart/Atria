@@ -15,4 +15,4 @@ RUN ungodot
 
 EXPOSE 7308/udp
 
-ENTRYPOINT /app/builds/server --headless --server
+ENTRYPOINT /app/builds/server.sh --headless --server --port 7308

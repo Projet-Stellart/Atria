@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 
 public partial class MultiplayerManager : Node
 {
 
-    public Dictionary<long, playerScript> playerControler = new Dictionary<long, playerScript>();
+    public Dictionary<long, playerScript> playersControler = new Dictionary<long, playerScript>();
 
     private int[,,] tempGrid;
 
@@ -74,6 +75,9 @@ public partial class MultiplayerManager : Node
         if (Multiplayer.IsServer())
         {
             //Server OnClientDisconnect
+            Rpc("DeletePlayer", new Variant[] {id});
+            playersControler[id].QueueFree();
+            playersControler.Remove(id);
         }
         else
         {
@@ -114,15 +118,21 @@ public partial class MultiplayerManager : Node
     {
         if (!Multiplayer.IsServer())
             return;
-        if (playerControler.ContainsKey(id))
+        if (playersControler.ContainsKey(id))
             return;
         playerScript player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<playerScript>();
         GameManager.singleton.GetChild(1).AddChild(player);
-        playerControler.Add(id, player);
+        playersControler.Add(id, player);
         player.Position = pos;
         player.IsLocalPlayer = false;
-        ((Camera3D)player.GetChild(0)).Visible = false;
+        player.Name = "Player" + id;
+        ((Camera3D)player.GetChild(0)).ClearCurrent(false);
         Rpc("InstantiatePlayer", new Variant[] { id, pos });
+    }
+
+    public void SendPlayer(long receiver, long id, Vector3 pos)
+    {
+        RpcId(receiver, "InstantiatePlayer", new Variant[] { id, pos });
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -130,11 +140,30 @@ public partial class MultiplayerManager : Node
     {
         playerScript player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<playerScript>();
         GameManager.singleton.GetChild(1).AddChild(player);
-        playerControler.Add(id.As<long>(), player);
+        playersControler.Add(id.As<long>(), player);
         player.Position = pos.AsVector3();
         bool localPl = Multiplayer.GetUniqueId() == id.As<long>();
         player.IsLocalPlayer = localPl;
-        ((Camera3D)player.GetChild(0)).Visible = localPl;
+        player.Name = "Player" + id;
+        ((Camera3D)player.GetChild(0)).Current = localPl;
+        if (localPl)
+            player.Init();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void DeletePlayer(Variant id)
+    {
+        long pid = id.As<long>();
+        bool localPl = Multiplayer.GetUniqueId() == pid;
+        if (localPl)
+        {
+            //Quit server
+        }
+        else
+        {
+            playersControler[pid].QueueFree();
+            playersControler.Remove(pid);
+        }
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]

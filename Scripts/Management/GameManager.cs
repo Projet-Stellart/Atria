@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -44,10 +45,14 @@ public partial class GameManager : Node
         }); };
         ((Button)hudManager.GetChild(2)).ButtonUp += () => { InitMultiplayer(new string[]
         {
-            
+            "--port",
+            "5556"
         }); };
 
-        //InitMultiplayer(args);
+        if (args.Contains("--server"))
+        {
+            InitMultiplayer(args);
+        }
     }
 
     private void LoadData()
@@ -71,7 +76,7 @@ public partial class GameManager : Node
         }
         else
         {
-            multiplayerManager.InitClient("127.0.0.1", port);
+            multiplayerManager.InitClient("141.145.217.236", port);
         }
         ((Control)hudManager.GetChild(1)).Visible = false;
         ((Control)hudManager.GetChild(2)).Visible = false;
@@ -87,6 +92,10 @@ public partial class GameManager : Node
     {
         if (tileMapGenerator == null)
             return;
+        foreach(KeyValuePair<long, playerScript> player in multiplayerManager.playersControler)
+        {
+            multiplayerManager.SendPlayer(id, player.Key, player.Value.Position);
+        }
         Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
         multiplayerManager.InstantiateNewPlayer(id, npos);
     }

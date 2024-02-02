@@ -46,7 +46,7 @@ public partial class TileMeshGeneration : Node
 
     public void Init()
     {
-        Task generating = GenerateMapAsync(20, 20);
+        Task generating = GenerateMapAsync(10, 10);
     }
 
     //Debug only
@@ -101,26 +101,6 @@ public partial class TileMeshGeneration : Node
         InstantiateGrid(tGrid);
 
         generation.Dispose();
-
-        string[,,] tRes = new string[tGrid.GetLength(0), tGrid.GetLength(1), tGrid.GetLength(2)];
-        int[,,] tRot = new int[tGrid.GetLength(0), tGrid.GetLength(1), tGrid.GetLength(2)];
-
-        for (int h = 0; h < tGrid.GetLength(0); h++)
-        {
-            for (int x = 0; x < tGrid.GetLength(1); x++)
-            {
-                for (int y = 0; y < tGrid.GetLength(2); y++)
-                {
-                    tRes[h, x, y] = tileTemplates[tGrid[h, x, y] - 1].mapRes;
-                    tRot[h, x, y] = tileTemplates[tGrid[h, x, y] - 1].rotation;
-                }
-            }
-        }
-
-        MapManager.singleton.mapRes = tRes;
-        MapManager.singleton.mapRot = tRot;
-
-        MapManager.singleton.LoadMap();
 
         OnMapGenerated.Invoke();
         Debug.Print("Map ready!");

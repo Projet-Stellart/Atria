@@ -4,13 +4,13 @@ public partial class LocalEntity : CharacterBody3D
 {
     public void SyncEntity()
     {
-        RpcId(1, "SendServerPosVelo", new Variant[] { Position, Velocity });
+        RpcId(1, "SyncServerPosVelo", new Variant[] { Position, Velocity });
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     public void SyncServerPosVelo(Variant pos, Variant velo)
     {
-        if (GameManager.singleton.multiplayerManager.playerControler[Multiplayer.GetRemoteSenderId()] != this)
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
         Vector3 position = pos.AsVector3();
         Vector3 velocity = velo.AsVector3();
@@ -32,13 +32,11 @@ public partial class LocalEntity : CharacterBody3D
         Velocity = velocity;
         foreach (var id in Multiplayer.GetPeers())
         {
-            if (id == Multiplayer.GetRemoteSenderId())
-                continue;
             RpcId(id, "SyncPosVelo", new Variant[] { position, velocity });
         }
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     public void SyncPosVelo(Variant pos, Variant velo)
     {
         Vector3 position = pos.AsVector3();
