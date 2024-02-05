@@ -65,6 +65,7 @@ public partial class GameManager : Node
 
         LoadData();
 
+        //Temp script
         ((Button)hudManager.GetChild(1)).ButtonUp += () => { InitMultiplayer(new string[]
         {
             "--server"

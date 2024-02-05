@@ -1,11 +1,30 @@
 ﻿using Godot;
 
-public partial class LocalEntity : CharacterBody3D
+public abstract partial class LocalEntity : CharacterBody3D
 {
+    public bool IsLocalPlayer;
+
     public void SyncEntity()
     {
         RpcId(1, "SyncServerPosVelo", new Variant[] { Position, Velocity });
     }
+
+    public override void _PhysicsProcess(double delta)
+    {
+        if (IsLocalPlayer)
+        {
+            InputProcess(delta);
+        }
+
+        MoveAndSlide();
+
+        if (IsLocalPlayer)
+        {
+            SyncEntity();
+        }
+    }
+
+    public abstract void InputProcess(double delta);
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     public void SyncServerPosVelo(Variant pos, Variant velo)
