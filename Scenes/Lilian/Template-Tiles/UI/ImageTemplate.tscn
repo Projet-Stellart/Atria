@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://csm33w1x8n0ia"]
+[gd_scene load_steps=2 format=3 uid="uid://csm33w1x8n0ia"]
+
+[ext_resource type="Texture2D" uid="uid://dv8ywhrct323h" path="res://icon.svg" id="1_pt7n1"]
 
 [node name="ImageTemplate" type="Control"]
 custom_minimum_size = Vector2(10, 10)
@@ -6,8 +8,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -1098.0
-offset_bottom = -594.0
+offset_right = -1096.0
+offset_bottom = -592.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
@@ -20,6 +22,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(27, 27)
+pivot_offset = Vector2(28, 28)
+texture = ExtResource("1_pt7n1")
 expand_mode = 1
 stretch_mode = 5

@@ -75,14 +75,19 @@ public partial class MultiplayerManager : Node
         if (Multiplayer.IsServer())
         {
             //Server OnClientDisconnect
-            Rpc("DeletePlayer", new Variant[] {id});
-            playersControler[id].QueueFree();
-            playersControler.Remove(id);
+            GameManager.singleton.ManageDisconnectedClient(id);
         }
         else
         {
             //Client OnClientDisconnect
         }
+    }
+
+    public void KickClient(long id, bool callOnDisconnect)
+    {
+        if (!Multiplayer.IsServer())
+            return;
+        Multiplayer.MultiplayerPeer.DisconnectPeer((int)id, callOnDisconnect);
     }
 
     public void MapGenerated()
@@ -150,8 +155,15 @@ public partial class MultiplayerManager : Node
             player.Init();
     }
 
+    public void DeletePlayer(long id)
+    {
+        Rpc("DeletePlayer", new Variant[] { id });
+        playersControler[id].QueueFree();
+        playersControler.Remove(id);
+    }
+
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void DeletePlayer(Variant id)
+    private void DeletePlayer(Variant id)
     {
         long pid = id.As<long>();
         bool localPl = Multiplayer.GetUniqueId() == pid;

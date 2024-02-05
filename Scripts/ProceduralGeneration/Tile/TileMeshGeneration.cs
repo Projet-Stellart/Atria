@@ -44,9 +44,9 @@ public partial class TileMeshGeneration : Node
         Init();
     }*/
 
-    public void Init()
+    public void Init(int sizeX, int sizeY)
     {
-        Task generating = GenerateMapAsync(10, 10);
+        Task generating = GenerateMapAsync(sizeX, sizeY);
     }
 
     //Debug only
@@ -496,6 +496,8 @@ public struct MapParam
 {
     public int mapHeight;
     public int startHeight;
+    public int sizeX;
+    public int sizeY;
 }
 
 /// <summary>
