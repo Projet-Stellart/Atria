@@ -414,6 +414,7 @@ layout_mode = 2
 
 [node name="TextEdit" type="TextEdit" parent="Custom/MarginContainer4/VBoxContainer"]
 layout_mode = 2
+text = "127.0.0.1"
 placeholder_text = "Target IP Adress : "
 scroll_fit_content_height = true
 
@@ -429,7 +430,8 @@ layout_mode = 2
 
 [node name="TextEdit" type="TextEdit" parent="Custom/MarginContainer5/VBoxContainer"]
 layout_mode = 2
-placeholder_text = "Target Port :"
+text = "7308"
+placeholder_text = "Target Port : "
 scroll_fit_content_height = true
 
 [node name="MarginContainer6" type="MarginContainer" parent="Custom"]

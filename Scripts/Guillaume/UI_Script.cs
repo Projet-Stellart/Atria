@@ -1,9 +1,13 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class UI_Script : CanvasLayer
 
 {
+
+	public Action OnPlay;
+	public Action<string, int> OnCustomPlay;
 	
 	private void _on_quit_pressed()
 	{
@@ -112,6 +116,7 @@ public partial class UI_Script : CanvasLayer
 		var online = GetNode<Control>("/root/UI/Online");
 		play.Visible = false;
 		online.Visible = true;
+		if (OnPlay != null) OnPlay.Invoke();
 	}
 
 	private void _on_custom_pressed()
@@ -142,8 +147,13 @@ public partial class UI_Script : CanvasLayer
 	{
 		var custom = GetNode<Control>("/root/UI/Custom");
 		var joined = GetNode<Control>("/root/UI/Joined");
+		string IP = GetNode<TextEdit>("/root/UI/Custom/MarginContainer4/VBoxContainer/TextEdit").Text;
+		
+		uint Port = uint.Parse(GetNode<TextEdit>("/root/UI/Custom/MarginContainer5/VBoxContainer/TextEdit").Text);
 		custom.Visible = false;
 		joined.Visible = true;
+		if (OnCustomPlay != null) OnCustomPlay.Invoke(IP, (int)Port);
+		Debug.Print(IP + Port);
 	}
 
 	private void _on_exit_pressed_custom_joined()
