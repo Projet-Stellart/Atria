@@ -56,7 +56,7 @@ public partial class MultiplayerManager : Node
         if (Multiplayer.IsServer())
         {
             //Server OnClientConnect
-            Debug.Print("Client connected (" + Multiplayer.GetPeers().Length + "/" + GameManager.gameData.nbPlayer + ")");
+            Debug.Print("Client connected (" + Multiplayer.GetPeers().Length + "/" + GameManager.GameData.nbPlayer + ")");
             if (GameManager.singleton.tileMapGenerator.tileMap != null)
             {
                 SendMapToClient(id);
@@ -236,6 +236,28 @@ public partial class MultiplayerManager : Node
             throw new ArgumentException("The port format is invalid");
         }
         return port;
+    }
+
+    public static string GetCmdKeyValue(string key, string[] args)
+    {
+        if (!args.Contains(key))
+        {
+            throw new ArgumentException("The arguments does not contains the " + key + " argument");
+        }
+        int i;
+        for (i = 0; i < args.Length; i++)
+        {
+            if (args[i] == key)
+            {
+                break;
+            }
+        }
+        if (i >= args.Length - 1)
+        {
+            throw new ArgumentException("The argument " + key + " is invalid");
+        }
+
+        return args[i+1];
     }
 
 }

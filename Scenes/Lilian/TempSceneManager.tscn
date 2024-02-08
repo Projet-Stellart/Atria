@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce5vj3u2gpugd"]
+
+[ext_resource type="Script" path="res://Scripts/Management/SceneManager.cs" id="1_l8rp1"]
+
+[node name="TempSceneManager" type="Node"]
+script = ExtResource("1_l8rp1")

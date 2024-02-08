@@ -24,7 +24,7 @@ public partial class TileMeshGeneration : Node
 
     //Dependant on the map generation Task
     private float gridGenerationAdvencement;
-    private bool isGenerating;
+    public bool isGenerating { get; private set; }
 
     public int[,,] tileMap;
 

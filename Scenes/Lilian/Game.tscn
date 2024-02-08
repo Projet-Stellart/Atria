@@ -39,17 +39,6 @@ layout_mode = 2
 [node name="MiniMap" parent="HUD/MarginContainer/AspectRatioContainer" instance=ExtResource("2_73q1c")]
 layout_mode = 2
 
-[node name="StartServer" type="Button" parent="HUD"]
-offset_right = 200.0
-offset_bottom = 30.0
-text = "Start server"
-
-[node name="StartClient" type="Button" parent="HUD"]
-offset_top = 36.0
-offset_right = 200.0
-offset_bottom = 67.0
-text = "Start client"
-
 [node name="Multiplayer" type="Node" parent="."]
 script = ExtResource("4_r3f7e")
 
