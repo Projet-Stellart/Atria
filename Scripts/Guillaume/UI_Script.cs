@@ -152,7 +152,7 @@ public partial class UI_Script : CanvasLayer
 		string IP = GetNode<TextEdit>("Custom/MarginContainer4/VBoxContainer/TextEdit").Text;
 		uint Port = uint.Parse(GetNode<TextEdit>("Custom/MarginContainer5/VBoxContainer/TextEdit").Text);
 		if (OnCustomPlay != null) OnCustomPlay.Invoke(IP, (int)Port);
-		Debug.Print(IP + " " + Port);
+		Debug.Print("IP : " + IP + " - Port : " + Port);
 	}
 
 	private void _on_exit_pressed_custom_joined()
