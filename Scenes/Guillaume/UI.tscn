@@ -6,17 +6,25 @@
 script = ExtResource("1_mxrpx")
 
 [node name="Main" type="Control" parent="."]
+visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Main"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 19.0
-offset_right = 1132.0
-offset_bottom = 627.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.029
+anchor_right = 0.983
+anchor_bottom = 0.968
+offset_left = 0.415998
+offset_top = 0.208
+offset_right = -0.416016
+offset_bottom = -0.264038
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer"]
 layout_mode = 2
@@ -34,11 +42,16 @@ layout_mode = 2
 text = "Options"
 
 [node name="MarginContainer2" type="MarginContainer" parent="Main"]
-layout_mode = 0
-offset_left = 1043.0
-offset_top = 597.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.905
+anchor_top = 0.921
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.439941
+offset_top = 0.191956
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer2"]
 layout_mode = 2
@@ -50,21 +63,23 @@ text = "Quit"
 [node name="Controls" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Controls"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -556.0
-offset_top = -304.0
-offset_right = 556.0
-offset_bottom = 304.0
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.031
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = -0.0880013
+offset_right = -0.416016
+offset_bottom = 0.0879517
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -80,11 +95,18 @@ layout_mode = 2
 text = "Keyboard Settings"
 
 [node name="MarginContainer2" type="MarginContainer" parent="Controls"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Controls/MarginContainer2"]
 layout_mode = 2
@@ -99,17 +121,23 @@ Exit
 [node name="Credits" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_left = 1.0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Credits"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.031
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = -0.0880013
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Credits/MarginContainer"]
 layout_mode = 2
@@ -139,11 +167,16 @@ text = "Luan Ray-Chagas
 "
 
 [node name="MarginContainer2" type="MarginContainer" parent="Credits"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Credits/MarginContainer2"]
 layout_mode = 2
@@ -158,21 +191,23 @@ Exit
 [node name="Graphics" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Graphics"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -276.0
-offset_top = -224.0
-offset_right = 276.0
-offset_bottom = 224.0
+anchors_preset = -1
+anchor_left = 0.26
+anchor_top = 0.154
+anchor_right = 0.74
+anchor_bottom = 0.846
+offset_left = 0.47998
+offset_top = 0.207993
+offset_right = -0.47998
+offset_bottom = -0.208008
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -186,11 +221,16 @@ step = 10.0
 value = 100.0
 
 [node name="MarginContainer2" type="MarginContainer" parent="Graphics"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Graphics/MarginContainer2"]
 layout_mode = 2
@@ -205,21 +245,23 @@ Exit
 [node name="Sound" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Sound"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -556.0
-offset_top = -304.0
-offset_right = 556.0
-offset_bottom = 304.0
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.031
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = -0.0880013
+offset_right = -0.416016
+offset_bottom = 0.0879517
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -234,11 +276,16 @@ text = "Sound :"
 alignment = 1
 
 [node name="MarginContainer4" type="MarginContainer" parent="Sound"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Sound/MarginContainer4"]
 layout_mode = 2
@@ -253,16 +300,23 @@ Exit
 [node name="Play" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Play"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer3"]
 layout_mode = 2
@@ -275,11 +329,16 @@ Exit
 "
 
 [node name="MarginContainer4" type="MarginContainer" parent="Play"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 570.0
-offset_bottom = 97.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.031
+anchor_right = 0.495
+anchor_bottom = 0.15
+offset_left = 0.415998
+offset_top = -0.0880013
+offset_right = -0.240051
+offset_bottom = -0.200005
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer4"]
 layout_mode = 2
@@ -292,11 +351,16 @@ Online
 "
 
 [node name="MarginContainer5" type="MarginContainer" parent="Play"]
-layout_mode = 0
-offset_left = 582.0
-offset_top = 20.0
-offset_right = 1132.0
-offset_bottom = 97.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.031
+anchor_right = 0.983
+anchor_bottom = 0.15
+offset_left = 6.0
+offset_top = -0.0880013
+offset_right = -0.416016
+offset_bottom = -0.200005
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer5"]
 layout_mode = 2
@@ -311,16 +375,23 @@ Custom
 [node name="Options" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Options"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.031
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = -0.0880013
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Options/MarginContainer3"]
 layout_mode = 2
@@ -338,11 +409,16 @@ layout_mode = 2
 text = "Binds"
 
 [node name="MarginContainer4" type="MarginContainer" parent="Options"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Options/MarginContainer4"]
 layout_mode = 2
@@ -357,16 +433,23 @@ Exit
 [node name="Online" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Online"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Online/MarginContainer3"]
 layout_mode = 2
@@ -381,16 +464,23 @@ Exit
 [node name="Custom" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Custom"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer3"]
 layout_mode = 2
@@ -403,11 +493,16 @@ Exit
 "
 
 [node name="MarginContainer4" type="MarginContainer" parent="Custom"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 570.0
-offset_bottom = 97.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.031
+anchor_right = 0.495
+anchor_bottom = 0.085
+offset_left = 0.415998
+offset_top = -0.0880013
+offset_right = -0.240051
+offset_bottom = -0.0800018
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer4"]
 layout_mode = 2
@@ -419,11 +514,16 @@ placeholder_text = "Target IP Adress : "
 scroll_fit_content_height = true
 
 [node name="MarginContainer5" type="MarginContainer" parent="Custom"]
-layout_mode = 0
-offset_left = 582.0
-offset_top = 20.0
-offset_right = 1132.0
-offset_bottom = 97.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.505
+anchor_top = 0.031
+anchor_right = 0.983
+anchor_bottom = 0.085
+offset_left = 0.23999
+offset_top = -0.0880013
+offset_right = -0.416016
+offset_bottom = -0.0800018
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer5"]
 layout_mode = 2
@@ -435,11 +535,16 @@ placeholder_text = "Target Port : "
 scroll_fit_content_height = true
 
 [node name="MarginContainer6" type="MarginContainer" parent="Custom"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 453.0
-offset_right = 1132.0
-offset_bottom = 530.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.699
+anchor_right = 0.983
+anchor_bottom = 0.818
+offset_left = 0.415998
+offset_top = 0.0479736
+offset_right = -0.416016
+offset_bottom = -0.0640259
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer6"]
 layout_mode = 2
@@ -454,16 +559,23 @@ Join
 [node name="Joined" type="Control" parent="."]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Joined"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 551.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.85
+anchor_right = 0.983
+anchor_bottom = 0.969
+offset_left = 0.415998
+offset_top = 0.200012
+offset_right = -0.416016
+offset_bottom = 0.0879517
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Joined/MarginContainer3"]
 layout_mode = 2

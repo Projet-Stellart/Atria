@@ -9,6 +9,16 @@ public partial class UI_Script : CanvasLayer
 	public Action OnPlay;
 	public Action<string, int> OnCustomPlay;
 	
+	public override void _Ready()
+	{
+		var main = GetNode<Control>("Main");
+		for (int i = 0; i < GetChildCount(); i++)
+		{
+			GetChild<Control>(i).Visible = false;
+		}
+		main.Visible = true;
+	}
+
 	private void _on_quit_pressed()
 	{
 		GetTree().Quit();
@@ -112,10 +122,10 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_online_pressed()
 	{
-		var play = GetNode<Control>("Play");
-		var online = GetNode<Control>("Online");
-		play.Visible = false;
-		online.Visible = true;
+		// var play = GetNode<Control>("Play");
+		// var online = GetNode<Control>("Online");
+		// play.Visible = false;
+		// online.Visible = true;
 		if (OnPlay != null) OnPlay.Invoke();
 	}
 

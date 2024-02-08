@@ -7,16 +7,23 @@ script = ExtResource("1_bi12c")
 
 [node name="Custom" type="Control" parent="."]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Custom"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 370.0
-offset_bottom = 461.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.017
+anchor_top = 0.031
+anchor_right = 0.321
+anchor_bottom = 0.742
+offset_left = 0.415998
+offset_top = -0.0880013
+offset_right = 0.207977
+offset_bottom = -19.816
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 20
@@ -67,11 +74,16 @@ Player #5
 "
 
 [node name="MarginContainer4" type="MarginContainer" parent="Custom"]
-layout_mode = 0
-offset_left = 782.0
-offset_top = 187.0
-offset_right = 1132.0
-offset_bottom = 628.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.679
+anchor_top = 0.289
+anchor_right = 0.983
+anchor_bottom = 1.0
+offset_left = -0.208008
+offset_top = -0.272003
+offset_right = -0.416016
+offset_bottom = -20.0
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
@@ -123,15 +135,15 @@ Player #10
 
 [node name="MarginContainer5" type="MarginContainer" parent="Custom"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -200.0
-offset_right = 200.0
-offset_bottom = 200.0
+anchors_preset = -1
+anchor_left = 0.326
+anchor_top = 0.191
+anchor_right = 0.674
+anchor_bottom = 0.809
+offset_left = 0.447998
+offset_top = 0.231987
+offset_right = -0.447998
+offset_bottom = -0.231995
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 25
@@ -165,11 +177,12 @@ editable = false
 
 [node name="MarginContainer7" type="MarginContainer" parent="Custom"]
 layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
+anchors_preset = -1
+anchor_top = 0.85
+anchor_right = 0.217
 anchor_bottom = 1.0
-offset_top = -97.0
-offset_right = 250.0
+offset_top = 0.200012
+offset_right = 0.0159912
 grow_vertical = 0
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
@@ -182,6 +195,7 @@ size_flags_vertical = 4
 
 [node name="Info_Team_1" type="Button" parent="Custom/MarginContainer7/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
 text = "
 Info_Team_1
@@ -190,11 +204,12 @@ Info_Team_1
 
 [node name="MarginContainer6" type="MarginContainer" parent="Custom"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
+anchors_preset = -1
+anchor_left = 0.783
 anchor_right = 1.0
-offset_left = -250.0
-offset_bottom = 97.0
+anchor_bottom = 0.15
+offset_left = -0.0160522
+offset_bottom = -0.200005
 grow_horizontal = 0
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
