@@ -1,0 +1,49 @@
+[gd_scene load_steps=13 format=3 uid="uid://bafgat3hsv4uh"]
+
+[ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Room/GenerateRoom.cs" id="1_yne72"]
+[ext_resource type="PackedScene" uid="uid://cwaublm3q4l76" path="res://Scenes/Lilian/Objects/S1/Scar.tscn" id="2_ron3t"]
+[ext_resource type="PackedScene" uid="uid://balagxy4nv3kk" path="res://Scenes/Lilian/Objects/S1/AKS74.tscn" id="3_u5mqp"]
+[ext_resource type="PackedScene" uid="uid://bnpp13k1an1r8" path="res://Scenes/Lilian/Objects/S1/M1911.tscn" id="4_eu0ia"]
+[ext_resource type="PackedScene" uid="uid://cn4w4m641aigi" path="res://Scenes/Lilian/Objects/S2/Barrel.tscn" id="5_lckvs"]
+[ext_resource type="PackedScene" uid="uid://b1hn1vc3ggdnc" path="res://Scenes/Lilian/Objects/S2/Well.tscn" id="6_yv1dx"]
+[ext_resource type="Material" uid="uid://dl1f24xpspegd" path="res://Ressources/Material/arrow.tres" id="7_dnrt1"]
+[ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Room/SpawnPointS1.cs" id="8_k345e"]
+[ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Room/SpawnPointS2.cs" id="9_01vtj"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_7nxne"]
+material = ExtResource("7_dnrt1")
+
+[sub_resource type="BoxMesh" id="BoxMesh_n8r0p"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_lfx2j"]
+
+[node name="tile1" type="Node3D"]
+script = ExtResource("1_yne72")
+metadata/prefabS1 = [ExtResource("2_ron3t"), ExtResource("3_u5mqp"), ExtResource("4_eu0ia")]
+metadata/prefabS2 = [ExtResource("5_lckvs"), ExtResource("6_yv1dx")]
+
+[node name="Floor" type="Node3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 0.044, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_7nxne")
+
+[node name="Table" type="Node3D" parent="."]
+transform = Transform3D(0.462, 0, 0, 0, 0.385, 0, 0, 0, 0.462, 0.741944, 0.206069, -0.550263)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Table"]
+mesh = SubResource("BoxMesh_n8r0p")
+
+[node name="SpawnPointS1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.742, 0.419374, -0.55)
+script = ExtResource("8_k345e")
+
+[node name="SpawnPointS2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.164259, 0.229271, 0.426564)
+script = ExtResource("9_01vtj")
+
+[node name="Door" type="Node3D" parent="."]
+transform = Transform3D(0.03, 0, 0, 0, 1, 0, 0, 0, 0.61107, -0.97817, 0.512414, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Door"]
+mesh = SubResource("BoxMesh_lfx2j")
