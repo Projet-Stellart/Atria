@@ -1,43 +1,55 @@
 using Godot;
-using Godot.NativeInterop;
-using System;
-using System.Runtime.ExceptionServices;
-
-public partial class player : CharacterBody3D
+public partial class player : LocalEntity
 {
-	//VARIABLES
+	///////VARIABLES
+	//Nodes
+	Node3D head;
+	Camera3D camera;
+	RayCast3D aim;
+
+	//Scenes
+	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/bullet_decal.tscn");
+
 	//Movements
-	public const float SPEED_WALK = 3.0f;
-	public const float ACCELERATION = 3.0f;
-	public const float SPEED_CROUCH = 2.0f;
-	public const float SPEED_RUN = 5.0f;
-	public const float SPEED_SPRINT = 8.0f;
-	public const float LINEARDRAG = 5f;
-	public const float LINEARAIRDRAG = 0.05f;
-	public const float JUMP_VELOCITY = 4.5f;
+	public Acceleration accel_type = new Acceleration();
+	public Speed speed_type = new Speed();
+	public float speed = 7.0f;
+	public float accel ;
+	public const float JUMP_VELOCITY = 5.0f;
 	// Get the gravity from the project settings to be synced with RigidBody nodes
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
+	//Properties
 	public bool doubleJump = true;
 	public bool isCrouching = false;
+	public bool isAiming = false;
 
 	//Camera
 	public float mouseSensitivity = 0.001f;
-	
+	public float cam_shake = 0.3f;
 
+	//Vectors
+	Vector3 direction = new Vector3();
+	Vector3 velocity = new Vector3();
 	//Stats
 
     
 	//FUNCTIONS
 	public override void _Ready() 
 	{
+		//Initialize Default Values
+		accel = accel_type.normal;
+		speed = speed_type.normal;
+		
+		//Initialize Nodes
+		head = GetNode<Node3D>("Head");
+		camera = GetNode<Camera3D>("Head/Camera");
+
+		//Mouse in FPS
 		Input.MouseMode = Input.MouseModeEnum.Captured;
 	}
 
-    public override void _PhysicsProcess(double delta)
+    public override void InputProcess(double delta)
 	{
-		//Nodes
-		//var _head = GetNode<Node3D>("Head");
-
 		//Firing
 		_fire();
 
@@ -46,20 +58,33 @@ public partial class player : CharacterBody3D
 			_crouch();
 		}
 
-
-		Vector3 velocity = Velocity;
-		float SPEED = SPEED_WALK;
-		if (isCrouching&&IsOnFloor()) {
-			SPEED = SPEED_CROUCH;
+		//Aiming Event
+		if (Input.IsActionJustPressed("aim")||Input.IsActionJustReleased("aim"))	 {
+			_aim();
 		}
-		//No Override
+
+		//Handling Acceleration
+		Vector3 velocity = Velocity;
+		if (!IsOnFloor()) {
+			accel = accel_type.air;
+		}
+		else {
+			accel = accel_type.normal;
+		}
+
+		//Handling Speed
+		float speed = speed_type.normal;
+		if (isCrouching&&IsOnFloor()) {
+			speed = speed_type.crouch;
+		}
+		//No Override - Thus: "else"
 		else {
 			if (Input.IsActionPressed("run")&&Input.IsActionPressed("forward")) {
-				SPEED = SPEED_RUN;
+				speed = speed_type.run;
 			}
-			//Override Possible
+			//Override Possible - Thus: "if"
 		    if (Input.IsActionPressed("sprint")&&Input.IsActionPressed("forward")&&IsOnFloor()) {
-				SPEED = SPEED_SPRINT;
+				speed = speed_type.sprint;
 			}
 		}
 
@@ -74,29 +99,24 @@ public partial class player : CharacterBody3D
 			velocity.Y = JUMP_VELOCITY;
 		}
 
-		// Get the input direction and handle the movement/deceleration.
-		// As good practice, you should replace UI actions with custom gameplay actions.
+		// Get the input direction
 		Vector2 inputDir = Input.GetVector("left", "right", "forward", "backward");
 		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
+		//Handle Velocity
 		if (direction.X != 0) {
-			if (IsOnFloor()) velocity.X = Mathf.MoveToward(Velocity.X,direction.X * SPEED,ACCELERATION*LINEARDRAG*(float)delta);
-			else velocity.X = Mathf.MoveToward(Velocity.X,direction.X*SPEED,ACCELERATION*LINEARAIRDRAG*(float)delta);
+			velocity.X = Mathf.MoveToward(Velocity.X,direction.X * speed,accel*(float)delta);
 		}
 		else {
-			if (IsOnFloor()) velocity.X = Mathf.MoveToward(Velocity.X,0,ACCELERATION*LINEARDRAG*(float)delta);
-			else velocity.X = Mathf.MoveToward(Velocity.X,0,ACCELERATION*LINEARAIRDRAG*(float)delta);
+			velocity.X = Mathf.MoveToward(Velocity.X,0,accel*(float)delta);
 		}
 		if (direction.Z != 0) {
-			if (IsOnFloor()) velocity.Z = Mathf.MoveToward(Velocity.Z,direction.Z * SPEED,ACCELERATION*LINEARDRAG*(float)delta);
-			else velocity.Z = Mathf.MoveToward(Velocity.Z,direction.Z*SPEED,ACCELERATION*LINEARAIRDRAG*(float)delta);
+			velocity.Z = Mathf.MoveToward(Velocity.Z,direction.Z * speed,accel*(float)delta);
 		}
 		else {
-			if (IsOnFloor()) velocity.Z = Mathf.MoveToward(Velocity.Z,0,ACCELERATION*LINEARDRAG*(float)delta);
-			else velocity.Z = Mathf.MoveToward(Velocity.Z,0,ACCELERATION*LINEARAIRDRAG*(float)delta);
+			velocity.Z = Mathf.MoveToward(Velocity.Z,0,accel*(float)delta);
 		}
-
+		
 		Velocity = velocity;
-		MoveAndSlide();
 
 		//Head Bob
 	}
@@ -106,16 +126,56 @@ public partial class player : CharacterBody3D
 	{
 		if (Input.IsActionPressed("fire")) {
 			if (!GetNode<AnimationPlayer>("Gunfire").IsPlaying()) {
-				//if (GetNode<RayCast3D>("Aim").IsColliding()) {
-				//	var target = GetNode<RayCast3D>("Aim").GetCollider();
-				//	//if (target is in group Ennemy -> Damage (Must define the groups for multi))
-				//}
+				//Camera Shake
+				
+
+				//Finding what you hit
+				aim = GetNode<RayCast3D>("Head/Camera/Aim");
+				if (aim.IsColliding()) {
+					if (aim.IsColliding()) {
+						var collider = (Node)aim.GetCollider(); //Casting to Node to be able to Add Child
+						////Bullet Hole
+						var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
+						collider.AddChild(b); //Add child to collider
+						b.GlobalPosition = aim.GetCollisionPoint(); //Putting the bullet hole where we hit on the collider
+						var dir = aim.GetCollisionPoint() + aim.GetCollisionNormal(); //Calculating the direction
+						if (b.GlobalTransform.Origin != dir)
+							b.LookAt(dir, Vector3.Up);
+
+						//if (target is in group Ennemy -> Damage (Must define the groups for multi))
+						if (collider is enemy target) { //Casting collider to target to modify enemy properties
+							if (target.IsInGroup("Enemy")) {
+								target.health -= 20;
+							}
+						}
+					}
+				}
 			}
-			GetNode<AnimationPlayer>("Gunfire").Play("GunTest");
+			if (!isAiming) {
+				GetNode<AnimationPlayer>("Gunfire").Play("NoAim");
+			}
+			else {
+				GetNode<AnimationPlayer>("Gunfire").Play("Aim");
+			}
 		}
 		else {
+			camera.Translate(new Vector3());
 			GetNode<AnimationPlayer>("Gunfire").Stop();
 		}
+	}
+
+
+	//Aim with Weapon
+	public void _aim() {
+		//Aim
+		if (!isAiming) {
+			GetNode<AnimationPlayer>("Aiming").Play("Aiming");
+		}
+		//No Aim
+		else {
+			GetNode<AnimationPlayer>("Aiming").PlayBackwards("Aiming");
+		}
+		isAiming = Input.IsActionPressed("aim");
 	}
 
 	//Toggle Crouch Function
@@ -138,9 +198,35 @@ public partial class player : CharacterBody3D
         if (@event is InputEventMouseMotion mouseEvent&&Input.MouseMode == Input.MouseModeEnum.Captured) {
 			Rotation -= new Vector3 (0,mouseEvent.Relative.X*mouseSensitivity,0);
 			Vector3 RotationHead = new Vector3 (GetNode<Node3D>("Head").Rotation.X-mouseEvent.Relative.Y*mouseSensitivity,0,0);
-			if (RotationHead.X<-Mathf.Pi/2) RotationHead = new Vector3 (-Mathf.Pi/2,0,0);
+	        if (RotationHead.X<-Mathf.Pi/2) RotationHead = new Vector3 (-Mathf.Pi/2,0,0);
 			else if (RotationHead.X>Mathf.Pi/2) RotationHead = new Vector3 (Mathf.Pi/2,0,0);
 			GetNode<Node3D>("Head").Rotation = RotationHead;
 		}
     }
+}
+
+public struct Speed 
+{
+	public float normal;
+	public float crouch;
+	public float run;
+	public float sprint;
+
+	public Speed() {
+		normal = 3.0f;
+		crouch = 1.0f;
+		run = 5.0f;
+		sprint = 8.0f;
+	}
+	
+}
+
+public struct Acceleration 
+{
+	public float normal;
+	public float air;
+	public Acceleration() {
+		normal = 15.0f;
+		air = 5.0f;
+	}
 }
