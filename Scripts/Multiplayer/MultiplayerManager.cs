@@ -56,7 +56,7 @@ public partial class MultiplayerManager : Node
         if (Multiplayer.IsServer())
         {
             //Server OnClientConnect
-            Debug.Print("Client connected (" + Multiplayer.GetPeers().Length + "/" + GameManager.GameData.nbPlayer + ")");
+            Debug.Print("Client connected (" + Multiplayer.GetPeers().Length + "/" + GameManager.singleton.GameData.nbPlayer + ")");
             if (GameManager.singleton.tileMapGenerator.tileMap != null)
             {
                 SendMapToClient(id);
@@ -204,6 +204,20 @@ public partial class MultiplayerManager : Node
     private void StartGame()
     {
         GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
+    }
+
+    //Fun Function
+
+    public void RotateMapServer(Vector3 rot)
+    {
+        (GameManager.singleton.tileMapGenerator).Rotation = rot;
+        Rpc("RotateMap", new Variant[] { rot });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RotateMap(Variant rot)
+    {
+        (GameManager.singleton.tileMapGenerator).Rotation = rot.AsVector3();
     }
 
     /// <summary>

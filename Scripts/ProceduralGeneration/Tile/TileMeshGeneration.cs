@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
-public partial class TileMeshGeneration : Node
+public partial class TileMeshGeneration : Node3D
 {
     public Action OnMapGenerated { get; set; }
 
@@ -492,12 +492,12 @@ public partial class TileMeshGeneration : Node
 /// <summary>
 /// Parameters of the map.
 /// </summary>
-public struct MapParam
+public class MapParam
 {
-    public int mapHeight;
-    public int startHeight;
-    public int sizeX;
-    public int sizeY;
+    public int mapHeight {  get; set; }
+    public int startHeight { get; set; }
+    public int sizeX { get; set; }
+    public int sizeY { get; set; }
 }
 
 /// <summary>

@@ -41,7 +41,7 @@ public partial class MapManager : Control
         Control Container = (Control)GetChild(0).GetChild(0);
         Control PlayerPos = (Control)GetChild(1);
 
-        Vector2 tileSize = Container.Size / new Vector2(GameManager.GameData.mapParam.sizeX, GameManager.GameData.mapParam.sizeY);
+        Vector2 tileSize = Container.Size / new Vector2(GameManager.singleton.GameData.mapParam.sizeX, GameManager.singleton.GameData.mapParam.sizeY);
 
         PlayerPos.Position = Container.Position + new Vector2(8, 8) + (relativePosition * tileSize);
         PlayerPos.Rotation = -rotation;
@@ -63,8 +63,6 @@ public partial class MapManager : Control
             {
                 item.Hide();
             }
-            
-            
         }
     }
 
@@ -101,7 +99,7 @@ public partial class MapManager : Control
 
         Grid.Columns = TM.tileMap.GetLength(1);
 
-        Vector2 piv = Grid.Size / (new Vector2(GameManager.GameData.mapParam.sizeX, GameManager.GameData.mapParam.sizeY) * 2);
+        Vector2 piv = Grid.Size / (new Vector2(GameManager.singleton.GameData.mapParam.sizeX, GameManager.singleton.GameData.mapParam.sizeY) * 2f);
 
         for (int y = 0; y < TM.tileMap.GetLength(2); y++)
         {

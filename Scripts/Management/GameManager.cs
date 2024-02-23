@@ -2,11 +2,9 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 public partial class GameManager : Node
 {
@@ -24,7 +22,7 @@ public partial class GameManager : Node
 
     private List<long>[] teams;
 
-    private static GameData _gameData = new GameData()
+    private GameData _gameData = new GameData()
     {
         mapParam = new MapParam()
         {
@@ -35,14 +33,20 @@ public partial class GameManager : Node
         },
         nbPlayer = 10,
         spawnDelay = 5,
-        beginDelay = 30,
+        beginDelay = 10,
         port = 7308
     };
 
-    public static GameData GameData { get => _gameData; private set => _gameData = value; }
+    public GameData GameData { get => _gameData; private set => _gameData = value; }
 
     public override void _Process(double delta)
     {
+        //Make the map rotate
+        /*if (matchStatus >= 1)
+        {
+            Vector3 rot = (tileMapGenerator).Rotation + new Vector3(10f, 0f, 0f) * (float)delta;
+            multiplayerManager.RotateMapServer(rot);
+        }*/
         if (delayedActions == null)
             return;
         for (int i = 0; i < delayedActions.Count; i++)
@@ -67,9 +71,7 @@ public partial class GameManager : Node
 
         string paramPath = ProjectSettings.GlobalizePath("res://serverParams.json");
 
-        Debug.Print("path: " + paramPath);
-
-        if (File.Exists(paramPath))
+        if (File.Exists(paramPath) && !args.Contains("--saveParams"))
         {
             using (var reader = new StreamReader(paramPath))
             {
@@ -90,11 +92,12 @@ public partial class GameManager : Node
 
         if (args.Contains("--saveParams"))
         {
-            string jsonText = JsonSerializer.Serialize(GameData, new JsonSerializerOptions { WriteIndented = true });
+            string jsonText = JsonSerializer.Serialize(_gameData, typeof(GameData),options: new JsonSerializerOptions { WriteIndented = true });
             using (StreamWriter writter = new StreamWriter(paramPath))
             {
                 writter.Write(jsonText);
             }
+            Debug.Print($"Parameters saved to: {paramPath}");
         }
     }
 
@@ -103,7 +106,7 @@ public partial class GameManager : Node
         tileMapGenerator = (TileMeshGeneration)GetChild(0);
         hudManager = (HudManager)GetChild(2);
         multiplayerManager = ((MultiplayerManager)GetChild(3));
-
+        
         if (args.Contains("--nbPlayers"))
         {
             string param = MultiplayerManager.GetCmdKeyValue("--nbPlayers", args);
@@ -112,6 +115,24 @@ public partial class GameManager : Node
                 throw new Exception("--nbPlayers is not a unsigned integer");
             }
             _gameData.nbPlayer = nbp;
+        }
+        if (args.Contains("--spawnDelay"))
+        {
+            string param = MultiplayerManager.GetCmdKeyValue("--spawnDelay", args);
+            if (!uint.TryParse(param, out uint nbp) || nbp < 0)
+            {
+                throw new Exception("--spawnDelay is not a unsigned integer");
+            }
+            _gameData.spawnDelay = nbp;
+        }
+        if (args.Contains("--beginDelay"))
+        {
+            string param = MultiplayerManager.GetCmdKeyValue("--beginDelay", args);
+            if (!uint.TryParse(param, out uint nbp) || nbp < 0)
+            {
+                throw new Exception("--beginDelay is not a unsigned integer");
+            }
+            _gameData.beginDelay = nbp;
         }
         if (args.Contains("--mapSize"))
         {
@@ -295,23 +316,23 @@ public struct GameData
     /// <summary>
     /// Map parameters for the server
     /// </summary>
-    public MapParam mapParam;
+    public MapParam mapParam {  get; set; }
     /// <summary>
     /// Number of player for a match
     /// </summary>
-    public uint nbPlayer;
+    public uint nbPlayer {  get; set; }
     /// <summary>
     /// Delay betwin match full and spawn of player in seconds
     /// </summary>
-    public uint spawnDelay;
+    public uint spawnDelay { get; set; }
     /// <summary>
     /// Delay betwin spawn of player and match start in seconds
     /// </summary>
-    public uint beginDelay;
+    public uint beginDelay { get; set; }
     /// <summary>
     /// Port the server will listen
     /// </summary>
-    public uint port;
+    public uint port {  get; set; }
 }
 
 public struct TeamData

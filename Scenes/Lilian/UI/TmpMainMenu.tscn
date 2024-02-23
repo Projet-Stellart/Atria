@@ -24,6 +24,11 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "Jouer"
 
+[node name="Button3" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Host"
+
 [node name="Button2" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3

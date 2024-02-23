@@ -15,6 +15,11 @@ public partial class SceneManager : Node
             throw new Exception("There is two SceneManager in the scene");
         singelton = this;
         string[] args = OS.GetCmdlineArgs();
+        if (args.Contains("--help"))
+        {
+            Debug.Print("Help command");
+            GetTree().Quit();
+        }
         LoadMainMenu(args);
         //Auto start
         if (args.Contains("--server") || args.Contains("--client"))
@@ -42,6 +47,10 @@ public partial class SceneManager : Node
         {
             LoadGame(args);
         };
+        mainMenu.OnHost += () =>
+        {
+            LoadGame(new string[] {"--server"});
+        };
     }
 
     public void LoadGame(string[] loadParameters)
@@ -49,7 +58,7 @@ public partial class SceneManager : Node
         ClearChildren();
         GameManager gameScene = GD.Load<PackedScene>(GameScene).Instantiate<GameManager>();
         AddChild(gameScene);
-        gameScene.Init(new string[] {"--server", "--nbPlayers", "2", "--saveParams" });
+        gameScene.Init(loadParameters);
         //gameScene.Init(loadParameters);
     }
 }
