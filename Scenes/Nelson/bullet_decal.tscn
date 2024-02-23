@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cv01nplbwhyr8"]
+
+[ext_resource type="Texture2D" uid="uid://ffftwjbhhx6v" path="res://Ressources/GamePlay/Textures/bullet_hole_001.png" id="1_owb7h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jog62"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 1)
+albedo_texture = ExtResource("1_owb7h")
+
+[sub_resource type="QuadMesh" id="QuadMesh_ib25g"]
+material = SubResource("StandardMaterial3D_jog62")
+
+[node name="BulletDecal" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.05, 0, 4.37114e-09, 0, 0.05, 0, -4.37114e-09, 0, -0.05, 0, 0, -0.001)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_ib25g")
