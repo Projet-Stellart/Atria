@@ -1,4 +1,5 @@
 using Godot;
+using System.Diagnostics;
 public partial class player : LocalEntity
 {
 	///////VARIABLES
@@ -13,8 +14,8 @@ public partial class player : LocalEntity
 	//Movements
 	public Acceleration accel_type = new Acceleration();
 	public Speed speed_type = new Speed();
-	public float speed = 7.0f;
-	public float accel ;
+	public float speed;
+	public float accel;
 	public const float JUMP_VELOCITY = 5.0f;
 	// Get the gravity from the project settings to be synced with RigidBody nodes
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
@@ -101,22 +102,24 @@ public partial class player : LocalEntity
 
 		// Get the input direction
 		Vector2 inputDir = Input.GetVector("left", "right", "forward", "backward");
-		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
+		Vector3 direction = (Transform.Basis * new Vector3((float)inputDir.X, 0, (float)inputDir.Y)).Normalized();
 		//Handle Velocity
-		if (direction.X != 0) {
-			velocity.X = Mathf.MoveToward(Velocity.X,direction.X * speed,accel*(float)delta);
+		Vector3 useVelocity = new Vector3(Velocity.X, 0, Velocity.Z);
+		Vector3 endVelocity;
+
+        Vector3 SlowingVector = (direction * speed - useVelocity).Normalized();
+        if ((direction * speed - useVelocity).Length() <= accel * (float)delta)
+		{
+            endVelocity = direction * speed;
 		}
-		else {
-			velocity.X = Mathf.MoveToward(Velocity.X,0,accel*(float)delta);
-		}
-		if (direction.Z != 0) {
-			velocity.Z = Mathf.MoveToward(Velocity.Z,direction.Z * speed,accel*(float)delta);
-		}
-		else {
-			velocity.Z = Mathf.MoveToward(Velocity.Z,0,accel*(float)delta);
-		}
+		else
+		{
+            endVelocity = useVelocity + (SlowingVector * accel * (float)delta);
+        }
+        /*velocity.X = Mathf.MoveToward(Velocity.X, direction.X * speed, accel * (float)delta);
+        velocity.Z = Mathf.MoveToward(Velocity.Z, direction.Z * speed, accel * (float)delta);*/
 		
-		Velocity = velocity;
+		Velocity = new Vector3(endVelocity.X, velocity.Y, endVelocity.Z);
 
 		//Head Bob
 	}
