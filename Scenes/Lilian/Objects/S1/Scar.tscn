@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cwaublm3q4l76"]
+
+[ext_resource type="PackedScene" uid="uid://dxogkowry3mio" path="res://Ressources/ProceduralGenerationTempRes/Objects/S1/SCAR-H.fbx" id="1_nr8pk"]
+
+[node name="Scar" type="Node3D"]
+
+[node name="SCAR-H" parent="." instance=ExtResource("1_nr8pk")]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
