@@ -13,126 +13,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer3" type="MarginContainer" parent="Custom"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.017
-anchor_top = 0.031
-anchor_right = 0.321
-anchor_bottom = 0.742
-offset_left = 0.415998
-offset_top = -0.0880013
-offset_right = 0.207977
-offset_bottom = -19.816
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer3"]
-layout_mode = 2
-size_flags_vertical = 4
-
-[node name="Player_1" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #1
-
-"
-
-[node name="Player_2" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #2
-
-"
-
-[node name="Player_3" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #3
-
-"
-
-[node name="Player_4" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #4
-
-"
-
-[node name="Player_5" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #5
-
-"
-
-[node name="MarginContainer4" type="MarginContainer" parent="Custom"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.679
-anchor_top = 0.289
-anchor_right = 0.983
-anchor_bottom = 1.0
-offset_left = -0.208008
-offset_top = -0.272003
-offset_right = -0.416016
-offset_bottom = -20.0
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 40
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer4"]
-layout_mode = 2
-size_flags_vertical = 4
-
-[node name="Player_6" type="Button" parent="Custom/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #6
-
-"
-
-[node name="Player_7" type="Button" parent="Custom/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #7
-
-"
-
-[node name="Player_8" type="Button" parent="Custom/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #8
-
-"
-
-[node name="Player_9" type="Button" parent="Custom/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #9
-
-"
-
-[node name="Player_10" type="Button" parent="Custom/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Player #10
-
-"
-
 [node name="MarginContainer5" type="MarginContainer" parent="Custom"]
 layout_mode = 1
 anchors_preset = -1
@@ -178,11 +58,14 @@ editable = false
 [node name="MarginContainer7" type="MarginContainer" parent="Custom"]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.85
-anchor_right = 0.217
-anchor_bottom = 1.0
-offset_top = 0.200012
-offset_right = 0.0159912
+anchor_left = 0.016
+anchor_top = 0.833
+anchor_right = 0.234
+anchor_bottom = 0.972
+offset_left = -0.480001
+offset_top = 0.239929
+offset_right = 0.47998
+offset_bottom = 0.159973
 grow_vertical = 0
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
@@ -193,37 +76,65 @@ theme_override_constants/margin_bottom = 10
 layout_mode = 2
 size_flags_vertical = 4
 
-[node name="Info_Team_1" type="Button" parent="Custom/MarginContainer7/VBoxContainer"]
+[node name="Add_Team_1" type="Button" parent="Custom/MarginContainer7/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
 text = "
-Info_Team_1
+Add Team #1
 
 "
 
 [node name="MarginContainer6" type="MarginContainer" parent="Custom"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.783
-anchor_right = 1.0
-anchor_bottom = 0.15
-offset_left = -0.0160522
-offset_bottom = -0.200005
+anchor_left = 0.765625
+anchor_top = 0.0277778
+anchor_right = 0.984375
+anchor_bottom = 0.166667
 grow_horizontal = 0
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
+metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer6"]
 layout_mode = 2
 size_flags_vertical = 4
 
-[node name="Info_Team_2" type="Button" parent="Custom/MarginContainer6/VBoxContainer"]
+[node name="Add_Team_2" type="Button" parent="Custom/MarginContainer6/VBoxContainer"]
 layout_mode = 2
 size_flags_stretch_ratio = 0.0
 text = "
-Info Team #2
+Add Team #2
 
 "
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.03125
+anchor_top = 0.0555556
+anchor_right = 0.3125
+anchor_bottom = 0.805556
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.6875
+anchor_top = 0.194444
+anchor_right = 0.96875
+anchor_bottom = 0.944444
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/ScrollContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
