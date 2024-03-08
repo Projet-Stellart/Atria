@@ -1,0 +1,12 @@
+{
+  "mapParam": {
+	"mapHeight": 3,
+	"startHeight": 1,
+	"sizeX": 10,
+	"sizeY": 10
+  },
+  "nbPlayer": 2,
+  "spawnDelay": 1,
+  "beginDelay": 5,
+  "port": 7308
+}

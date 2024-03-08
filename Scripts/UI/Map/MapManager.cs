@@ -1,12 +1,13 @@
 using Godot;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 
 public partial class MapManager : Control
 {
     public static MapManager singleton;
-    public string[,,] mapRes;
-    public int[,,] mapRot;
+    /*public string[,,] mapRes;
+    public int[,,] mapRot;*/
 
     public override void _Ready()
     {
@@ -40,8 +41,10 @@ public partial class MapManager : Control
         Control Container = (Control)GetChild(0).GetChild(0);
         Control PlayerPos = (Control)GetChild(1);
 
-        PlayerPos.Position = Container.Position + new Vector2(8, 8) + (relativePosition * 54);
-        PlayerPos.Rotation = -rotation/*-(Mathf.Pi/2)*/;
+        Vector2 tileSize = Container.Size / new Vector2(GameManager.singleton.GameData.mapParam.sizeX, GameManager.singleton.GameData.mapParam.sizeY);
+
+        PlayerPos.Position = Container.Position + new Vector2(8, 8) + (relativePosition * tileSize);
+        PlayerPos.Rotation = -rotation;
     }
 
     public void SelectLayer(int height)
@@ -63,21 +66,27 @@ public partial class MapManager : Control
         }
     }
 
+    //TM.tileTemplates[TM.tileMap[] - 1].mapRes;
+
     public void LoadMap()
     {
+        TileMeshGeneration TM = GameManager.singleton.tileMapGenerator;
         Control Container = (Control)GetChild(0);
         PackedScene GridTemplate = (PackedScene)GetMeta("GridTemplate");
-        for (int i = 0; i < mapRes.GetLength(0); i++)
+        for (int i = 0; i < TM.tileMap.GetLength(0); i++)
         {
-            Node tGrid = GridTemplate.Instantiate();
+            Control tGrid = GridTemplate.Instantiate<Control>();
             Container.AddChild(tGrid);
+            tGrid.LayoutMode = 1;
+            tGrid.SetAnchorsPreset(LayoutPreset.FullRect);
             LoadMapLayerMap(i);
-            ((Control)tGrid).Hide();
+            (tGrid).Hide();
         }
     }
 
     public void LoadMapLayerMap(int height)
 	{
+        TileMeshGeneration TM = GameManager.singleton.tileMapGenerator;
         PackedScene ImageTemplate = (PackedScene)GetMeta("ImageTemplate");
 
         Control Container = (Control)GetChild(0);
@@ -88,19 +97,23 @@ public partial class MapManager : Control
             item.QueueFree();
         }
 
-        Grid.Columns = mapRes.GetLength(1);
+        Grid.Columns = TM.tileMap.GetLength(1);
 
-        for (int y = 0; y < mapRes.GetLength(2); y++)
+        Vector2 piv = Grid.Size / (new Vector2(GameManager.singleton.GameData.mapParam.sizeX, GameManager.singleton.GameData.mapParam.sizeY) * 2f);
+
+        for (int y = 0; y < TM.tileMap.GetLength(2); y++)
         {
-            for (int x = 0; x < mapRes.GetLength(1); x++) 
+            for (int x = 0; x < TM.tileMap.GetLength(1); x++) 
             {
             
                 Control tNode = ImageTemplate.Instantiate<Control>();
                 Grid.AddChild(tNode);
                 TextureRect displayer = (TextureRect)tNode.GetChild(0);
-                Texture2D texture = GD.Load<Texture2D>(mapRes[height, x, y]);
+                Texture2D texture = GD.Load<Texture2D>(TM.tileTemplates[TM.tileMap[height, x, y] - 1].mapRes);
                 displayer.Texture = texture;
-                displayer.RotationDegrees = -mapRot[height, x, y];
+                displayer.PivotOffset = piv;
+                displayer.RotationDegrees = -TM.tileTemplates[TM.tileMap[height, x, y] - 1].rotation;
+                
             }
         }
     }
