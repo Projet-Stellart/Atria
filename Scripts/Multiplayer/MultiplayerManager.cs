@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 public partial class MultiplayerManager : Node
 {
 
-    public Dictionary<long, playerScript> playersControler = new Dictionary<long, playerScript>();
+    public Dictionary<long, player> playersControler = new Dictionary<long, player>();
 
     private int[,,] tempGrid;
 
@@ -127,13 +127,14 @@ public partial class MultiplayerManager : Node
             return;
         if (playersControler.ContainsKey(id))
             return;
-        playerScript player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<playerScript>();
+        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<player>();
         GameManager.singleton.GetChild(1).AddChild(player);
         playersControler.Add(id, player);
         player.Position = pos;
         player.IsLocalPlayer = false;
         player.Name = "Player" + id;
-        ((Camera3D)player.GetChild(0)).ClearCurrent(false);
+        player.Init();
+        player.camera.ClearCurrent(false);
         Rpc("InstantiatePlayer", new Variant[] { id, pos });
     }
 
@@ -145,14 +146,15 @@ public partial class MultiplayerManager : Node
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void InstantiatePlayer(Variant id, Variant pos)
     {
-        playerScript player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<playerScript>();
+        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<player>();
         GameManager.singleton.GetChild(1).AddChild(player);
         playersControler.Add(id.As<long>(), player);
         player.Position = pos.AsVector3();
         bool localPl = Multiplayer.GetUniqueId() == id.As<long>();
         player.IsLocalPlayer = localPl;
         player.Name = "Player" + id;
-        ((Camera3D)player.GetChild(0)).Current = localPl;
+        player.Init();
+        player.camera.Current = localPl;
         if (localPl)
             player.Init();
     }

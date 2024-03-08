@@ -138,7 +138,7 @@ public partial class TileMeshGeneration : Node3D
             (px, py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
             tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
         }
-        return new Vector3(px * tileSize, mapParam.startHeight * tileSize, py * tileSize);
+        return new Vector3(px * tileSize, mapParam.startHeight * tileSize-1, py * tileSize);
     }
 
     /// <summary>

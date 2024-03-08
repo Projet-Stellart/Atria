@@ -7,9 +7,10 @@ public partial class UI_Script : CanvasLayer
 {
 
 	public Action OnPlay;
+	public Action OnHost;
 	public Action<string, int> OnCustomPlay;
 	
-	public override void _Ready()
+	public void Init()
 	{
 		var main = GetNode<Control>("Main");
 		for (int i = 0; i < GetChildCount(); i++)

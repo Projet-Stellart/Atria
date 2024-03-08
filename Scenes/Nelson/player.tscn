@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c1o14bivnd8qb"]
+[gd_scene load_steps=15 format=3 uid="uid://c1o14bivnd8qb"]
 
 [ext_resource type="PackedScene" uid="uid://ccnnulmcgps1c" path="res://Ressources/GamePlay/3D_Models/ak_47_custom.glb" id="1_gply0"]
 [ext_resource type="Script" path="res://Scripts/Gameplay/player.cs" id="1_ryegq"]
@@ -230,6 +230,9 @@ _data = {
 "RESET": SubResource("Animation_15f5c")
 }
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_srdf2"]
+radius = 0.375
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_ryegq")
 
@@ -265,3 +268,7 @@ libraries = {
 libraries = {
 "": SubResource("AnimationLibrary_aod32")
 }
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_srdf2")

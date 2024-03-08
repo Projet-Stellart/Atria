@@ -11,12 +11,10 @@ public partial class playerScript : LocalEntity
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
-    public void Init()
+    public override void InitPlayer()
     {
         Input.MouseMode = Input.MouseModeEnum.Captured;
         ((Camera3D)GetChild(0)).MakeCurrent();
-		MapManager.singleton.HideMap();
-		MapManager.singleton.LoadMap();
     }
 
 	public override void InputProcess(double delta)
@@ -30,19 +28,6 @@ public partial class playerScript : LocalEntity
         // Handle Jump.
         if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
             velocity.Y = JumpVelocity;
-
-        if (Input.IsActionJustPressed("map"))
-        {
-            //((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
-            MapManager.singleton.SelectLayer((int)((Position.Y + 3.2f) / 6.4f));
-            MapManager.singleton.ShowMap();
-
-        }
-        if (Input.IsActionJustReleased("map"))
-        {
-            //((Camera3D)GetChild(0)).MakeCurrent();
-            MapManager.singleton.HideMap();
-        }
 
         if (Input.IsActionJustPressed("fullscreen"))
         {
@@ -81,9 +66,6 @@ public partial class playerScript : LocalEntity
             velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
             velocity.Z = Mathf.MoveToward(Velocity.Z, 0, Speed);
         }
-
-        if (Input.IsActionPressed("map"))
-            MapManager.singleton.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
 
         Velocity = velocity;
     }
