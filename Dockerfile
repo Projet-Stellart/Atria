@@ -1,6 +1,8 @@
 FROM lilian1024/godot-mono
 
-WORKDIR /app
+USER appuser
+
+WORKDIR /home/appuser/
 
 #Copy source code and prepare files
 COPY . ./sc
@@ -15,4 +17,4 @@ RUN ungodot
 
 EXPOSE 7308/udp
 
-ENTRYPOINT /app/builds/server.sh --headless --server --port 7308
+ENTRYPOINT sudo appuser -c /app/builds/server.sh --headless --server --port 7308
