@@ -6,8 +6,10 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
-public partial class TileMeshGeneration : Node
+public partial class TileMeshGeneration : Node3D
 {
+    public Action OnMapGenerated { get; set; }
+
     private MapParam mapParam;
     //Switch from public to private
     /// <summary>
@@ -22,9 +24,9 @@ public partial class TileMeshGeneration : Node
 
     //Dependant on the map generation Task
     private float gridGenerationAdvencement;
-    private bool isGenerating;
+    public bool isGenerating { get; private set; }
 
-    private int[,,] tileMap;
+    public int[,,] tileMap;
 
     /// <summary>
     /// The type that is used when accessing a tile outside the grid.
@@ -36,15 +38,15 @@ public partial class TileMeshGeneration : Node
     /// </summary>
     private float tileSize = 6.4f;
 
-    public override void _Ready()
+    /*public override void _Ready()
 	{
         //Prototype call
         Init();
-    }
+    }*/
 
-    public void Init()
+    public void Init(int sizeX, int sizeY)
     {
-        Task generating = GenerateMapAsync(20, 20);
+        Task generating = GenerateMapAsync(sizeX, sizeY);
     }
 
     //Debug only
@@ -96,31 +98,12 @@ public partial class TileMeshGeneration : Node
 
         isGenerating = false;
 
-        InstantiateGrid(tGrid, rand);
+        InstantiateGrid(tGrid);
 
         generation.Dispose();
 
-        tileMap = tGrid;
-
-        string[,,] tRes = new string[tGrid.GetLength(0), tGrid.GetLength(1), tGrid.GetLength(2)];
-        int[,,] tRot = new int[tGrid.GetLength(0), tGrid.GetLength(1), tGrid.GetLength(2)];
-
-        for (int h = 0; h < tGrid.GetLength(0); h++)
-        {
-            for (int x = 0; x < tGrid.GetLength(1); x++)
-            {
-                for (int y = 0; y < tGrid.GetLength(2); y++)
-                {
-                    tRes[h, x, y] = tileTemplates[tGrid[h, x, y] - 1].mapRes;
-                    tRot[h, x, y] = tileTemplates[tGrid[h, x, y] - 1].rotation;
-                }
-            }
-        }
-
-        MapManager.singleton.mapRes = tRes;
-        MapManager.singleton.mapRot = tRot;
-
-        MapManager.singleton.LoadMap();
+        OnMapGenerated.Invoke();
+        Debug.Print("Map ready!");
     }
 
     //Switch from public to private
@@ -144,29 +127,32 @@ public partial class TileMeshGeneration : Node
         return tGrid;
     }
 
+    public Vector3 GetRandSpawnPoint(int[,,] tGrid, Random rand)
+    {
+        player = playerTemplate.Instantiate<Node3D>();
+        AddChild(player);
+        (int px, int py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
+        TilePrefa tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
+        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)
+        {
+            (px, py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
+            tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
+        }
+        return new Vector3(px * tileSize, mapParam.startHeight * tileSize, py * tileSize);
+    }
+
     /// <summary>
     /// Function that spawn the tiles from a grid matrix
     /// </summary>
     /// <param name="tGrid"></param>
     /// <param name="rand"></param>
-    private void InstantiateGrid(int[,,] tGrid, Random rand)
+    public void InstantiateGrid(int[,,] tGrid)
     {
+
+        tileMap = tGrid;
 
         int sizex = tGrid.GetLength(1);
         int sizey = tGrid.GetLength(2);
-
-        //Spawn player temporary
-        /*player = playerTemplate.Instantiate<Node3D>();
-        AddChild(player);
-        (int px, int py) = (rand.Next(sizex), rand.Next(sizey));
-        TilePrefa tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
-        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)
-        {
-            (px, py) = (rand.Next(sizex), rand.Next(sizey));
-            tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
-        }
-        player.Position = new Vector3(px * tileSize, mapParam.startHeight * tileSize, py * tileSize);*/
-        //End of temporary script
 
         for (int height = 0; height < tGrid.GetLength(0); height++)
         {
@@ -417,7 +403,11 @@ public partial class TileMeshGeneration : Node
         //Get metadata
         playerTemplate = (PackedScene)GetMeta("PlayerTemplate");
 
-        mapParam = new MapParam((int)GetMeta("mapHeight"), (int)GetMeta("mapHeight")>>1);
+        mapParam = new MapParam()
+        {
+            mapHeight = (int)GetMeta("mapHeight"),
+            startHeight = (int)GetMeta("mapHeight") >> 1
+        };
 
         Godot.Collections.Array<PackedScene> tiles = GetMeta("TileTemplate").AsGodotArray<PackedScene>();
         Godot.Collections.Array<Resource> mpRes = GetMeta("TileImage").AsGodotArray<Resource>();
@@ -504,14 +494,10 @@ public partial class TileMeshGeneration : Node
 /// </summary>
 public class MapParam
 {
-    public int mapHeight;
-    public int startHeight;
-
-    public MapParam(int mapHeight, int startHeight)
-    {
-        this.mapHeight = mapHeight;
-        this.startHeight = startHeight;
-    }
+    public int mapHeight {  get; set; }
+    public int startHeight { get; set; }
+    public int sizeX { get; set; }
+    public int sizeY { get; set; }
 }
 
 /// <summary>

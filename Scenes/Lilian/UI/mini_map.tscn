@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=3 uid="uid://4ia8ae3lyb7i"]
+
+[ext_resource type="Script" path="res://Scripts/UI/Map/MapManager.cs" id="1_mfrcu"]
+[ext_resource type="PackedScene" uid="uid://csm33w1x8n0ia" path="res://Scenes/Lilian/Template-Tiles/UI/ImageTemplate.tscn" id="2_bwvex"]
+[ext_resource type="PackedScene" uid="uid://cncg737tdq7we" path="res://Scenes/Lilian/Template-Tiles/UI/GridTemplate.tscn" id="3_ocj5e"]
+[ext_resource type="Texture2D" uid="uid://dycx7tkdsk7nk" path="res://Ressources/UI/Map/PlayerPoint.png" id="4_83dbf"]
+
+[node name="MiniMap" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 540)
+script = ExtResource("1_mfrcu")
+metadata/ImageTemplate = ExtResource("2_bwvex")
+metadata/GridTemplate = ExtResource("3_ocj5e")
+
+[node name="Grids" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Player" type="Control" parent="."]
+visible = false
+layout_mode = 2
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+pivot_offset = Vector2(20, 20)
+
+[node name="TextureRect" type="TextureRect" parent="Player"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_83dbf")
