@@ -1,0 +1,140 @@
+[gd_scene load_steps=2 format=3 uid="uid://crg0ua4vy7tlf"]
+
+[ext_resource type="Script" path="res://Scripts/Guillaume/Lobby_Script.cs" id="1_bi12c"]
+
+[node name="Lobby" type="CanvasLayer"]
+script = ExtResource("1_bi12c")
+
+[node name="Custom" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer5" type="MarginContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.326
+anchor_top = 0.191
+anchor_right = 0.674
+anchor_bottom = 0.809
+offset_left = 0.447998
+offset_top = 0.231987
+offset_right = -0.447998
+offset_bottom = -0.231995
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer5"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer5/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextEdit" type="TextEdit" parent="Custom/MarginContainer5/VBoxContainer/ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -96.0
+offset_top = -17.5
+offset_right = 96.0
+offset_bottom = 17.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/background_color = Color(0, 0, 0, 1)
+text = "[ MiniMap PlaceHolder ]"
+editable = false
+
+[node name="MarginContainer7" type="MarginContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.016
+anchor_top = 0.833
+anchor_right = 0.234
+anchor_bottom = 0.972
+offset_left = -0.480001
+offset_top = 0.239929
+offset_right = 0.47998
+offset_bottom = 0.159973
+grow_vertical = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer7"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Add_Team_1" type="Button" parent="Custom/MarginContainer7/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+text = "
+Add Team #1
+
+"
+
+[node name="MarginContainer6" type="MarginContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.765625
+anchor_top = 0.0277778
+anchor_right = 0.984375
+anchor_bottom = 0.166667
+grow_horizontal = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer6"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Add_Team_2" type="Button" parent="Custom/MarginContainer6/VBoxContainer"]
+layout_mode = 2
+size_flags_stretch_ratio = 0.0
+text = "
+Add Team #2
+
+"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.03125
+anchor_top = 0.0555556
+anchor_right = 0.3125
+anchor_bottom = 0.805556
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.6875
+anchor_top = 0.194444
+anchor_right = 0.96875
+anchor_bottom = 0.944444
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/ScrollContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
