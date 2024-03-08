@@ -1,5 +1,7 @@
 # Godot 4+ specific ignores
 *.tar
 .godot/
-.vs/*
-Builds/*
+.idea/
+.vs/
+Builds/
+Ressources/
