@@ -22,6 +22,7 @@ public partial class player : LocalEntity
 	public bool doubleJump = true;
 	public bool isCrouching = false;
 	public bool isAiming = false;
+	public int Health = 100;
 
 	//Camera
 	public float mouseSensitivity = 0.001f;
@@ -165,6 +166,12 @@ public partial class player : LocalEntity
 	}
 
 
+
+	//Death
+	public void _death(DeathCause cause) {
+		GD.Print($"dead by {cause}");
+	}
+
 	//Aim with Weapon
 	public void _aim() {
 		//Aim
@@ -229,4 +236,9 @@ public struct Acceleration
 		normal = 15.0f;
 		air = 5.0f;
 	}
+}
+
+public enum DeathCause 
+{
+	DeathRegion,
 }
