@@ -19,10 +19,11 @@ public partial class player : LocalEntity
 	public const float JUMP_VELOCITY = 5.0f;
 	// Get the gravity from the project settings to be synced with RigidBody nodes
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
-	//Properties
+	//Properties/Stats
 	public bool doubleJump = true;
 	public bool isCrouching = false;
 	public bool isAiming = false;
+	public int Health = 100;
 
 	//Camera
 	public float mouseSensitivity = 0.001f;
@@ -31,7 +32,6 @@ public partial class player : LocalEntity
 	//Vectors
 	Vector3 direction = new Vector3();
 	Vector3 velocity = new Vector3();
-	//Stats
 
     
 	//FUNCTIONS
@@ -48,6 +48,13 @@ public partial class player : LocalEntity
 		//Mouse in FPS
 		Input.MouseMode = Input.MouseModeEnum.Captured;
 	}
+
+    public override void _Process(double delta)
+    {
+		if (Health<=0) {
+			_death(DeathCause.Health);
+		}
+    }
 
     public override void InputProcess(double delta)
 	{
@@ -129,6 +136,7 @@ public partial class player : LocalEntity
 	{
 		if (Input.IsActionPressed("fire")) {
 			if (!GetNode<AnimationPlayer>("Gunfire").IsPlaying()) {
+				GetNode<AudioStreamPlayer>("GunSound").Play();
 				//Camera Shake
 				
 
@@ -151,6 +159,9 @@ public partial class player : LocalEntity
 								target.health -= 20;
 							}
 						}
+						else if (collider is player target2 && this!=target2) {
+							target2.Health -= 5;
+						}
 					}
 				}
 			}
@@ -167,6 +178,15 @@ public partial class player : LocalEntity
 		}
 	}
 
+
+
+	//Death
+	public void _death(DeathCause cause) {
+		GD.Print($"dead by {cause}");
+		GetNode<Label>("DeathScreen").Visible = true;
+		GetNode<AudioStreamPlayer>("DeathSound").Play();
+		GetNode<AudioStreamPlayer>("DeathSoundNuke").Play();
+	}
 
 	//Aim with Weapon
 	public void _aim() {
@@ -196,7 +216,7 @@ public partial class player : LocalEntity
 	}
 	
 	//Camera
-    public override void _Input(InputEvent @event)
+    public override void InputLocalEvent(InputEvent @event)
     {
         if (@event is InputEventMouseMotion mouseEvent&&Input.MouseMode == Input.MouseModeEnum.Captured) {
 			Rotation -= new Vector3 (0,mouseEvent.Relative.X*mouseSensitivity,0);
@@ -205,6 +225,16 @@ public partial class player : LocalEntity
 			else if (RotationHead.X>Mathf.Pi/2) RotationHead = new Vector3 (Mathf.Pi/2,0,0);
 			GetNode<Node3D>("Head").Rotation = RotationHead;
 		}
+    }
+	public override Vector2 GetRotation() {
+		return new Vector2(GetNode<Node3D>("Head").Rotation.X,Rotation.Y);
+	}
+
+    public override void SyncRotation(Vector2 rot)
+    {
+        Rotation = new Vector3(0,rot.Y,0);
+		Vector3 RotationHead = new Vector3(rot.X,0,0);
+		GetNode<Node3D>("Head").Rotation = RotationHead;
     }
 }
 
@@ -232,4 +262,10 @@ public struct Acceleration
 		normal = 15.0f;
 		air = 5.0f;
 	}
+}
+
+public enum DeathCause 
+{
+	DeathRegion,
+	Health,
 }
