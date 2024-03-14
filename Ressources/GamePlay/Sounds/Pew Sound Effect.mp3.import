@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cac8u5022nta4"
+path="res://.godot/imported/Pew Sound Effect.mp3-fafcf1b6365616b6ae225492db743349.mp3str"
+
+[deps]
+
+source_file="res://Ressources/GamePlay/Sounds/Pew Sound Effect.mp3"
+dest_files=["res://.godot/imported/Pew Sound Effect.mp3-fafcf1b6365616b6ae225492db743349.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

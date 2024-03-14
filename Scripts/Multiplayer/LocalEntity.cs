@@ -22,4 +22,7 @@ public abstract partial class LocalEntity : CharacterBody3D
     }
 
     public abstract void InputProcess(double delta);
+    public abstract void InputLocalEvent(InputEvent @event);
+    public abstract void SyncRotation(Vector2 rot);
+    public abstract Vector2 GetRotation();
 }

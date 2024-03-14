@@ -136,6 +136,7 @@ public partial class player : LocalEntity
 	{
 		if (Input.IsActionPressed("fire")) {
 			if (!GetNode<AnimationPlayer>("Gunfire").IsPlaying()) {
+				GetNode<AudioStreamPlayer>("GunSound").Play();
 				//Camera Shake
 				
 
@@ -158,6 +159,9 @@ public partial class player : LocalEntity
 								target.health -= 20;
 							}
 						}
+						else if (collider is player target2 && this!=target2) {
+							target2.Health -= 5;
+						}
 					}
 				}
 			}
@@ -179,6 +183,9 @@ public partial class player : LocalEntity
 	//Death
 	public void _death(DeathCause cause) {
 		GD.Print($"dead by {cause}");
+		GetNode<Label>("DeathScreen").Visible = true;
+		GetNode<AudioStreamPlayer>("DeathSound").Play();
+		GetNode<AudioStreamPlayer>("DeathSoundNuke").Play();
 	}
 
 	//Aim with Weapon
@@ -209,7 +216,7 @@ public partial class player : LocalEntity
 	}
 	
 	//Camera
-    public override void _Input(InputEvent @event)
+    public override void InputLocalEvent(InputEvent @event)
     {
         if (@event is InputEventMouseMotion mouseEvent&&Input.MouseMode == Input.MouseModeEnum.Captured) {
 			Rotation -= new Vector3 (0,mouseEvent.Relative.X*mouseSensitivity,0);
@@ -218,6 +225,16 @@ public partial class player : LocalEntity
 			else if (RotationHead.X>Mathf.Pi/2) RotationHead = new Vector3 (Mathf.Pi/2,0,0);
 			GetNode<Node3D>("Head").Rotation = RotationHead;
 		}
+    }
+	public override Vector2 GetRotation() {
+		return new Vector2(GetNode<Node3D>("Head").Rotation.X,Rotation.Y);
+	}
+
+    public override void SyncRotation(Vector2 rot)
+    {
+        Rotation = new Vector3(0,rot.Y,0);
+		Vector3 RotationHead = new Vector3(rot.X,0,0);
+		GetNode<Node3D>("Head").Rotation = RotationHead;
     }
 }
 
