@@ -55,6 +55,10 @@ public abstract partial class LocalEntity : CharacterBody3D
     public abstract void InitPlayer();
 
     public abstract void InputProcess(double delta);
+    
+    public abstract void InputLocalEvent(InputEvent @event);
+    public abstract void SyncRotation(Vector2 rot);
+    public abstract Vector2 GetRotation();
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     public void SyncServerPosVelo(Variant pos, Variant velo)
