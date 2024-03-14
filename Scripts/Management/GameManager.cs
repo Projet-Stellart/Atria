@@ -13,7 +13,7 @@ public partial class GameManager : Node
     public TileMeshGeneration tileMapGenerator;
     public HudManager hudManager;
 
-    public const string playerTemplate = "res://Scenes/Lilian/TempAssets/Player.tscn";
+    public const string playerTemplate = "res://Scenes/Nelson/player.tscn";
 
     //Match management
     private int matchStatus = -2;

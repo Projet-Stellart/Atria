@@ -5,7 +5,7 @@ public partial class player : LocalEntity
 	///////VARIABLES
 	//Nodes
 	Node3D head;
-	Camera3D camera;
+	public Camera3D camera;
 	RayCast3D aim;
 
 	//Scenes
@@ -35,7 +35,7 @@ public partial class player : LocalEntity
 
     
 	//FUNCTIONS
-	public override void _Ready() 
+	public override void InitPlayer()
 	{
 		//Initialize Default Values
 		accel = accel_type.normal;

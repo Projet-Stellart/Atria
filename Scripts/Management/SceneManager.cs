@@ -6,7 +6,7 @@ using System.Linq;
 public partial class SceneManager : Node
 {
     public static SceneManager singelton { get; private set; }
-    public const string MainMenuScene = "res://Scenes/Lilian/UI/TmpMainMenu.tscn";
+    public const string MainMenuScene = "res://Scenes/Guillaume/UI.tscn";
     public const string GameScene = "res://Scenes/Lilian/Game.tscn";
 
     public override void _Ready()
@@ -40,17 +40,24 @@ public partial class SceneManager : Node
     {
         Debug.Print("MainMenu");
         ClearChildren();
-        TmpMainMenu mainMenu = GD.Load<PackedScene>(MainMenuScene).Instantiate<TmpMainMenu>();
+        UI_Script mainMenu = GD.Load<PackedScene>(MainMenuScene).Instantiate<UI_Script>();
         AddChild(mainMenu);
         //Connect hooks
         mainMenu.OnPlay += () =>
         {
             LoadGame(args);
         };
+
+        mainMenu.OnCustomPlay += (string adr, int port) =>
+        {
+            LoadGame(adr, port);
+        };
+
         mainMenu.OnHost += () =>
         {
             LoadGame(new string[] {"--server"});
         };
+        mainMenu.Init();
     }
 
     public void LoadGame(string[] loadParameters)
@@ -59,6 +66,13 @@ public partial class SceneManager : Node
         GameManager gameScene = GD.Load<PackedScene>(GameScene).Instantiate<GameManager>();
         AddChild(gameScene);
         gameScene.Init(loadParameters);
-        //gameScene.Init(loadParameters);
+    }
+
+    public void LoadGame(string adress, int port)
+    {
+        ClearChildren();
+        GameManager gameScene = GD.Load<PackedScene>(GameScene).Instantiate<GameManager>();
+        AddChild(gameScene);
+        gameScene.Init(new string[] {"--client", "--adress", adress, "--port", ""+port});
     }
 }

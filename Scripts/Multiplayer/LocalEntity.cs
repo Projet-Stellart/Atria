@@ -9,11 +9,39 @@ public abstract partial class LocalEntity : CharacterBody3D
         RpcId(1, "SyncServerPosVelo", new Variant[] { Position, Velocity });
     }
 
+    public void Init()
+    {
+        InitPlayer();
+        if (IsLocalPlayer)
+        {
+            MapManager.singleton.HideMap();
+            MapManager.singleton.LoadMap();
+        }
+    }
+
     public override void _PhysicsProcess(double delta)
     {
         if (IsLocalPlayer)
         {
             InputProcess(delta);
+
+            //Minimap management
+
+            if (Input.IsActionJustPressed("map"))
+            {
+                //((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
+                MapManager.singleton.SelectLayer((int)((Position.Y + 3.2f) / 6.4f));
+                MapManager.singleton.ShowMap();
+
+            }
+            if (Input.IsActionJustReleased("map"))
+            {
+                //((Camera3D)GetChild(0)).MakeCurrent();
+                MapManager.singleton.HideMap();
+            }
+
+            if (Input.IsActionPressed("map"))
+                MapManager.singleton.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
         }
 
         MoveAndSlide();
@@ -23,6 +51,8 @@ public abstract partial class LocalEntity : CharacterBody3D
             SyncEntity();
         }
     }
+
+    public abstract void InitPlayer();
 
     public abstract void InputProcess(double delta);
     
