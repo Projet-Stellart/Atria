@@ -19,7 +19,7 @@ public partial class player : LocalEntity
 	public const float JUMP_VELOCITY = 5.0f;
 	// Get the gravity from the project settings to be synced with RigidBody nodes
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
-	//Properties
+	//Properties/Stats
 	public bool doubleJump = true;
 	public bool isCrouching = false;
 	public bool isAiming = false;
@@ -32,7 +32,6 @@ public partial class player : LocalEntity
 	//Vectors
 	Vector3 direction = new Vector3();
 	Vector3 velocity = new Vector3();
-	//Stats
 
     
 	//FUNCTIONS
@@ -49,6 +48,13 @@ public partial class player : LocalEntity
 		//Mouse in FPS
 		Input.MouseMode = Input.MouseModeEnum.Captured;
 	}
+
+    public override void _Process(double delta)
+    {
+		if (Health<=0) {
+			_death(DeathCause.Health);
+		}
+    }
 
     public override void InputProcess(double delta)
 	{
@@ -244,4 +250,5 @@ public struct Acceleration
 public enum DeathCause 
 {
 	DeathRegion,
+	Health,
 }
