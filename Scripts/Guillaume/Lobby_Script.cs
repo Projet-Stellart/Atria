@@ -15,6 +15,23 @@ public partial class Lobby_Script : CanvasLayer
 	{
 		var packedscene = GD.Load<PackedScene>("res://Scenes/Guillaume/Lobby_Player_Template.tscn");
 		var player = packedscene.Instantiate<Control>();
+		player.GetNode<RichTextLabel>("MarginContainer/ColorRect/RichTextLabel").Text = playerName;
 		GetNode<Control>(team == 0 ? "Custom/ScrollContainer/VBoxContainer" : "Custom/ScrollContainer2/VBoxContainer").AddChild(player);
 	}
+
+	public void LobbyClear()
+	{
+		Control team1 = GetNode<Control>("Custom/ScrollContainer/VBoxContainer");
+		Control team2 = GetNode<Control>("Custom/ScrollContainer2/VBoxContainer");
+
+		foreach (Node pl in team1.GetChildren())
+		{
+			pl.QueueFree();
+		}
+
+        foreach (Node pl in team2.GetChildren())
+        {
+            pl.QueueFree();
+        }
+    }
 }

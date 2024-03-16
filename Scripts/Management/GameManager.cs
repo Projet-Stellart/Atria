@@ -1,4 +1,5 @@
 using Godot;
+using Godot.NativeInterop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,12 +16,35 @@ public partial class GameManager : Node
 
     public const string playerTemplate = "res://Scenes/Nelson/player.tscn";
 
+    private const string lobbyTemplate = "res://Scenes/Guillaume/Lobby.tscn";
+    public Node lobby;
+
     //Match management
     private int matchStatus = -2;
 
     private List<(ulong, Action)> delayedActions;
 
+    private Dictionary<long, PlayerData> playerInfo;
+
+    public Dictionary<long, PlayerData> PlayerInfo { get => playerInfo; set => SetPlayerInfo(value); }
+
+    private void SetPlayerInfo(Dictionary<long, PlayerData> value)
+    {
+        if (Multiplayer.IsServer())
+            return;
+        playerInfo = value;
+    }
+
     private List<long>[] teams;
+
+    public List<long>[] Teams { get => teams; set => SetTeams(value); }
+
+    private void SetTeams(List<long>[] value)
+    {
+        if (Multiplayer.IsServer())
+            return;
+        teams = value;
+    }
 
     private GameData _gameData = new GameData()
     {
@@ -99,6 +123,10 @@ public partial class GameManager : Node
             }
             Debug.Print($"Parameters saved to: {paramPath}");
         }
+
+        //Display lobby
+        lobby = GD.Load<PackedScene>(lobbyTemplate).Instantiate();
+        AddChild(lobby);
     }
 
     private void LoadData(string[] args)
@@ -174,15 +202,16 @@ public partial class GameManager : Node
         {
             _gameData.port = (uint)MultiplayerManager.GetCmdPort(args);
         }
+        teams = new List<long>[2];
+        for (int i = 0; i < teams.Length; i++)
+        {
+            teams[i] = new List<long>();
+        }
+        playerInfo = new Dictionary<long, PlayerData>();
         if (args.Contains("--server"))
         {
             multiplayerManager.InitServer((int)GameData.port, (int)GameData.nbPlayer);
             delayedActions = new List<(ulong, Action)>();
-            teams = new List<long>[2];
-            for (int i = 0; i < teams.Length; i++)
-            {
-                teams[i] = new List<long>();
-            }
             InitMap();
         }
         else
@@ -229,8 +258,7 @@ public partial class GameManager : Node
                 t = i;
             }
         }
-        teams[0].Add(id);
-        Debug.Print("Player added to team " + (t + 1));
+        teams[t].Add(id);
         if (!tileMapGenerator.isGenerating && Multiplayer.GetPeers().Length == GameData.nbPlayer)
         {
             BeginMatch();
@@ -285,6 +313,9 @@ public partial class GameManager : Node
             Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
             multiplayerManager.InstantiateNewPlayer(id, npos);
         }
+
+        multiplayerManager.SyncStartGame();
+
         Debug.Print("Match will begin in " + (GameData.beginDelay) + " seconds!");
     }
 
@@ -333,6 +364,22 @@ public struct GameData
     /// Port the server will listen
     /// </summary>
     public uint port {  get; set; }
+}
+
+public struct PlayerData
+{
+    public string Username;
+
+    public Variant Serialize()
+    {
+        return new Godot.Collections.Dictionary<string, Variant>() { { "Username", Username } };
+    }
+
+    public static PlayerData Deserialize(Variant data)
+    {
+        Godot.Collections.Dictionary<string, Variant> dict = data.AsGodotDictionary<string, Variant>();
+        return new PlayerData() { Username = (string)dict["Username"] };
+    }
 }
 
 public struct TeamData
