@@ -56,6 +56,7 @@ text = "[ MiniMap PlaceHolder ]"
 editable = false
 
 [node name="MarginContainer7" type="MarginContainer" parent="Custom"]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.016
@@ -86,6 +87,7 @@ Add Team #1
 "
 
 [node name="MarginContainer6" type="MarginContainer" parent="Custom"]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.765625

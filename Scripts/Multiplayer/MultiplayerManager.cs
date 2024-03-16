@@ -235,7 +235,7 @@ public partial class MultiplayerManager : Node
         Rpc("StartGameClient");
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void StartGameClient()
     {
         GameManager.singleton.lobby.QueueFree();
@@ -273,7 +273,7 @@ public partial class MultiplayerManager : Node
         Rpc("LobbySyncClient", new Variant[] { steams, sPlayers });
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void LobbySyncClient(Variant teams, Variant playerData)
     {
         List<long>[] nTeams = new List<long>[teams.AsGodotArray().Count];
