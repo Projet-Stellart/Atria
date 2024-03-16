@@ -33,7 +33,7 @@ public partial class GameManager : Node
         },
         nbPlayer = 10,
         spawnDelay = 5,
-        beginDelay = 10,
+        beginDelay = 30,
         port = 7308
     };
 
@@ -44,7 +44,7 @@ public partial class GameManager : Node
         //Make the map rotate
         /*if (matchStatus >= 1)
         {
-            Vector3 rot = (tileMapGenerator).Rotation + new Vector3(10f, 0f, 0f) * (float)delta;
+            Vector3 rot = (tileMapGenerator).Rotation + new Vector3(0.3f, 0.3f, 0.3f) * (float)delta;
             multiplayerManager.RotateMapServer(rot);
         }*/
         if (delayedActions == null)
