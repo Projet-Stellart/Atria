@@ -4,11 +4,22 @@ using System.Diagnostics;
 
 public partial class Lobby_Script : CanvasLayer
 {
-	// Called when the node enters the scene tree for the first time.
+
+	public Action OnUpLayer;
+	public Action OnDownLayer;
+
 	public override void _Ready()
 	{
-		GetNode<Button>("Custom/MarginContainer7/VBoxContainer/Add_Team_1").ButtonUp += (() => {PlayerJoin("pute!", 0);});
-		GetNode<Button>("Custom/MarginContainer6/VBoxContainer/Add_Team_2").ButtonUp += (() => {PlayerJoin("pute2!", 1);});
+		GetNode<Button>("Custom/MarginContainer9/VBoxContainer/Down").ButtonUp += (() => {if (OnDownLayer != null)
+		{
+			OnDownLayer.Invoke();
+		}
+		;});
+		GetNode<Button>("Custom/MarginContainer10/VBoxContainer/Up").ButtonUp += (() => {if (OnUpLayer != null)
+		{
+			OnUpLayer.Invoke();
+		}
+		;});
 	}
 
 	public void PlayerJoin(string playerName, uint team)
