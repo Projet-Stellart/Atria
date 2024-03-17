@@ -32,9 +32,11 @@ public partial class Lobby_Script : CanvasLayer
 	{
         MapManager minimap = GetNode<MapManager>("Custom/MarginContainer5/MiniMapContainer/MiniMap");
         minimap.LoadMap();
-        minimap.SelectLayer(1);
+        minimap.SelectLayer(layer);
         minimap.ShowMap();
         minimap.HidePlayer();
+		OnUpLayer += minimap.ShowUpMap;
+        OnDownLayer += minimap.ShowDownMap;
     }
 
 	public void PlayerJoin(string playerName, uint team)

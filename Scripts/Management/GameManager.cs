@@ -23,6 +23,8 @@ public partial class GameManager : Node
 
     private List<(ulong, Action)> delayedActions;
 
+    public PlayerData localPlayerData;
+
     private Dictionary<long, PlayerData> playerInfo;
 
     public Dictionary<long, PlayerData> PlayerInfo { get => playerInfo; set => SetPlayerInfo(value); }

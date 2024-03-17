@@ -76,7 +76,7 @@ public partial class MultiplayerManager : Node
         if (Multiplayer.IsServer())
             return;
 
-        RpcId(1, "ReceivePlayerDataServer", new Variant[] { "Player" + Multiplayer.GetUniqueId() });
+        RpcId(1, "ReceivePlayerDataServer", new Variant[] { GameManager.singleton.localPlayerData.Username });
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
