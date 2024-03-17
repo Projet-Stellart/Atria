@@ -1,6 +1,6 @@
 FROM lilian1024/godot-mono
 
-USER appuser
+RUN [ "useradd", "appuser", "--create-home" ]
 
 WORKDIR /home/appuser/
 
@@ -9,7 +9,7 @@ COPY . ./sc
 RUN mkdir ./builds
 
 #Build project
-RUN godot "./sc/project.godot" --export-debug "Linux Docker" /app/builds/server
+RUN godot "./sc/project.godot" --export-debug "Linux Docker" /home/appuser/builds/server
 
 #Remove source code and Godot editor
 RUN rm -rf ./sc
@@ -17,4 +17,4 @@ RUN ungodot
 
 EXPOSE 7308/udp
 
-ENTRYPOINT sudo appuser -c /app/builds/server.sh --headless --server --port 7308
+ENTRYPOINT su appuser -c "./builds/server.sh --headless --server --port 7308 --nbPlayers 4"

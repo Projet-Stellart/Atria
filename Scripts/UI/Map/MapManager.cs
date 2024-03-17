@@ -5,14 +5,10 @@ using System.Diagnostics;
 
 public partial class MapManager : Control
 {
-    public static MapManager singleton;
     /*public string[,,] mapRes;
     public int[,,] mapRot;*/
 
-    public override void _Ready()
-    {
-        singleton = this;
-    }
+    private int selectedLayer;
 
     public void ClearMap()
     {
@@ -36,6 +32,23 @@ public partial class MapManager : Control
         ((Control)GetChild(1)).Hide();
     }
 
+    public void HidePlayer()
+    {
+        GetChild<Control>(1).Visible = false;
+    }
+
+    public void ShowUpMap()
+    {
+        selectedLayer++;
+        SelectLayer(selectedLayer);
+    }
+
+    public void ShowDownMap()
+    {
+        selectedLayer--;
+        SelectLayer(selectedLayer);
+    }
+
     public void UpdatePlayerPos(Vector2 relativePosition, float rotation)
     {
         Control Container = (Control)GetChild(0).GetChild(0);
@@ -49,6 +62,8 @@ public partial class MapManager : Control
 
     public void SelectLayer(int height)
     {
+        selectedLayer = height;
+
         Node Container = GetChild(0);
 
         Godot.Collections.Array<Node> children = Container.GetChildren();
@@ -65,8 +80,6 @@ public partial class MapManager : Control
             }
         }
     }
-
-    //TM.tileTemplates[TM.tileMap[] - 1].mapRes;
 
     public void LoadMap()
     {
