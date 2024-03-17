@@ -3,24 +3,28 @@ using System;
 
 public partial class HealthBar : Control
 {
+	
+	float health = 1;
 
 	public void SetHealth(float d)
 	{
 		var healthRect = GetNode<ColorRect>("Health/HB_BG/ColorRect/HB/ColorRect");
 
+		healthRect.Position = new Vector2((d-1) * healthRect.Size.X, healthRect.Position.Y);
+
 		if (healthRect != null && d > 0)
 		{
 			healthRect.Position = new Vector2(healthRect.Position.X - (int)d, healthRect.Position.Y);
 		}
-		if (healthRect.Position.X < -145 && healthRect.Position.X >= -230)
+		if (d < 0.5 && d > 0.15)
 		{
 			healthRect.Color = new Color(1, 1, 0);
 		}
-		else if (healthRect.Position.X >= -145)
+		else if (d >= 0.5)
 		{
 			healthRect.Color = new Color(0, 1, 0);
 		}
-		else if (healthRect.Position.X < -230)
+		else if (d <= 0.15)
 		{
 			healthRect.Color = new Color(1, 0, 0);
 		}
@@ -40,8 +44,8 @@ public partial class HealthBar : Control
 	 	var healthRect = GetNode<Control>("Health/HB_BG/ColorRect/HB/ColorRect");
 		if (healthRect != null)
 		{
-			healthRect.Position += new Vector2(-1, 0);
-			SetHealth(0);
+			health -= 0.01f;
+			SetHealth(health);
 		}
 	}
 
