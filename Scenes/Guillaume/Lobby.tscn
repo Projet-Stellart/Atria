@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://crg0ua4vy7tlf"]
+[gd_scene load_steps=4 format=3 uid="uid://crg0ua4vy7tlf"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/Lobby_Script.cs" id="1_bi12c"]
-[ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_vuha2"]
+[ext_resource type="Texture2D" uid="uid://dowuts2osg2p0" path="res://Ressources/UI/MapLayers/layer-download-svgrepo-com - Copy.svg" id="2_jp1ac"]
+[ext_resource type="Texture2D" uid="uid://b5n5nr41bqeou" path="res://Ressources/UI/MapLayers/layer-upload-svgrepo-com - Copy.svg" id="3_dwoyv"]
 
 [node name="Lobby" type="CanvasLayer"]
 script = ExtResource("1_bi12c")
@@ -46,71 +47,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer7" type="MarginContainer" parent="Custom"]
-visible = false
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.016
-anchor_top = 0.833
-anchor_right = 0.234
-anchor_bottom = 0.972
-offset_left = -0.480001
-offset_top = 0.239929
-offset_right = 0.47998
-offset_bottom = 0.159973
-grow_vertical = 0
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer7"]
-layout_mode = 2
-size_flags_vertical = 4
-
-[node name="Add_Team_1" type="Button" parent="Custom/MarginContainer7/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-text = "
-Add Team #1
-
-"
-
-[node name="MarginContainer6" type="MarginContainer" parent="Custom"]
-visible = false
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.765625
-anchor_top = 0.0277778
-anchor_right = 0.984375
-anchor_bottom = 0.166667
-grow_horizontal = 0
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer6"]
-layout_mode = 2
-size_flags_vertical = 4
-
-[node name="Add_Team_2" type="Button" parent="Custom/MarginContainer6/VBoxContainer"]
-layout_mode = 2
-size_flags_stretch_ratio = 0.0
-text = "
-Add Team #2
-
-"
-
 [node name="ScrollContainer" type="ScrollContainer" parent="Custom"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.03125
 anchor_top = 0.0555556
 anchor_right = 0.3125
-anchor_bottom = 0.805556
+anchor_bottom = 0.944445
 metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Custom/ScrollContainer"]
@@ -122,7 +65,7 @@ size_flags_vertical = 3
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.6875
-anchor_top = 0.194444
+anchor_top = 0.0555556
 anchor_right = 0.96875
 anchor_bottom = 0.944444
 metadata/_edit_use_anchors_ = true
@@ -131,3 +74,93 @@ metadata/_edit_use_anchors_ = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="MarginContainer9" type="MarginContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.46875
+anchor_top = 0.763889
+anchor_right = 0.53125
+anchor_bottom = 0.875
+offset_top = 10.0
+offset_bottom = 10.0
+grow_vertical = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="Control" parent="Custom/MarginContainer9"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer9/VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Down" type="Button" parent="Custom/MarginContainer9/VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+text = "
+
+"
+icon = ExtResource("2_jp1ac")
+flat = true
+icon_alignment = 1
+expand_icon = true
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer10" type="MarginContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.46875
+anchor_top = 0.125
+anchor_right = 0.53125
+anchor_bottom = 0.236111
+offset_top = -10.0
+offset_bottom = -10.0
+grow_vertical = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="Control" parent="Custom/MarginContainer10"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer10/VBoxContainer"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Up" type="Button" parent="Custom/MarginContainer10/VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+text = "
+
+"
+icon = ExtResource("3_dwoyv")
+flat = true
+icon_alignment = 1
+expand_icon = true
