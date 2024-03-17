@@ -1,5 +1,4 @@
 using Godot;
-using Godot.NativeInterop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -235,6 +234,7 @@ public partial class GameManager : Node
                 BeginMatch();
             }
         };
+
         tileMapGenerator.Init(GameData.mapParam.sizeX, GameData.mapParam.sizeY);
     }
 
@@ -274,6 +274,7 @@ public partial class GameManager : Node
     public void ManageDisconnectedClient(long id)
     {
         int index = FindPlayerTeam(id);
+        playerInfo.Remove(id);
         if (index >= 0)
         {
             teams[index].Remove(id);
@@ -287,9 +288,23 @@ public partial class GameManager : Node
         {
             //Players did not spawn
             matchStatus = -2;
+            multiplayerManager.LobbySync();
             delayedActions.Clear();
-            Debug.Print("Match start cancelled");
         }
+    }
+
+    public void ReceivePlayerData(string username)
+    {
+        if (!Multiplayer.IsServer())
+            return;
+        if (PlayerInfo.ContainsKey(Multiplayer.GetRemoteSenderId()))
+            return;
+        if (matchStatus >= 0)
+            return;
+
+        PlayerInfo.Add(Multiplayer.GetRemoteSenderId(), new PlayerData() { Username = (string)username });
+
+        multiplayerManager.LobbySync();
     }
 
     //Match management

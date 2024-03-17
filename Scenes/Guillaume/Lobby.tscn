@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://crg0ua4vy7tlf"]
+[gd_scene load_steps=3 format=3 uid="uid://crg0ua4vy7tlf"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/Lobby_Script.cs" id="1_bi12c"]
+[ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_vuha2"]
 
 [node name="Lobby" type="CanvasLayer"]
 script = ExtResource("1_bi12c")
@@ -31,29 +32,19 @@ theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 25
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer5"]
+[node name="MiniMapContainer" type="Control" parent="Custom/MarginContainer5"]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer5/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextEdit" type="TextEdit" parent="Custom/MarginContainer5/VBoxContainer/ColorRect"]
+[node name="MiniMap" parent="Custom/MarginContainer5/MiniMapContainer" instance=ExtResource("2_vuha2")]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -96.0
-offset_top = -17.5
-offset_right = 96.0
-offset_bottom = 17.5
+
+[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer5/MiniMapContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/background_color = Color(0, 0, 0, 1)
-text = "[ MiniMap PlaceHolder ]"
-editable = false
 
 [node name="MarginContainer7" type="MarginContainer" parent="Custom"]
 visible = false

@@ -9,7 +9,22 @@ public partial class Lobby_Script : CanvasLayer
 	{
 		GetNode<Button>("Custom/MarginContainer7/VBoxContainer/Add_Team_1").ButtonUp += (() => {PlayerJoin("pute!", 0);});
 		GetNode<Button>("Custom/MarginContainer6/VBoxContainer/Add_Team_2").ButtonUp += (() => {PlayerJoin("pute2!", 1);});
-	}
+    }
+
+	public void Init()
+	{
+		if (GameManager.singleton.tileMapGenerator.tileMap == null)
+			return;
+    }
+
+	public void InitMiniMap(int layer)
+	{
+        MapManager minimap = GetNode<MapManager>("Custom/MarginContainer5/MiniMapContainer/MiniMap");
+        minimap.LoadMap();
+        minimap.SelectLayer(1);
+        minimap.ShowMap();
+        minimap.HidePlayer();
+    }
 
 	public void PlayerJoin(string playerName, uint team)
 	{

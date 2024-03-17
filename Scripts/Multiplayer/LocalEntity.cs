@@ -15,8 +15,8 @@ public abstract partial class LocalEntity : CharacterBody3D
         InitPlayer();
         if (IsLocalPlayer)
         {
-            MapManager.singleton.HideMap();
-            MapManager.singleton.LoadMap();
+            GameManager.singleton.hudManager.miniMap.HideMap();
+            GameManager.singleton.hudManager.miniMap.LoadMap();
         }
     }
 
@@ -31,18 +31,18 @@ public abstract partial class LocalEntity : CharacterBody3D
             if (Input.IsActionJustPressed("map"))
             {
                 //((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
-                MapManager.singleton.SelectLayer((int)((Position.Y + 3.2f) / 6.4f));
-                MapManager.singleton.ShowMap();
+                GameManager.singleton.hudManager.miniMap.SelectLayer((int)((Position.Y + 3.2f) / 6.4f));
+                GameManager.singleton.hudManager.miniMap.ShowMap();
 
             }
             if (Input.IsActionJustReleased("map"))
             {
                 //((Camera3D)GetChild(0)).MakeCurrent();
-                MapManager.singleton.HideMap();
+                GameManager.singleton.hudManager.miniMap.HideMap();
             }
 
             if (Input.IsActionPressed("map"))
-                MapManager.singleton.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
+                GameManager.singleton.hudManager.miniMap.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
         }
 
         MoveAndSlide();

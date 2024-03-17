@@ -10,7 +10,7 @@ public partial class TileMeshGeneration : Node3D
 {
     public Action OnMapGenerated { get; set; }
 
-    private MapParam mapParam;
+    //private GameManager.singleton.GameData.mapParam GameManager.singleton.GameData.mapParam;
     //Switch from public to private
     /// <summary>
     /// Array of all tiles template for grid generation. Will be set to private in the final version
@@ -117,11 +117,13 @@ public partial class TileMeshGeneration : Node3D
     public int[,,] GenerateGrid(int sizex, int sizey, Random rand)
     {
         //tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
-        int[,,] tGrid = new int[mapParam.mapHeight, sizex, sizey];
+        int[,,] tGrid = new int[GameManager.singleton.GameData.mapParam.mapHeight, sizex, sizey];
 
-        for (int i = 0; i < mapParam.mapHeight; i++)
+        Debug.Print(GameManager.singleton.GameData.mapParam.mapHeight.ToString());
+
+        for (int i = 0; i < GameManager.singleton.GameData.mapParam.mapHeight; i++)
         {
-            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, mapParam.startHeight), (float)i / mapParam.mapHeight, rand);
+            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, GameManager.singleton.GameData.mapParam.startHeight), (float)i / GameManager.singleton.GameData.mapParam.mapHeight, rand);
         }
 
         return tGrid;
@@ -132,13 +134,13 @@ public partial class TileMeshGeneration : Node3D
         player = playerTemplate.Instantiate<Node3D>();
         AddChild(player);
         (int px, int py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
-        TilePrefa tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
+        TilePrefa tile = tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
         while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)
         {
             (px, py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
-            tile = tileTemplates[tGrid[mapParam.startHeight, px, py] - 1];
+            tile = tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
         }
-        return new Vector3(px * tileSize, mapParam.startHeight * tileSize-1, py * tileSize);
+        return new Vector3(px * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize-1, py * tileSize);
     }
 
     /// <summary>
@@ -368,7 +370,7 @@ public partial class TileMeshGeneration : Node3D
                 continue;
             }
             //Rule: stairs point to the correct next layer
-            if (templ.transition * (height - mapParam.startHeight) < 0)
+            if (templ.transition * (height - GameManager.singleton.GameData.mapParam.startHeight) < 0)
             {
                 continue;
             }
@@ -402,12 +404,6 @@ public partial class TileMeshGeneration : Node3D
 	{
         //Get metadata
         playerTemplate = (PackedScene)GetMeta("PlayerTemplate");
-
-        mapParam = new MapParam()
-        {
-            mapHeight = (int)GetMeta("mapHeight"),
-            startHeight = (int)GetMeta("mapHeight") >> 1
-        };
 
         Godot.Collections.Array<PackedScene> tiles = GetMeta("TileTemplate").AsGodotArray<PackedScene>();
         Godot.Collections.Array<Resource> mpRes = GetMeta("TileImage").AsGodotArray<Resource>();

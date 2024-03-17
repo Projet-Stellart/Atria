@@ -82,14 +82,7 @@ public partial class MultiplayerManager : Node
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void ReceivePlayerDataServer(Variant username)
     {
-        if (!Multiplayer.IsServer())
-            return;
-        if (GameManager.singleton.PlayerInfo.ContainsKey(Multiplayer.GetRemoteSenderId()))
-            return;
-
-        GameManager.singleton.PlayerInfo.Add(Multiplayer.GetRemoteSenderId(), new PlayerData() { Username = (string)username });
-
-        LobbySync();
+        GameManager.singleton.ReceivePlayerData((string)username);
     }
 
     private void OnClientDisconnect(long id)
@@ -98,12 +91,12 @@ public partial class MultiplayerManager : Node
         {
             //Server OnClientDisconnect
             GameManager.singleton.ManageDisconnectedClient(id);
+            Debug.Print("Client disconnected");
         }
         else
         {
             //Client OnClientDisconnect
-            //Temp quit -> need to be change to load main menu
-            GetTree().Quit();
+            SceneManager.singelton.LoadMainMenu(OS.GetCmdlineArgs());
         }
     }
 
@@ -140,7 +133,7 @@ public partial class MultiplayerManager : Node
                 }
             }
         }
-        RpcId(id, "FinishedMap", new Variant[0]);
+        RpcId(id, "FinishedMap", new Variant[] { GameManager.singleton.GameData.mapParam.startHeight });
     }
 
     public void InstantiateNewPlayer(long id, Vector3 pos)
@@ -221,9 +214,12 @@ public partial class MultiplayerManager : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void FinishedMap()
+    private void FinishedMap(Variant layer)
     {
         GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
+        if (GameManager.singleton.lobby == null)
+            return;
+        ((Lobby_Script)GameManager.singleton.lobby).InitMiniMap((int)layer);
     }
 
     //Game management
