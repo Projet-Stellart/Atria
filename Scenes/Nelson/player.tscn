@@ -233,6 +233,9 @@ _data = {
 "RESET": SubResource("Animation_15f5c")
 }
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_srdf2"]
+radius = 0.375
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_ryegq")
 
@@ -289,3 +292,6 @@ stream = ExtResource("4_xpweg")
 
 [node name="GunSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_2kjfu")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_srdf2")

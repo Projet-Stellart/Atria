@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://so4f0bcdldlh"]
+[gd_scene load_steps=2 format=3 uid="uid://so4f0bcdldlh"]
 
-[node name="Main" type="Node3D"]
+[ext_resource type="Script" path="res://Scripts/Management/SceneManager.cs" id="1_pu3t2"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_pu3t2")

@@ -7,6 +7,17 @@ public abstract partial class LocalEntity : CharacterBody3D
     public void SyncEntity()
     {
         RpcId(1, "SyncServerPosVelo", new Variant[] { Position, Velocity });
+        RpcId(1, "SyncServerRot", new Variant[] { GetRotation() });
+    }
+
+    public void Init()
+    {
+        InitPlayer();
+        if (IsLocalPlayer)
+        {
+            GameManager.singleton.hudManager.miniMap.HideMap();
+            GameManager.singleton.hudManager.miniMap.LoadMap();
+        }
     }
 
     public override void _PhysicsProcess(double delta)
@@ -14,6 +25,24 @@ public abstract partial class LocalEntity : CharacterBody3D
         if (IsLocalPlayer)
         {
             InputProcess(delta);
+
+            //Minimap management
+
+            if (Input.IsActionJustPressed("map"))
+            {
+                //((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
+                GameManager.singleton.hudManager.miniMap.SelectLayer((int)((Position.Y + 3.2f) / 6.4f));
+                GameManager.singleton.hudManager.miniMap.ShowMap();
+
+            }
+            if (Input.IsActionJustReleased("map"))
+            {
+                //((Camera3D)GetChild(0)).MakeCurrent();
+                GameManager.singleton.hudManager.miniMap.HideMap();
+            }
+
+            if (Input.IsActionPressed("map"))
+                GameManager.singleton.hudManager.miniMap.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
         }
 
         MoveAndSlide();
@@ -23,6 +52,16 @@ public abstract partial class LocalEntity : CharacterBody3D
             SyncEntity();
         }
     }
+
+    public override void _Input(InputEvent @event)
+    {
+        if (IsLocalPlayer)
+        {
+            InputLocalEvent(@event);
+        }
+    }
+
+    public abstract void InitPlayer();
 
     public abstract void InputProcess(double delta);
     
@@ -47,6 +86,21 @@ public abstract partial class LocalEntity : CharacterBody3D
         }
     }
 
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    public void SyncServerRot(Variant rot)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        Vector2 rotation = rot.AsVector2();
+        SyncRotation(rotation);
+        foreach (var id in Multiplayer.GetPeers())
+        {
+            if (id == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(id, "SyncRot", new Variant[] { rotation });
+        }
+    }
+
     public void SendServerPosVelo(Vector3 position, Vector3 velocity)
     {
         if (!Multiplayer.IsServer())
@@ -59,6 +113,17 @@ public abstract partial class LocalEntity : CharacterBody3D
         }
     }
 
+    public void SendServerRot(Vector2 rotation)
+    {
+        if (!Multiplayer.IsServer())
+            return;
+        SyncRotation(rotation);
+        foreach (var id in Multiplayer.GetPeers())
+        {
+            RpcId(id, "SyncRot", new Variant[] { rotation });
+        }
+    }
+
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     public void SyncPosVelo(Variant pos, Variant velo)
     {
@@ -66,5 +131,21 @@ public abstract partial class LocalEntity : CharacterBody3D
         Vector3 velocity = velo.AsVector3();
         Position = position;
         Velocity = velocity;
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    public void SyncRot(Variant pos)
+    {
+        SyncRotation(pos.AsVector2());
+    }
+
+    public abstract void CalculateFire();
+
+    public abstract void ShowFire();
+    
+    public void FireLocal() 
+    {
+        CalculateFire();
+        ShowFire();
     }
 }

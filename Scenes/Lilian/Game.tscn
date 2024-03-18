@@ -21,7 +21,7 @@ script = ExtResource("1_tuo0n")
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_emm8j")
 
-[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+[node name="MiniMap" type="MarginContainer" parent="HUD"]
 anchors_preset = -1
 anchor_left = 0.2
 anchor_right = 0.8
@@ -33,10 +33,10 @@ offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="HUD/MarginContainer"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="HUD/MiniMap"]
 layout_mode = 2
 
-[node name="MiniMap" parent="HUD/MarginContainer/AspectRatioContainer" instance=ExtResource("2_73q1c")]
+[node name="MiniMap" parent="HUD/MiniMap/AspectRatioContainer" instance=ExtResource("2_73q1c")]
 layout_mode = 2
 
 [node name="Multiplayer" type="Node" parent="."]

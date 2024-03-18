@@ -6,10 +6,11 @@ public partial class UI_Script : CanvasLayer
 
 {
 
-	public Action OnPlay;
-	public Action<string, int> OnCustomPlay;
+	public Action<string> OnPlay;
+	public Action OnHost;
+	public Action<string, int, string> OnCustomPlay;
 	
-	public override void _Ready()
+	public void Init()
 	{
 		var main = GetNode<Control>("Main");
 		for (int i = 0; i < GetChildCount(); i++)
@@ -30,6 +31,10 @@ public partial class UI_Script : CanvasLayer
 		var play = GetNode<Control>("Play");
 		main.Visible = false;
 		play.Visible = true;
+		var custom = GetNode<Button>("Play/MarginContainer5/VBoxContainer/Custom");
+		var online = GetNode<Button>("Play/MarginContainer4/VBoxContainer/Online");
+		custom.Disabled = true;
+		online.Disabled = true;
 	}
 
 	private void _on_credits_pressed()
@@ -122,11 +127,8 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_online_pressed()
 	{
-		// var play = GetNode<Control>("Play");
-		// var online = GetNode<Control>("Online");
-		// play.Visible = false;
-		// online.Visible = true;
-		if (OnPlay != null) OnPlay.Invoke();
+		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
+		if (OnPlay != null) OnPlay.Invoke(username);
 	}
 
 	private void _on_custom_pressed()
@@ -155,14 +157,10 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_join_pressed()
 	{
-		//var custom = GetNode<Control>("Custom");
-		//var joined = GetNode<Control>("Joined");
-		//custom.Visible = false;
-		//joined.Visible = true;
 		string IP = GetNode<TextEdit>("Custom/MarginContainer4/VBoxContainer/TextEdit").Text;
 		uint Port = uint.Parse(GetNode<TextEdit>("Custom/MarginContainer5/VBoxContainer/TextEdit").Text);
-		if (OnCustomPlay != null) OnCustomPlay.Invoke(IP, (int)Port);
-		//Debug.Print("IP : " + IP + " - Port : " + Port);
+		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
+		if (OnCustomPlay != null) OnCustomPlay.Invoke(IP, (int)Port, username);
 	}
 
 	private void _on_exit_pressed_custom_joined()
@@ -171,6 +169,21 @@ public partial class UI_Script : CanvasLayer
 		var custom = GetNode<Control>("Custom");
 		joined.Visible = false;
 		custom.Visible = true;
+	}
+
+	private void _on_username_input_text_changed()
+	{
+		var custom = GetNode<Button>("Play/MarginContainer5/VBoxContainer/Custom");
+		var online = GetNode<Button>("Play/MarginContainer4/VBoxContainer/Online");
+		custom.Disabled = false;
+		online.Disabled = false;
+		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
+		if (username.Length <= 2)
+		{
+			custom.Disabled = true;
+			online.Disabled = true;
+		}
+		
 	}
 
 }
