@@ -11,6 +11,7 @@ public partial class nelson_main : Node3D
     public override void _Ready()
     {
         DisplayServer.WindowSetMode(DisplayServer.WindowMode.Fullscreen);
+        Input.MouseMode = Input.MouseModeEnum.Captured;
         //Nodes Initialized
         deathRegion = GetNode<Area3D>("Death Region");
     }
