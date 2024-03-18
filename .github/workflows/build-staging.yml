@@ -17,12 +17,12 @@ jobs:
     strategy:
       matrix:
         platform:
-          - name: Windows
-            file: game.exe
-          - name: MacOS
-            file: game.zip
-          - name: Linux
-            file: game.zip
+          - name: Windows Desktop
+            file: Atria.exe
+          - name: Linux-X11
+            file: Atria.sh
+          - name: Linux-X11
+            file: Atria
     steps:
       - uses: actions/checkout@v2
         with:
