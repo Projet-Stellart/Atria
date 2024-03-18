@@ -1,11 +1,9 @@
-[gd_scene load_steps=16 format=3 uid="uid://c1o14bivnd8qb"]
+[gd_scene load_steps=17 format=3 uid="uid://dwx8ndyw304ra"]
 
 [ext_resource type="PackedScene" uid="uid://ccnnulmcgps1c" path="res://Ressources/GamePlay/3D_Models/ak_47_custom.glb" id="1_gply0"]
 [ext_resource type="Script" path="res://Scripts/Gameplay/player.cs" id="1_ryegq"]
-[ext_resource type="AudioStream" uid="uid://dsilnn2beyd55" path="res://Ressources/GamePlay/Sounds/Thompson SMG with suppressor single shot sound effect.mp3" id="5_ufkxw"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_srdf2"]
-radius = 0.375
+[ext_resource type="AudioStream" uid="uid://cqfjcj5xef1tf" path="res://Ressources/GamePlay/Sounds/ouf.mp3" id="3_gq3vq"]
+[ext_resource type="AudioStream" uid="uid://di4bxjhr6hvlf" path="res://Ressources/GamePlay/test.mp3" id="5_8wrqy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2wcmm"]
 radius = 0.375
@@ -234,12 +232,11 @@ _data = {
 "RESET": SubResource("Animation_15f5c")
 }
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_srdf2"]
+radius = 0.375
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_ryegq")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource("CapsuleMesh_srdf2")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -274,5 +271,26 @@ libraries = {
 "": SubResource("AnimationLibrary_aod32")
 }
 
+[node name="DeathScreen" type="Label" parent="."]
+visible = false
+offset_left = 360.0
+offset_top = 185.0
+offset_right = 680.0
+offset_bottom = 351.0
+theme_override_colors/font_color = Color(0.74902, 0, 0, 1)
+theme_override_font_sizes/font_size = 70
+text = "WASTED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_gq3vq")
+
+[node name="DeathSoundNuke" type="AudioStreamPlayer" parent="."]
+
 [node name="GunSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_ufkxw")
+stream = ExtResource("5_8wrqy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_srdf2")
