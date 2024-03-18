@@ -4,6 +4,5 @@
 .idea/
 .vs/
 Builds/
-Ressources/
 RunServer.bat
 serverParams.json
