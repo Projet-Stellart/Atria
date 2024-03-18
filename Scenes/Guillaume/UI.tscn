@@ -5,7 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://b0efel5c7odhb" path="res://Ressources/UI/Sci-Fi Sound Effects (mp3cut (mp3cut.net).mp3" id="3_41h6r"]
 [ext_resource type="Texture2D" uid="uid://2x54dyrtl6yq" path="res://Ressources/UI/UI-Elements/SmallEmptyButton.png" id="3_pga3l"]
 [ext_resource type="AudioStream" uid="uid://bisdnb3vq2dvx" path="res://Ressources/UI/Trap.mp3" id="4_7w28x"]
-[ext_resource type="Shortcut" uid="uid://cx64jymi5t2sa" path="res://Ressources/UI/shortcat.tres" id="6_yjv84"]
+[ext_resource type="Shortcut" uid="uid://bjmel41tvfycs" path="res://Ressources/UI/shortcat.tres" id="6_yjv84"]
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_mxrpx")

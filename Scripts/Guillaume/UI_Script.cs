@@ -15,16 +15,6 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("SonFond").Play();
 	}
 
-	public void Init()
-	{
-		var main = GetNode<Control>("Main");
-		for (int i = 0; i < GetChildCount(); i++)
-		{
-			GetChild<Control>(i).Visible = false;
-		}
-		main.Visible = true;
-	}
-
 	private void _on_quit_pressed()
 	{
 		GetTree().Quit();
