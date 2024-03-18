@@ -10,6 +10,11 @@ public partial class UI_Script : CanvasLayer
 	public Action OnHost;
 	public Action<string, int, string> OnCustomPlay;
 	
+	public override void _Ready()
+	{
+		GetNode<AudioStreamPlayer>("SonFond").Play();
+	}
+
 	public void Init()
 	{
 		var main = GetNode<Control>("Main");
@@ -23,6 +28,7 @@ public partial class UI_Script : CanvasLayer
 	private void _on_quit_pressed()
 	{
 		GetTree().Quit();
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_play_pressed()
@@ -31,10 +37,8 @@ public partial class UI_Script : CanvasLayer
 		var play = GetNode<Control>("Play");
 		main.Visible = false;
 		play.Visible = true;
-		var custom = GetNode<Button>("Play/MarginContainer5/VBoxContainer/Custom");
-		var online = GetNode<Button>("Play/MarginContainer4/VBoxContainer/Online");
-		custom.Disabled = true;
-		online.Disabled = true;
+		_on_username_input_text_changed();
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_credits_pressed()
@@ -43,6 +47,7 @@ public partial class UI_Script : CanvasLayer
 		var credits = GetNode<Control>("Credits");
 		main.Visible = false;
 		credits.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_options_pressed()
@@ -51,6 +56,7 @@ public partial class UI_Script : CanvasLayer
 		var options = GetNode<Control>("Options");
 		main.Visible = false;
 		options.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed_controls()
@@ -59,6 +65,7 @@ public partial class UI_Script : CanvasLayer
 		var options = GetNode<Control>("Options");
 		controls.Visible = false;
 		options.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed_credits()
@@ -67,6 +74,7 @@ public partial class UI_Script : CanvasLayer
 		var main = GetNode<Control>("Main");
 		credits.Visible = false;
 		main.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed_graphics()
@@ -75,6 +83,7 @@ public partial class UI_Script : CanvasLayer
 		var options = GetNode<Control>("Options");
 		graphics.Visible = false;
 		options.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed()
@@ -83,6 +92,7 @@ public partial class UI_Script : CanvasLayer
 		var options = GetNode<Control>("Options");
 		sound.Visible = false;
 		options.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed_play()
@@ -91,6 +101,7 @@ public partial class UI_Script : CanvasLayer
 		var main = GetNode<Control>("Main");
 		play.Visible = false;
 		main.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_sound_pressed()
@@ -99,6 +110,7 @@ public partial class UI_Script : CanvasLayer
 		var sound = GetNode<Control>("Sound");
 		options.Visible = false;
 		sound.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_graphics_pressed()
@@ -107,6 +119,7 @@ public partial class UI_Script : CanvasLayer
 		var graphics = GetNode<Control>("Graphics");
 		options.Visible = false;
 		graphics.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_controls_pressed()
@@ -115,6 +128,7 @@ public partial class UI_Script : CanvasLayer
 		var controls = GetNode<Control>("Controls");
 		options.Visible = false;
 		controls.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed_options()
@@ -123,12 +137,14 @@ public partial class UI_Script : CanvasLayer
 		var main = GetNode<Control>("Main");
 		options.Visible = false;
 		main.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_online_pressed()
 	{
 		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
 		if (OnPlay != null) OnPlay.Invoke(username);
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_custom_pressed()
@@ -137,6 +153,7 @@ public partial class UI_Script : CanvasLayer
 		var custom = GetNode<Control>("Custom");
 		play.Visible = false;
 		custom.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed_online()
@@ -145,6 +162,7 @@ public partial class UI_Script : CanvasLayer
 		var play = GetNode<Control>("Play");
 		online.Visible = false;
 		play.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed_custom()
@@ -153,6 +171,7 @@ public partial class UI_Script : CanvasLayer
 		var play = GetNode<Control>("Play");
 		custom.Visible = false;
 		play.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_join_pressed()
@@ -161,6 +180,7 @@ public partial class UI_Script : CanvasLayer
 		uint Port = uint.Parse(GetNode<TextEdit>("Custom/MarginContainer5/VBoxContainer/TextEdit").Text);
 		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
 		if (OnCustomPlay != null) OnCustomPlay.Invoke(IP, (int)Port, username);
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_exit_pressed_custom_joined()
@@ -169,6 +189,7 @@ public partial class UI_Script : CanvasLayer
 		var custom = GetNode<Control>("Custom");
 		joined.Visible = false;
 		custom.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_username_input_text_changed()
@@ -178,12 +199,26 @@ public partial class UI_Script : CanvasLayer
 		custom.Disabled = false;
 		online.Disabled = false;
 		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
-		if (username.Length <= 2)
+		if (username.Length <= 2 || username.Contains(" "))
 		{
 			custom.Disabled = true;
 			online.Disabled = true;
 		}
-		
+	}
+
+	private bool is_authorized_char(char c)
+	{
+		if (c <= 'z' && c >= 'a') return true;
+		if (c <= 'Z' && c >= 'A') return true;
+		if (c <= '9' && c >= '0') return true;
+		return false;
+	}
+
+	private void _on_check_button_pressed()
+	{
+		var music_sounds = AudioServer.GetBusIndex("Master");
+		AudioServer.SetBusMute(music_sounds, !AudioServer.IsBusMute(music_sounds));
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 }
