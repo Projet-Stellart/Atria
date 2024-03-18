@@ -139,7 +139,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         SyncRotation(pos.AsVector2());
     }
 
-    public void SyncHealth();
+    public void SyncHealth() {};
 
     public abstract void CalculateFire();
 
