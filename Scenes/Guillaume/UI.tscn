@@ -276,6 +276,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Sound"]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.016
@@ -300,6 +301,7 @@ text = "Sound :"
 alignment = 1
 
 [node name="MarginContainer4" type="MarginContainer" parent="Sound"]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.016
@@ -399,6 +401,25 @@ text = "
 Custom
 
 "
+
+[node name="MarginContainer6" type="MarginContainer" parent="Play"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.382813
+anchor_top = 0.347222
+anchor_right = 0.617188
+anchor_bottom = 0.395833
+offset_top = 1.52588e-05
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer6"]
+layout_mode = 2
+
+[node name="UsernameInput" type="TextEdit" parent="Play/MarginContainer6/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Username"
+scroll_fit_content_height = true
 
 [node name="Options" type="Control" parent="."]
 visible = false
@@ -632,6 +653,8 @@ Exit
 [connection signal="pressed" from="Play/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_play"]
 [connection signal="pressed" from="Play/MarginContainer4/VBoxContainer/Online" to="." method="_on_online_pressed"]
 [connection signal="pressed" from="Play/MarginContainer5/VBoxContainer/Custom" to="." method="_on_custom_pressed"]
+[connection signal="text_changed" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_changed"]
+[connection signal="text_set" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_set"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
