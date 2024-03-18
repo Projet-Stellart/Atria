@@ -131,8 +131,18 @@ public partial class player : LocalEntity
 		//Head Bob
 	}
 
-	//Gun Fire
-	public void _fire() 
+    public override void CalculateFire()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void ShowFire()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    //Gun Fire
+    public void _fire() 
 	{
 		if (Input.IsActionPressed("fire")) {
 			if (!GetNode<AnimationPlayer>("Gunfire").IsPlaying()) {
@@ -151,7 +161,7 @@ public partial class player : LocalEntity
 						b.GlobalPosition = aim.GetCollisionPoint(); //Putting the bullet hole where we hit on the collider
 						var dir = aim.GetCollisionPoint() + aim.GetCollisionNormal(); //Calculating the direction
 						if (b.GlobalTransform.Origin != dir)
-							b.LookAt(dir, Vector3.Up);
+                            b.LookAt(dir);
 
 						//if (target is in group Ennemy -> Damage (Must define the groups for multi))
 						if (collider is enemy target) { //Casting collider to target to modify enemy properties
