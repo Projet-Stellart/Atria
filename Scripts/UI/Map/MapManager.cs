@@ -39,13 +39,15 @@ public partial class MapManager : Control
 
     public void ShowUpMap()
     {
-        selectedLayer++;
+        if (selectedLayer < GameManager.singleton.tileMapGenerator.tileMap.GetLength(0)-1)
+            selectedLayer++;
         SelectLayer(selectedLayer);
     }
 
     public void ShowDownMap()
     {
-        selectedLayer--;
+        if (selectedLayer > 0)
+            selectedLayer--;
         SelectLayer(selectedLayer);
     }
 

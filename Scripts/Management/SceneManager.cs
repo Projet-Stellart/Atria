@@ -24,7 +24,7 @@ public partial class SceneManager : Node
 		//Auto start
 		if (args.Contains("--server") || args.Contains("--client"))
 		{
-			LoadGame(args);
+			LoadGame(args, new PlayerData());
 		}
 	}
 
@@ -43,36 +43,38 @@ public partial class SceneManager : Node
 		UI_Script mainMenu = GD.Load<PackedScene>(MainMenuScene).Instantiate<UI_Script>();
 		AddChild(mainMenu);
 		//Connect hooks
-		mainMenu.OnPlay += (string a) =>
+		mainMenu.OnPlay += (string username) =>
 		{
-			LoadGame(args);
+			LoadGame(args, new PlayerData() { Username = username });
 		};
 
-		mainMenu.OnCustomPlay += (string adr, int port, string a) =>
+		mainMenu.OnCustomPlay += (string adr, int port, string username) =>
 		{
-			LoadGame(adr, port);
+			LoadGame(adr, port, new PlayerData() { Username = username });
 		};
 
 		mainMenu.OnHost += () =>
 		{
-			LoadGame(new string[] {"--server"});
+			LoadGame(new string[] {"--server"}, new PlayerData());
 		};
 		mainMenu.Init();
 	}
 
-	public void LoadGame(string[] loadParameters)
+	public void LoadGame(string[] loadParameters, PlayerData data)
 	{
 		ClearChildren();
 		GameManager gameScene = GD.Load<PackedScene>(GameScene).Instantiate<GameManager>();
 		AddChild(gameScene);
+		gameScene.localPlayerData = data;
 		gameScene.Init(loadParameters);
 	}
 
-	public void LoadGame(string adress, int port)
+	public void LoadGame(string adress, int port, PlayerData data)
 	{
 		ClearChildren();
 		GameManager gameScene = GD.Load<PackedScene>(GameScene).Instantiate<GameManager>();
 		AddChild(gameScene);
-		gameScene.Init(new string[] {"--client", "--adress", adress, "--port", ""+port});
+        gameScene.localPlayerData = data;
+        gameScene.Init(new string[] {"--client", "--adress", adress, "--port", ""+port});
 	}
 }

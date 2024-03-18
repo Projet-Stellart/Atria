@@ -10,7 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [linux, windows, mac]
+        platform:
+          - preset: Windows Desktop
+            name: Windows-exe
+            file: Atria.exe
+          - preset: Linux-X11
+            name: Linux-sh
+            file: Atria.sh
+          - preset: Linux-X11
+            name: Linux
+            file: Atria
     steps:
       - uses: actions/checkout@v2
         with:
@@ -19,11 +28,11 @@ jobs:
         id: build
         uses: manleydev/build-godot-action@v1.5.0
         with:
-          name: atria-prod
-          preset: ${{ matrix.platform }}
+          name: ${{ matrix.platform.file }}
+          preset: ${{ matrix.platform.preset }}
           debugMode: "false"
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: Client - ${{ matrix.platform }}
-          path: ${{ github.workspace }}/${{ steps.build.outputs.build }}
+          name: Client - ${{ matrix.platform.name }}
+          path: ./build/

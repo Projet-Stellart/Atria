@@ -76,7 +76,7 @@ public partial class MultiplayerManager : Node
         if (Multiplayer.IsServer())
             return;
 
-        RpcId(1, "ReceivePlayerDataServer", new Variant[] { "Player" + Multiplayer.GetUniqueId() });
+        RpcId(1, "ReceivePlayerDataServer", new Variant[] { GameManager.singleton.localPlayerData.Username });
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -147,6 +147,7 @@ public partial class MultiplayerManager : Node
         playersControler.Add(id, player);
         player.Position = pos;
         player.IsLocalPlayer = false;
+        player.uid = id;
         player.Name = "Player" + id;
         player.Init();
         player.camera.ClearCurrent(false);
@@ -167,6 +168,7 @@ public partial class MultiplayerManager : Node
         player.Position = pos.AsVector3();
         bool localPl = Multiplayer.GetUniqueId() == id.As<long>();
         player.IsLocalPlayer = localPl;
+        player.uid = id.As<long>();
         player.Name = "Player" + id;
         player.Init();
         player.camera.Current = localPl;

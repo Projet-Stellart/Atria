@@ -37,16 +37,4 @@ public partial class HealthBar : Control
 		var healthRect = GetNode<Control>("Health/HB_BG/ColorRect/HB/ColorRect");
 		healthRect.Position = new Vector2(0, 0);
 	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	 	var healthRect = GetNode<Control>("Health/HB_BG/ColorRect/HB/ColorRect");
-		if (healthRect != null)
-		{
-			health -= 0.01f;
-			SetHealth(health);
-		}
-	}
-
 }

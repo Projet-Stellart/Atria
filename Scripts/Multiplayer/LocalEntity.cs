@@ -3,6 +3,7 @@
 public abstract partial class LocalEntity : CharacterBody3D
 {
     public bool IsLocalPlayer;
+    public long uid;
 
     public void SyncEntity()
     {
@@ -139,14 +140,59 @@ public abstract partial class LocalEntity : CharacterBody3D
         SyncRotation(pos.AsVector2());
     }
 
-    public void SyncHealth() {}
+    public void SyncHealth(float health)
+    {
+        if (!Multiplayer.IsServer())
+            return;
+        Rpc("SyncHealthClientRpc", new Variant[] { health });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncHealthClientRpc(Variant health)
+    {
+        if (this is player playerScript)
+        {
+            playerScript.Health = (float)health;
+            if (IsLocalPlayer)
+                GameManager.singleton.hudManager.healthBar.SetHealth(playerScript.Health / 100);
+        }
+    }
 
     public abstract void CalculateFire();
 
     public abstract void ShowFire();
-    
-    public void FireLocal() 
+
+    public void FireLocal()
     {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "FireServerRpc", new Variant[] {Position, Rotation});
+        ShowFire();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void FireServerRpc(Variant pos, Variant rot)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        Vector3 tPos = Position;
+        Vector3 tRot = Rotation;
+        Position = pos.AsVector3();
+        Rotation = rot.AsVector3();
         CalculateFire();
+        Position = tPos;
+        Rotation = tRot;
+        foreach (int player in Multiplayer.GetPeers())
+        {
+            if (player == Multiplayer.GetRemoteSenderId())
+                return;
+            RpcId(player, "ReplicateFireRpc", new Variant[0]);
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void ReplicateFireRpc()
+    {
+        ShowFire();
     }
 }
