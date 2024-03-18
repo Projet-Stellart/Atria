@@ -1,16 +1,21 @@
-[gd_scene load_steps=5 format=3 uid="uid://cthdwsw2b1hp6"]
+[gd_scene load_steps=7 format=3 uid="uid://cthdwsw2b1hp6"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
 [ext_resource type="Texture2D" uid="uid://d0j1yn5gce2qt" path="res://Ressources/UI/_0e64fb47-7d02-42c7-8fe4-ba00e8761c2d.jpeg" id="2_jyfkf"]
+[ext_resource type="AudioStream" uid="uid://b0efel5c7odhb" path="res://Ressources/UI/Sci-Fi Sound Effects (mp3cut (mp3cut.net).mp3" id="3_41h6r"]
 [ext_resource type="Texture2D" uid="uid://2x54dyrtl6yq" path="res://Ressources/UI/UI-Elements/SmallEmptyButton.png" id="3_pga3l"]
 [ext_resource type="AudioStream" uid="uid://bisdnb3vq2dvx" path="res://Ressources/UI/Trap.mp3" id="4_7w28x"]
+[ext_resource type="Shortcut" uid="uid://cx64jymi5t2sa" path="res://Ressources/UI/shortcat.tres" id="6_yjv84"]
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_mxrpx")
 
 [node name="SonFond" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_7w28x")
-volume_db = -20.0
+volume_db = -30.0
+
+[node name="MenuSwitch" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_41h6r")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 anchors_preset = 15
@@ -37,11 +42,14 @@ anchor_right = 0.984
 anchor_bottom = 0.119
 offset_left = -999.36
 offset_top = 279.84
-offset_right = -1149.52
-offset_bottom = 280.32
+offset_right = -1045.52
+offset_bottom = 308.32
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer4"]
 layout_mode = 2
+alignment = 1
 
 [node name="Options" type="Button" parent="Main/MarginContainer4/VBoxContainer"]
 layout_mode = 2
@@ -61,10 +69,11 @@ anchor_bottom = 0.119
 offset_left = -999.36
 offset_top = 479.84
 offset_right = -1149.52
-offset_bottom = 480.32
+offset_bottom = 614.32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer"]
 layout_mode = 2
+alignment = 1
 
 [node name="Credits" type="Button" parent="Main/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -173,6 +182,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Controls/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -247,6 +257,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Credits/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -302,6 +313,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Graphics/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -359,6 +371,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Sound/MarginContainer4/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -391,6 +404,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Play/MarginContainer3/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -515,6 +529,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Options/MarginContainer4/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -547,6 +562,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Online/MarginContainer3/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -579,6 +595,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -677,6 +694,7 @@ layout_mode = 2
 [node name="Exit" type="Button" parent="Joined/MarginContainer3/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
 text = "
 Exit
 
@@ -695,7 +713,6 @@ Exit
 [connection signal="pressed" from="Play/MarginContainer4/VBoxContainer/Online" to="." method="_on_online_pressed"]
 [connection signal="pressed" from="Play/MarginContainer5/VBoxContainer/Custom" to="." method="_on_custom_pressed"]
 [connection signal="text_changed" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_changed"]
-[connection signal="text_set" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_set"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
