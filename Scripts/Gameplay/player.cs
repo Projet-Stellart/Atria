@@ -132,49 +132,56 @@ public partial class player : LocalEntity
 	}
 
 	//Gun Fire
-	public void _fire() 
-	{
+	public void _fire() {
 		if (Input.IsActionPressed("fire")) {
 			if (!GetNode<AnimationPlayer>("Gunfire").IsPlaying()) {
+				FireLocal();
+	
 				GetNode<AudioStreamPlayer>("GunSound").Play();
 				//Camera Shake
-				
 
-				//Finding what you hit
-				aim = GetNode<RayCast3D>("Head/Camera/Aim");
-				if (aim.IsColliding()) {
-					if (aim.IsColliding()) {
-						var collider = (Node)aim.GetCollider(); //Casting to Node to be able to Add Child
-						////Bullet Hole
-						var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
-						collider.AddChild(b); //Add child to collider
-						b.GlobalPosition = aim.GetCollisionPoint(); //Putting the bullet hole where we hit on the collider
-						var dir = aim.GetCollisionPoint() + aim.GetCollisionNormal(); //Calculating the direction
-						if (b.GlobalTransform.Origin != dir)
-							b.LookAt(dir, Vector3.Up);
-
-						//if (target is in group Ennemy -> Damage (Must define the groups for multi))
-						if (collider is enemy target) { //Casting collider to target to modify enemy properties
-							if (target.IsInGroup("Enemy")) {
-								target.health -= 20;
-							}
-						}
-						else if (collider is player target2 && this!=target2) {
-							target2.Health -= 5;
-						}
-					}
-				}
 			}
-			if (!isAiming) {
+			if (!isAiming) { //Allows changing aim while playing the animation
 				GetNode<AnimationPlayer>("Gunfire").Play("NoAim");
 			}
 			else {
 				GetNode<AnimationPlayer>("Gunfire").Play("Aim");
 			}
 		}
-		else {
-			camera.Translate(new Vector3());
-			GetNode<AnimationPlayer>("Gunfire").Stop();
+	}
+	public override void ShowFire() 
+	{
+		GetNode<AudioStreamPlayer>("GunSound").Play();
+		//Camera Shake
+		GetNode<AnimationPlayer>("Gunfire").Play("NoAim");
+	}
+
+	public override void CalculateFire() { //Finding what you hit
+		aim = GetNode<RayCast3D>("Head/Camera/Aim");
+		if (aim.IsColliding()) {
+			if (aim.IsColliding()) {
+				var collider = (Node)aim.GetCollider(); //Casting to Node to be able to Add Child
+				////Bullet Hole
+				var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
+				collider.AddChild(b); //Add child to collider
+				b.GlobalPosition = aim.GetCollisionPoint(); //Putting the bullet hole where we hit on the collider
+				if (aim.GetCollisionNormal().Dot(Vector3.Up) > 0.00001) {
+					var dir = aim.GetCollisionPoint() + aim.GetCollisionNormal(); //Calculating the direction
+					if (b.GlobalTransform.Origin != dir) {
+						b.LookAt(dir, Vector3.Up);
+					}
+				}
+
+				//if (target is in group Ennemy -> Damage (Must define the groups for multi))
+				if (collider is enemy target) { //Casting collider to target to modify enemy properties
+					if (target.IsInGroup("Enemy")) {
+						target.health -= 20;
+					}
+				}
+				else if (collider is player target2 && this!=target2) {
+					target2.Health -= 5;
+				}
+			}
 		}
 	}
 
@@ -183,9 +190,6 @@ public partial class player : LocalEntity
 	//Death
 	public void _death(DeathCause cause) {
 		GD.Print($"dead by {cause}");
-		GetNode<Label>("DeathScreen").Visible = true;
-		GetNode<AudioStreamPlayer>("DeathSound").Play();
-		GetNode<AudioStreamPlayer>("DeathSoundNuke").Play();
 	}
 
 	//Aim with Weapon

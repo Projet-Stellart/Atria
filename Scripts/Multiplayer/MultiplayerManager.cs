@@ -67,7 +67,22 @@ public partial class MultiplayerManager : Node
         else
         {
             //Client OnClientConnect
+            SendPlayerData();
         }
+    }
+
+    private void SendPlayerData()
+    {
+        if (Multiplayer.IsServer())
+            return;
+
+        RpcId(1, "ReceivePlayerDataServer", new Variant[] { "Player" + Multiplayer.GetUniqueId() });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ReceivePlayerDataServer(Variant username)
+    {
+        GameManager.singleton.ReceivePlayerData((string)username);
     }
 
     private void OnClientDisconnect(long id)
@@ -76,12 +91,12 @@ public partial class MultiplayerManager : Node
         {
             //Server OnClientDisconnect
             GameManager.singleton.ManageDisconnectedClient(id);
+            Debug.Print("Client disconnected");
         }
         else
         {
             //Client OnClientDisconnect
-            //Temp quit -> need to be change to load main menu
-            GetTree().Quit();
+            SceneManager.singelton.LoadMainMenu(OS.GetCmdlineArgs());
         }
     }
 
@@ -118,7 +133,7 @@ public partial class MultiplayerManager : Node
                 }
             }
         }
-        RpcId(id, "FinishedMap", new Variant[0]);
+        RpcId(id, "FinishedMap", new Variant[] { GameManager.singleton.GameData.mapParam.startHeight });
     }
 
     public void InstantiateNewPlayer(long id, Vector3 pos)
@@ -161,13 +176,15 @@ public partial class MultiplayerManager : Node
 
     public void DeletePlayer(long id)
     {
-        Rpc("DeletePlayer", new Variant[] { id });
+        if (!Multiplayer.IsServer())
+            return;
+        Rpc("DeletePlayerClient", new Variant[] { id });
         playersControler[id].QueueFree();
         playersControler.Remove(id);
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void DeletePlayer(Variant id)
+    private void DeletePlayerClient(Variant id)
     {
         long pid = id.As<long>();
         bool localPl = Multiplayer.GetUniqueId() == pid;
@@ -197,15 +214,103 @@ public partial class MultiplayerManager : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void FinishedMap()
+    private void FinishedMap(Variant layer)
     {
         GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
+        if (GameManager.singleton.lobby == null)
+            return;
+        ((Lobby_Script)GameManager.singleton.lobby).InitMiniMap((int)layer);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void StartGame()
+    //Game management
+
+    public void SyncStartGame()
     {
-        GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
+        if (!Multiplayer.IsServer())
+            return;
+        Rpc("StartGameClient");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void StartGameClient()
+    {
+        GameManager.singleton.lobby.QueueFree();
+    }
+
+    //Lobby sync
+
+    public void LobbySync()
+    {
+        if (!Multiplayer.IsServer())
+            return;
+
+        Godot.Collections.Array steams = new Godot.Collections.Array();
+
+        int i = 0;
+        foreach (List<long> team in GameManager.singleton.Teams)
+        {
+            Godot.Collections.Array<long> plys = new Godot.Collections.Array<long>();
+            foreach (long pl in team)
+            {
+                Debug.Print($"player: {pl}, in team: {i}");
+                plys.Add(pl);
+            }
+            steams.Add(plys);
+            i++;
+        }
+
+        Godot.Collections.Dictionary<long, Variant> sPlayers = new Godot.Collections.Dictionary<long, Variant>();
+
+        foreach (KeyValuePair<long, PlayerData> pl in GameManager.singleton.PlayerInfo)
+        {
+            sPlayers.Add(pl.Key, pl.Value.Serialize());
+        }
+
+        Rpc("LobbySyncClient", new Variant[] { steams, sPlayers });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void LobbySyncClient(Variant teams, Variant playerData)
+    {
+        List<long>[] nTeams = new List<long>[teams.AsGodotArray().Count];
+        Godot.Collections.Array list = teams.AsGodotArray();
+        for (int i = 0; i < list.Count; i++)
+        {
+            Variant team = list[i];
+            nTeams[i] = new List<long>();
+            foreach (long pl in team.AsGodotArray<long>())
+            {
+                nTeams[i].Add(pl);
+            }
+        }
+        GameManager.singleton.Teams = nTeams;
+
+        Dictionary<long, PlayerData> nPlData = new Dictionary<long, PlayerData>();
+        foreach (KeyValuePair<long, Variant> plData in playerData.AsGodotDictionary<long, Variant>())
+        {
+            nPlData.Add(plData.Key, PlayerData.Deserialize(plData.Value));
+        }
+        GameManager.singleton.PlayerInfo = nPlData;
+
+        SyncHUDLobbyClient();
+    }
+
+    private void SyncHUDLobbyClient()
+    {
+        if (GameManager.singleton.lobby == null)
+            return;
+
+        Lobby_Script lobby = ((Lobby_Script)GameManager.singleton.lobby);
+        lobby.LobbyClear();
+
+        for (int i = 0; i < GameManager.singleton.Teams.Length; i++)
+        {
+            foreach (long pl in GameManager.singleton.Teams[i])
+            {
+                string username = GameManager.singleton.PlayerInfo[pl].Username;
+                lobby.PlayerJoin(username, (uint)i);
+            }
+        }
     }
 
     //Fun Function
