@@ -196,12 +196,6 @@ public partial class player : LocalEntity
 	public void _death(DeathCause cause) {
 		if (!IsLocalPlayer && !Multiplayer.IsServer())
 			return;
-		GD.Print($"dead by {cause}");
-		GetNode<Label>("DeathScreen").Visible = true;
-		GetNode<AudioStreamPlayer>("DeathSound").Play();
-		GetNode<AudioStreamPlayer>("DeathSoundNuke").Play();
-		if (!Multiplayer.IsServer())
-			return;
 		GameManager.singleton.PlayerDeath(this, cause);
 	}
 
