@@ -343,6 +343,8 @@ public partial class GameManager : Node
 
         Debug.Print($"{playerInfo[player.uid].Username} died by {cause.ToString()}");
 
+        player.SyncVisibility(false);
+
         delayedActions.Add((Time.GetTicksMsec() + 5000, () =>
         {
             RespawnPlayer(player);
@@ -356,6 +358,8 @@ public partial class GameManager : Node
         if (player is player playerScript)
             playerScript.Health = 100;
         player.SendServerPosVelo(npos, Vector3.Zero);
+        player.SyncVisibility(true);
+        player.SyncRespawnServer();
     }
 
     private void StartMatch()

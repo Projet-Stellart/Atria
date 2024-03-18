@@ -74,8 +74,13 @@ public partial class player : LocalEntity
 			_crouch();
 		}
 
-		//Aiming Event
-		if (Input.IsActionJustPressed("aim")||Input.IsActionJustReleased("aim"))	 {
+        if (Input.IsActionJustPressed("fullscreen"))
+        {
+            DisplayServer.WindowSetMode(DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Windowed ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed);
+        }
+
+        //Aiming Event
+        if (Input.IsActionJustPressed("aim")||Input.IsActionJustReleased("aim"))	 {
 			_aim();
 		}
 
@@ -196,6 +201,11 @@ public partial class player : LocalEntity
 	public void _death(DeathCause cause) {
 		if (!IsLocalPlayer && !Multiplayer.IsServer())
 			return;
+		if (IsLocalPlayer)
+		{
+			GameManager.singleton.hudManager.deathHud.Visible = true;
+		}
+		dead = true;
 		GameManager.singleton.PlayerDeath(this, cause);
 	}
 
