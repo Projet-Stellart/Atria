@@ -10,6 +10,11 @@ public partial class UI_Script : CanvasLayer
 	public Action OnHost;
 	public Action<string, int, string> OnCustomPlay;
 	
+	public override void _Ready()
+	{
+		GetNode<AudioStreamPlayer>("SonFond").Play();GetNode<AudioStreamPlayer>("SonFond").Play();
+	}
+
 	public void Init()
 	{
 		var main = GetNode<Control>("Main");
@@ -35,7 +40,6 @@ public partial class UI_Script : CanvasLayer
 		var online = GetNode<Button>("Play/MarginContainer4/VBoxContainer/Online");
 		custom.Disabled = true;
 		online.Disabled = true;
-		GetNode<AudioStreamPlayer>("AudioStreamPlayer").Play();
 	}
 
 	private void _on_credits_pressed()
