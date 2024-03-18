@@ -190,9 +190,6 @@ public partial class player : LocalEntity
 	//Death
 	public void _death(DeathCause cause) {
 		GD.Print($"dead by {cause}");
-		GetNode<Label>("DeathScreen").Visible = true;
-		GetNode<AudioStreamPlayer>("DeathSound").Play();
-		GetNode<AudioStreamPlayer>("DeathSoundNuke").Play();
 	}
 
 	//Aim with Weapon
