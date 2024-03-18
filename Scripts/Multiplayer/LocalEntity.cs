@@ -3,6 +3,7 @@
 public abstract partial class LocalEntity : CharacterBody3D
 {
     public bool IsLocalPlayer;
+    public long uid;
 
     public void SyncEntity()
     {
@@ -139,10 +140,11 @@ public abstract partial class LocalEntity : CharacterBody3D
         SyncRotation(pos.AsVector2());
     }
 
-    public void SyncHealth()
+    public void SyncHealth(float health)
     {
         if (!Multiplayer.IsServer())
             return;
+        Rpc("SyncHealthClientRpc", new Variant[] { health });
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -150,7 +152,9 @@ public abstract partial class LocalEntity : CharacterBody3D
     {
         if (this is player playerScript)
         {
-            playerScript.Health = (int)health;
+            playerScript.Health = (float)health;
+            if (IsLocalPlayer)
+                GameManager.singleton.hudManager.healthBar.SetHealth(playerScript.Health / 100);
         }
     }
 

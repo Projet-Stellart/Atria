@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://66dt8jpsjwjw"]
+[gd_scene load_steps=8 format=3 uid="uid://66dt8jpsjwjw"]
 
 [ext_resource type="PackedScene" uid="uid://dh3olwlvda6ut" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="1_oxwxe"]
 [ext_resource type="Script" path="res://Scripts/Management/GameManager.cs" id="1_tuo0n"]
 [ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_73q1c"]
 [ext_resource type="Script" path="res://Scripts/UI/HudManager.cs" id="3_emm8j"]
+[ext_resource type="PackedScene" uid="uid://dqxls3fq7a0h2" path="res://Scenes/Guillaume/HealthBar.tscn" id="4_e5e70"]
 [ext_resource type="Script" path="res://Scripts/Multiplayer/MultiplayerManager.cs" id="4_r3f7e"]
 
 [sub_resource type="Environment" id="Environment_mntmn"]
@@ -20,6 +21,8 @@ script = ExtResource("1_tuo0n")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_emm8j")
+
+[node name="Data_OSD" parent="HUD" instance=ExtResource("4_e5e70")]
 
 [node name="MiniMap" type="MarginContainer" parent="HUD"]
 anchors_preset = -1
