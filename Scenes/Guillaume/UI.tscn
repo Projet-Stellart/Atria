@@ -1,12 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://cthdwsw2b1hp6"]
+[gd_scene load_steps=4 format=3 uid="uid://cthdwsw2b1hp6"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
+[ext_resource type="Texture2D" uid="uid://d0j1yn5gce2qt" path="res://Ressources/UI/_0e64fb47-7d02-42c7-8fe4-ba00e8761c2d.jpeg" id="2_jyfkf"]
+[ext_resource type="Texture2D" uid="uid://2x54dyrtl6yq" path="res://Ressources/UI/UI-Elements/SmallEmptyButton.png" id="3_pga3l"]
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_mxrpx")
 
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_jyfkf")
+
 [node name="Main" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,10 +30,10 @@ anchor_left = 0.812
 anchor_top = 0.028
 anchor_right = 0.984
 anchor_bottom = 0.119
-offset_left = 0.639893
-offset_top = -0.16
-offset_right = 0.47998
-offset_bottom = 0.32
+offset_left = -999.36
+offset_top = 279.84
+offset_right = -1149.52
+offset_bottom = 280.32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer"]
 layout_mode = 2
@@ -32,22 +41,27 @@ layout_mode = 2
 [node name="Options" type="Button" parent="Main/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Options"
+icon = ExtResource("3_pga3l")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="Credits" type="Button" parent="Main/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Credits"
+icon = ExtResource("3_pga3l")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="MarginContainer2" type="MarginContainer" parent="Main"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.906
-anchor_top = 0.917
-anchor_right = 0.984
-anchor_bottom = 0.972
-offset_left = 0.319946
-offset_top = -0.240051
-offset_right = 0.47998
-offset_bottom = 0.159973
+anchor_left = 0.03125
+anchor_top = 0.833333
+anchor_right = 0.135156
+anchor_bottom = 0.944444
+metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer2"]
 layout_mode = 2
@@ -56,27 +70,34 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 text = "Quit"
+icon = ExtResource("3_pga3l")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="MarginContainer3" type="MarginContainer" parent="Main"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.031
-anchor_top = 0.056
-anchor_right = 0.344
-anchor_bottom = 0.944
-offset_left = 0.32
-offset_top = -0.32
-offset_right = -0.320007
-offset_bottom = 0.319946
+anchor_left = 0.03125
+anchor_top = 0.0555556
+anchor_right = 0.226563
+anchor_bottom = 0.263889
 grow_vertical = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer3"]
 layout_mode = 2
 
 [node name="Play" type="Button" parent="Main/MarginContainer3/VBoxContainer"]
+modulate = Color(0, 0, 0, 1)
 layout_mode = 2
 size_flags_vertical = 3
-text = "Play"
+theme_override_font_sizes/font_size = 75
+text = "PLAY"
+icon = ExtResource("3_pga3l")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="Controls" type="Control" parent="."]
 visible = false
@@ -276,7 +297,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MarginContainer3" type="MarginContainer" parent="Sound"]
-visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.016
@@ -297,11 +317,11 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
+button_pressed = true
 text = "Sound :"
 alignment = 1
 
 [node name="MarginContainer4" type="MarginContainer" parent="Sound"]
-visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.016
@@ -649,6 +669,7 @@ Exit
 [connection signal="pressed" from="Controls/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_controls"]
 [connection signal="pressed" from="Credits/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_credits"]
 [connection signal="pressed" from="Graphics/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_graphics"]
+[connection signal="pressed" from="Sound/MarginContainer3/VBoxContainer/CheckButton" to="." method="_on_check_button_pressed"]
 [connection signal="pressed" from="Sound/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
 [connection signal="pressed" from="Play/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_play"]
 [connection signal="pressed" from="Play/MarginContainer4/VBoxContainer/Online" to="." method="_on_online_pressed"]

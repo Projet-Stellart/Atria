@@ -35,6 +35,7 @@ public partial class UI_Script : CanvasLayer
 		var online = GetNode<Button>("Play/MarginContainer4/VBoxContainer/Online");
 		custom.Disabled = true;
 		online.Disabled = true;
+		GetNode<AudioStreamPlayer>("AudioStreamPlayer").Play();
 	}
 
 	private void _on_credits_pressed()
@@ -184,6 +185,12 @@ public partial class UI_Script : CanvasLayer
 			online.Disabled = true;
 		}
 		
+	}
+
+	private void _on_check_button_pressed()
+	{
+		var music_sounds = AudioServer.GetBusIndex("Master");
+		AudioServer.SetBusMute(music_sounds, !AudioServer.IsBusMute(music_sounds));
 	}
 
 }
