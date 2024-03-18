@@ -22,7 +22,28 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
-        InputProcess(delta);
+        if (IsLocalPlayer)
+        {
+            InputProcess(delta);
+
+            //Minimap management
+
+            if (Input.IsActionJustPressed("map"))
+            {
+                //((Camera3D)GetParent().GetParent().GetChild(0).GetChild(0)).MakeCurrent();
+                GameManager.singleton.hudManager.miniMap.SelectLayer((int)((Position.Y + 3.2f) / 6.4f));
+                GameManager.singleton.hudManager.miniMap.ShowMap();
+
+            }
+            if (Input.IsActionJustReleased("map"))
+            {
+                //((Camera3D)GetChild(0)).MakeCurrent();
+                GameManager.singleton.hudManager.miniMap.HideMap();
+            }
+
+            if (Input.IsActionPressed("map"))
+                GameManager.singleton.hudManager.miniMap.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
+        }
 
         MoveAndSlide();
 
@@ -34,7 +55,10 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public override void _Input(InputEvent @event)
     {
-        InputLocalEvent(@event);
+        if (IsLocalPlayer)
+        {
+            InputLocalEvent(@event);
+        }
     }
 
     public abstract void InitPlayer();
