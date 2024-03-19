@@ -1,3 +1,33 @@
-[gd_scene format=3 uid="uid://ds3j7kf44ec40"]
+[gd_scene load_steps=4 format=3 uid="uid://ds3j7kf44ec40"]
+
+[ext_resource type="PackedScene" uid="uid://dh3olwlvda6ut" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="2_17x0g"]
+[ext_resource type="Script" path="res://Scenes/Lilian/TempAssets/orbitiongCam.cs" id="2_acby8"]
+[ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="3_ihgk6"]
 
 [node name="Lilian-main" type="Node3D"]
+
+[node name="OrbitingCam" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, 64)
+script = ExtResource("2_acby8")
+
+[node name="Camera3D" type="Camera3D" parent="OrbitingCam"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 100)
+current = true
+size = 200.0
+
+[node name="TileMapGenerator" parent="." instance=ExtResource("2_17x0g")]
+metadata/TileParams = ["StraitCorridor;75;0;0;corridor;corridor;space;space", "CurvedCorridor;60;0;0;space;corridor;corridor;space", "TCorridor;30;0;0;corridor;corridor;corridor;space", "XCorridor;1;0;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;0;space;corridor;space;space", "StairHighCorridor;10;-1;6;space;corridor;space;space", "StairLowCorridor;10;1;5;space;corridor;space;space", "MultiXLowCorridor;1;1;8;corridor;corridor;space;space", "MultiXHighCorridor;1;-1;7;space;space;corridor;corridor", "Empty;700;0;0;space;space;space;space"]
+metadata/mapHeight = 1
+metadata/Map = NodePath("../MiniMap")
+
+[node name="MiniMap" parent="." instance=ExtResource("3_ihgk6")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 64, 80, 64)
+projection = 1
+current = true
+size = 150.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.963663, -0.267121, 0, 0.267121, 0.963663, 0, 242.438, 0)
+light_energy = 4.535

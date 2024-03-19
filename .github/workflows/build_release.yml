@@ -1,0 +1,74 @@
+name: Build and Export Godot Release
+
+on:
+  push: 
+    tags:
+      - "release-v**"
+
+jobs:
+  Godot:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - preset: Windows Desktop
+            name: Windows-exe
+            extention: .exe
+          - preset: Linux-X11
+            name: Linux-sh
+            extention: .sh
+          - preset: Linux-X11
+            name: Linux
+            extention: ""
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Build
+        id: build
+        uses: manleydev/build-godot-action@v1.5.0
+        with:
+          name: Atria${{matrix.platform.extention}}
+          preset: ${{ matrix.platform.preset }}
+          debugMode: "false"
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Client - ${{ matrix.platform.name }}
+          path: ./build/
+      - name: Rename build folder
+        run: mv ./build ./Atria
+      - name: Copy README
+        run: cp ./README ./Atria/README
+      - name: Zip build
+        run: zip -r Atria-${{ matrix.platform.name }}.zip ./Atria/
+      - name: Create release
+        id: create_release
+        continue-on-error: true
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.ACCESS_TOKEN}}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: "Automatically generated release from tag: ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Upload release assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.ACCESS_TOKEN}}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./Atria-${{ matrix.platform.name }}.zip
+          asset_name: Atria-${{ matrix.platform.name }}.zip
+          asset_content_type: application/zip

@@ -1,4 +1,8 @@
 # Godot 4+ specific ignores
+*.tar
 .godot/
-Ressources/*
-.vs/*
+.idea/
+.vs/
+Builds/
+RunServer.bat
+serverParams.json
