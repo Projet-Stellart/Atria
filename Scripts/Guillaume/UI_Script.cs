@@ -15,16 +15,6 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("SonFond").Play();
 	}
 
-	public void Init()
-	{
-		var main = GetNode<Control>("Main");
-		for (int i = 0; i < GetChildCount(); i++)
-		{
-			GetChild<Control>(i).Visible = false;
-		}
-		main.Visible = true;
-	}
-
 	private void _on_quit_pressed()
 	{
 		GetTree().Quit();
@@ -218,6 +208,23 @@ public partial class UI_Script : CanvasLayer
 	{
 		var music_sounds = AudioServer.GetBusIndex("Master");
 		AudioServer.SetBusMute(music_sounds, !AudioServer.IsBusMute(music_sounds));
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+		var slider = GetNode<HSlider>("Sound/MarginContainer5/VBoxContainer/HSlider");
+		var button = GetNode<CheckButton>("Sound/MarginContainer3/VBoxContainer/CheckButton");
+		if (button.ButtonPressed)
+        {
+            slider.Visible = true;
+        }
+        else
+        {
+            slider.Visible = false;
+        }
+	}
+
+	private void _on_h_slider_value_changed(float v)
+	{
+		var music_sounds = AudioServer.GetBusIndex("Master");
+		AudioServer.SetBusVolumeDb(music_sounds, ((v-100) * 0.5f));
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 

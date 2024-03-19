@@ -57,7 +57,6 @@ public partial class SceneManager : Node
 		{
 			LoadGame(new string[] {"--server"});
 		};
-		mainMenu.Init();
 	}
 
 	public void LoadGame(string[] loadParameters)
