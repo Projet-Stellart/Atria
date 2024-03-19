@@ -825,6 +825,7 @@ Exit
 
 "
 
+[connection signal="finished" from="SonFond" to="." method="_on_son_fond_finished"]
 [connection signal="pressed" from="Main/MarginContainer4/VBoxContainer/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="Main/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
 [connection signal="pressed" from="Main/MarginContainer2/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

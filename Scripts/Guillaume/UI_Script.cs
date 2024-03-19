@@ -228,4 +228,9 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
+	private void _on_son_fond_finished()
+	{
+		GetNode<AudioStreamPlayer>("SonFond").Play();
+	}
+
 }
