@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://buw571tbf71tl"
+path="res://.godot/imported/Ressources_GamePlay_Sounds_Thompson SMG with suppressor single shot sound effect.mp3-e07ae601b773cb0d6905d697014b6c71.mp3str"
+
+[deps]
+
+source_file="res://Ressources/GamePlay/Sounds/Ressources_GamePlay_Sounds_Thompson SMG with suppressor single shot sound effect.mp3"
+dest_files=["res://.godot/imported/Ressources_GamePlay_Sounds_Thompson SMG with suppressor single shot sound effect.mp3-e07ae601b773cb0d6905d697014b6c71.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

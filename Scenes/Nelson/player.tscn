@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://ccnnulmcgps1c" path="res://Ressources/GamePlay/3D_Models/ak_47_custom.glb" id="1_gply0"]
 [ext_resource type="Script" path="res://Scripts/Gameplay/player.cs" id="1_ryegq"]
 [ext_resource type="AudioStream" uid="uid://cqfjcj5xef1tf" path="res://Ressources/GamePlay/Sounds/ouf.mp3" id="3_gq3vq"]
-[ext_resource type="AudioStream" uid="uid://di4bxjhr6hvlf" path="res://Ressources/GamePlay/test.mp3" id="5_8wrqy"]
+[ext_resource type="AudioStream" uid="uid://di4bxjhr6hvlf" path="res://Ressources/GamePlay/Sounds/FireSound.mp3" id="4_weq5b"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2wcmm"]
 radius = 0.375
@@ -290,7 +290,7 @@ volume_db = 24.0
 [node name="DeathSoundNuke" type="AudioStreamPlayer" parent="."]
 
 [node name="GunSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_8wrqy")
+stream = ExtResource("4_weq5b")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
