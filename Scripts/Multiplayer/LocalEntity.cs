@@ -4,6 +4,7 @@ public abstract partial class LocalEntity : CharacterBody3D
 {
     public bool IsLocalPlayer;
     public long uid;
+    public bool dead;
 
     public void SyncEntity()
     {
@@ -16,6 +17,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         InitPlayer();
         if (IsLocalPlayer)
         {
+            GameManager.singleton.hudManager.Visible = true;
             GameManager.singleton.hudManager.miniMap.HideMap();
             GameManager.singleton.hudManager.miniMap.LoadMap();
         }
@@ -23,7 +25,7 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
-        if (IsLocalPlayer)
+        if (IsLocalPlayer && !dead)
         {
             InputProcess(delta);
 
@@ -56,7 +58,7 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public override void _Input(InputEvent @event)
     {
-        if (IsLocalPlayer)
+        if (IsLocalPlayer && !dead)
         {
             InputLocalEvent(@event);
         }
@@ -112,6 +114,36 @@ public abstract partial class LocalEntity : CharacterBody3D
         {
             RpcId(id, "SyncPosVelo", new Variant[] { position, velocity });
         }
+    }
+
+    public void SyncVisibility(bool vis)
+    {
+        if (!Multiplayer.IsServer())
+            return;
+
+        Visible = vis;
+
+        Rpc("SyncVisibilityClientRpc", new Variant[] { vis });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncVisibilityClientRpc(Variant vis)
+    {
+        Visible = vis.AsBool();
+    }
+
+    public void SyncRespawnServer()
+    {
+        if (!Multiplayer.IsServer())
+            return;
+        RpcId(uid, "SyncRespawnClientRpc", new Variant[0]);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncRespawnClientRpc()
+    {
+        GameManager.singleton.hudManager.deathHud.Visible = false;
+        dead = false;
     }
 
     public void SendServerRot(Vector2 rotation)

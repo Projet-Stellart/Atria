@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/Lobby_Script.cs" id="1_bi12c"]
 [ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_eqo5k"]
-[ext_resource type="Texture2D" uid="uid://cm137032ogox" path="res://Ressources/UI/MapLayers/layer-download-svgrepo-com.svg" id="2_jp1ac"]
-[ext_resource type="Texture2D" uid="uid://bju78vl7mfg5v" path="res://Ressources/UI/MapLayers/layer-upload-svgrepo-com.svg" id="3_dwoyv"]
+[ext_resource type="Texture2D" uid="uid://dowuts2osg2p0" path="res://Ressources/UI/MapLayers/layer-download-svgrepo-com - Copy.svg" id="2_jp1ac"]
+[ext_resource type="Texture2D" uid="uid://b5n5nr41bqeou" path="res://Ressources/UI/MapLayers/layer-upload-svgrepo-com - Copy.svg" id="3_dwoyv"]
 
 [node name="Lobby" type="CanvasLayer"]
 script = ExtResource("1_bi12c")
