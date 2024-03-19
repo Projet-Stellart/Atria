@@ -40,10 +40,10 @@ jobs:
         with:
           name: Client - ${{ matrix.platform.name }}
           path: ./build/
+      - name: Copy README
+        run: sudo cp ./README ./build/README
       - name: Rename build folder
         run: mv ./build ./Atria
-      - name: Copy README
-        run: cp ./README ./Atria/README
       - name: Zip build
         run: zip -r Atria-${{ matrix.platform.name }}.zip ./Atria/
       - name: Create release
