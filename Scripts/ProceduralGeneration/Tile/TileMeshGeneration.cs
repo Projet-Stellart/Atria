@@ -8,6 +8,8 @@ using static System.Formats.Asn1.AsnWriter;
 
 public partial class TileMeshGeneration : Node
 {
+    public static TileMeshGeneration singelton;
+
     private MapParam mapParam;
     //Switch from public to private
     /// <summary>
@@ -39,7 +41,10 @@ public partial class TileMeshGeneration : Node
     public override void _Ready()
 	{
         //Prototype call
-        Init();
+        singelton = this;
+        GetData();
+        Pathfinding.GetPath(new Vector3I(0,0,0), new Vector3I(0,0,0));
+        //Init();
     }
 
     public void Init()
