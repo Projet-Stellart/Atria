@@ -792,39 +792,6 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Joined" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer3" type="MarginContainer" parent="Joined"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.016
-anchor_top = 0.861
-anchor_right = 0.984
-anchor_bottom = 0.972
-offset_left = -0.480001
-offset_top = 0.0799561
-offset_right = 0.47998
-offset_bottom = 0.159973
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Joined/MarginContainer3"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Joined/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-
 [connection signal="finished" from="SonFond" to="." method="_on_son_fond_finished"]
 [connection signal="pressed" from="Main/MarginContainer4/VBoxContainer/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="Main/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
@@ -847,4 +814,3 @@ Exit
 [connection signal="pressed" from="Online/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_online"]
 [connection signal="pressed" from="Custom/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_custom"]
 [connection signal="pressed" from="Custom/MarginContainer6/VBoxContainer/Join" to="." method="_on_join_pressed"]
-[connection signal="pressed" from="Joined/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_custom_joined"]
