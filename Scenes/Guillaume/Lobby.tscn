@@ -1,0 +1,168 @@
+[gd_scene load_steps=5 format=3 uid="uid://crg0ua4vy7tlf"]
+
+[ext_resource type="Script" path="res://Scripts/Guillaume/Lobby_Script.cs" id="1_bi12c"]
+[ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_eqo5k"]
+[ext_resource type="Texture2D" uid="uid://dowuts2osg2p0" path="res://Ressources/UI/MapLayers/layer-download-svgrepo-com - Copy.svg" id="2_jp1ac"]
+[ext_resource type="Texture2D" uid="uid://b5n5nr41bqeou" path="res://Ressources/UI/MapLayers/layer-upload-svgrepo-com - Copy.svg" id="3_dwoyv"]
+
+[node name="Lobby" type="CanvasLayer"]
+script = ExtResource("1_bi12c")
+
+[node name="Custom" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer5" type="MarginContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.326
+anchor_top = 0.191
+anchor_right = 0.674
+anchor_bottom = 0.809
+offset_left = 0.447998
+offset_top = 0.231987
+offset_right = -0.447998
+offset_bottom = -0.231995
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="MiniMapContainer" type="Control" parent="Custom/MarginContainer5"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer5/MiniMapContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0666667, 0.0980392, 0.168627, 1)
+
+[node name="MiniMap" parent="Custom/MarginContainer5/MiniMapContainer" instance=ExtResource("2_eqo5k")]
+layout_mode = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.03125
+anchor_top = 0.0555556
+anchor_right = 0.3125
+anchor_bottom = 0.944445
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.6875
+anchor_top = 0.0555556
+anchor_right = 0.96875
+anchor_bottom = 0.944444
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/ScrollContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer9" type="MarginContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.46875
+anchor_top = 0.763889
+anchor_right = 0.53125
+anchor_bottom = 0.875
+offset_top = 10.0
+offset_bottom = 10.0
+grow_vertical = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="Control" parent="Custom/MarginContainer9"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer9/VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Down" type="Button" parent="Custom/MarginContainer9/VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+text = "
+
+"
+icon = ExtResource("2_jp1ac")
+flat = true
+icon_alignment = 1
+expand_icon = true
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer10" type="MarginContainer" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.46875
+anchor_top = 0.125
+anchor_right = 0.53125
+anchor_bottom = 0.236111
+offset_top = -10.0
+offset_bottom = -10.0
+grow_vertical = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="Control" parent="Custom/MarginContainer10"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer10/VBoxContainer"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Up" type="Button" parent="Custom/MarginContainer10/VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+text = "
+
+"
+icon = ExtResource("3_dwoyv")
+flat = true
+icon_alignment = 1
+expand_icon = true

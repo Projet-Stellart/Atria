@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://8robqvb6ylgx"]
+
+[ext_resource type="Texture2D" uid="uid://dtblxc1u6ps60" path="res://Ressources/GamePlay/Textures/quadrillage.png" id="1_mn6kc"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lhacp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s35jg"]
+albedo_texture = ExtResource("1_mn6kc")
+uv1_scale = Vector3(0.75, 0.75, 0.75)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_6v3t4"]
+material = SubResource("StandardMaterial3D_s35jg")
+
+[node name="Block" type="StaticBody3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_lhacp")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_6v3t4")
