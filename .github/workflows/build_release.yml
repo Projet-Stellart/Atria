@@ -42,6 +42,8 @@ jobs:
           path: ./build/
       - name: Rename build folder
         run: mv ./build ./Atria
+      - name: Copy README
+        run: cp ./README ./Atria/README
       - name: Zip build
         run: zip -r Atria-${{ matrix.platform.name }}.zip ./Atria/
       - name: Create release

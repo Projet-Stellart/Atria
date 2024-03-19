@@ -175,9 +175,7 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_exit_pressed_custom_joined()
 	{
-		var joined = GetNode<Control>("Joined");
 		var custom = GetNode<Control>("Custom");
-		joined.Visible = false;
 		custom.Visible = true;
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}

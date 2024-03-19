@@ -17,4 +17,4 @@ RUN ungodot
 
 EXPOSE 7308/udp
 
-ENTRYPOINT su appuser -c "./builds/server.sh --headless --server --port 7308 --nbPlayers 4"
+ENTRYPOINT su appuser -c "./builds/server.sh --headless --server --port 7308"
