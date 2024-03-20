@@ -21,7 +21,7 @@ jobs:
             file: Atria.exe
           - name: Linux-X11
             file: Atria.sh
-          - name: Linux-X11
+          - name: Linux/X11
             file: Atria
     steps:
       - uses: actions/checkout@v2

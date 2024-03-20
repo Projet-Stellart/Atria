@@ -14,10 +14,10 @@ jobs:
           - preset: Windows Desktop
             name: Windows-exe
             file: Atria.exe
-          - preset: Linux-X11
+          - preset: Linux/X11
             name: Linux-sh
             file: Atria.sh
-          - preset: Linux-X11
+          - preset: Linux/X11
             name: Linux
             file: Atria
     steps:

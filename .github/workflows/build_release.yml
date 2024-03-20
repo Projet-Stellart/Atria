@@ -14,10 +14,10 @@ jobs:
           - preset: Windows Desktop
             name: Windows-exe
             extention: .exe
-          - preset: Linux-X11
+          - preset: Linux/X11
             name: Linux-sh
             extention: .sh
-          - preset: Linux-X11
+          - preset: Linux/X11
             name: Linux
             extention: ""
     permissions:
