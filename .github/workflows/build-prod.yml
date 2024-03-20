@@ -13,13 +13,10 @@ jobs:
         platform:
           - preset: Windows Desktop
             name: Windows-exe
-            file: Atria.exe
           - preset: Linux/X11
             name: Linux-sh
-            file: Atria.sh
           - preset: Linux/X11
             name: Linux
-            file: Atria
     steps:
       - uses: actions/checkout@v2
         with:
@@ -28,7 +25,7 @@ jobs:
         id: build
         uses: manleydev/build-godot-action@v1.5.0
         with:
-          name: ${{ matrix.platform.file }}
+          name: Atria
           preset: ${{ matrix.platform.preset }}
           debugMode: "false"
       - name: Upload Artifact

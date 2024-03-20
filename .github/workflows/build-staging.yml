@@ -18,11 +18,8 @@ jobs:
       matrix:
         platform:
           - name: Windows Desktop
-            file: Atria.exe
           - name: Linux-X11
-            file: Atria.sh
           - name: Linux/X11
-            file: Atria
     steps:
       - uses: actions/checkout@v2
         with:
@@ -31,6 +28,6 @@ jobs:
         id: build
         uses: manleydev/build-godot-action@v1.5.0
         with:
-          name: ${{ matrix.platform.file }}
+          name: Atria
           preset: ${{ matrix.platform.name }}
           debugMode: "true"

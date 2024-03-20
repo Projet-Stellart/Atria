@@ -13,13 +13,8 @@ jobs:
         platform:
           - preset: Windows Desktop
             name: Windows-exe
-            extention: .exe
           - preset: Linux/X11
-            name: Linux-sh
-            extention: .sh
-          - preset: Linux/X11
-            name: Linux
-            extention: ""
+            name: Linux-x86
     permissions:
       contents: write
       issues: write
@@ -32,7 +27,7 @@ jobs:
         id: build
         uses: manleydev/build-godot-action@v1.5.0
         with:
-          name: Atria${{matrix.platform.extention}}
+          name: Atria
           preset: ${{ matrix.platform.preset }}
           debugMode: "false"
       - name: Copy README
