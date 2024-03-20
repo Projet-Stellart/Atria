@@ -35,13 +35,13 @@ jobs:
           name: Atria${{matrix.platform.extention}}
           preset: ${{ matrix.platform.preset }}
           debugMode: "false"
+      - name: Copy README
+        run: sudo cp ./README ./build/README
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: Client - ${{ matrix.platform.name }}
           path: ./build/
-      - name: Copy README
-        run: sudo cp ./README ./build/README
       - name: Rename build folder
         run: mv ./build ./Atria
       - name: Zip build
