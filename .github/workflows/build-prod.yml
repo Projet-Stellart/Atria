@@ -1,9 +1,11 @@
 name: Build and Export Godot Project
 
 on:
-  push: 
+  push:
     branches:
       - main
+    tags:
+      - 'build-**'
 
 jobs:
   Godot:

@@ -1,15 +1,9 @@
 name: Build Godot Project
 
 on:
-  push:
-    branches:
-      - dev
-    tags:
-      - 'build-**'
   pull_request:
     branches:
       - dev
-      - main
 
 jobs:
   Godot:
@@ -34,8 +28,3 @@ jobs:
           name: Atria${{ matrix.platform.extention }}
           preset: ${{ matrix.platform.preset }}
           debugMode: "true"
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: Client - ${{ matrix.platform.name }}
-          path: ./build/
