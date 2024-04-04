@@ -27,7 +27,7 @@ jobs:
           lfs: true
       - name: Build
         id: build
-        uses: lillian1024/godot-mono-action@v0.1
+        uses: lillian1024/godot-mono-action@v1.0
         with:
           name: Atria${{ matrix.platform.extention }}
           preset: ${{ matrix.platform.preset }}
