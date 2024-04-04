@@ -26,8 +26,13 @@ jobs:
           lfs: true
       - name: Build
         id: build
-        uses: manleydev/build-godot-action@v1.5.0
+        uses: lillian1024/godot-mono-action@v0.1
         with:
           name: Atria
           preset: ${{ matrix.platform.name }}
           debugMode: "true"
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Client - ${{ matrix.platform.name }}
+          path: ./build/
