@@ -19,8 +19,10 @@ jobs:
         platform:
           - preset: Windows Desktop
             name: Windows-exe
+            extention: ".exe"
           - preset: Linux/X11
             name: Linux-x86
+            extention: ".x86_64"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -29,7 +31,7 @@ jobs:
         id: build
         uses: lillian1024/godot-mono-action@v0.1
         with:
-          name: Atria
+          name: Atria${{ matrix.platform.extention }}
           preset: ${{ matrix.platform.preset }}
           debugMode: "true"
       - name: Upload Artifact
