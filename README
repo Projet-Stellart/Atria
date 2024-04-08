@@ -4,7 +4,7 @@ To play the game, you can download the lastest version of Atria on the website: 
 
 When on the game if you want to join a server, you can click on the play button then enter a username of at least 3 characters in the input box then click on online if you want to join a game that is running on the same computer, otherwise click on custom button and enter the ip adress of the server and the port (by default the port used by the servers is the default port entered in the port input box).
 
-Atria is a multiplayer game thus to play the game you will need a server, if a public server is avaliable you can connect to those server via the match maker (work in progress), if you want to play the game on a private server you have multiple ways to run a private server:
+Atria is a multiplayer game thus to play the game you will need a server, if a public server is available you can connect to those server via the match maker (work in progress), if you want to play the game on a private server you have multiple ways to run a private server:
 
 -You can build the Dockerfile in the source file of the game and run the built image using Docker, this will automatically deploy a server with default parameters, the parameters can be changed in the Dockerfile by changing the command line arguments of the ENTRYPOINT as described below.
 

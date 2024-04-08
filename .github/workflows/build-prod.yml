@@ -1,9 +1,11 @@
 name: Build and Export Godot Project
 
 on:
-  push: 
+  push:
     branches:
       - main
+    tags:
+      - 'build-**'
 
 jobs:
   Godot:
@@ -13,22 +15,19 @@ jobs:
         platform:
           - preset: Windows Desktop
             name: Windows-exe
-            file: Atria.exe
-          - preset: Linux-X11
-            name: Linux-sh
-            file: Atria.sh
-          - preset: Linux-X11
-            name: Linux
-            file: Atria
+            extention: ".exe"
+          - preset: Linux/X11
+            name: Linux-x86
+            extention: ".x86_64"
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
       - name: Build
         id: build
-        uses: manleydev/build-godot-action@v1.5.0
+        uses: lillian1024/godot-mono-action@v1.0
         with:
-          name: ${{ matrix.platform.file }}
+          name: Atria${{ matrix.platform.extention }}
           preset: ${{ matrix.platform.preset }}
           debugMode: "false"
       - name: Upload Artifact

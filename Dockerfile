@@ -1,4 +1,13 @@
-FROM lilian1024/godot-mono
+FROM barichello/godot-ci:mono-4.2.1
+
+RUN wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+RUN dpkg -i packages-microsoft-prod.deb
+RUN rm packages-microsoft-prod.deb
+
+RUN apt-get update
+RUN apt-get install -y dotnet-sdk-7.0
+
+RUN cp -a /root/.local/share/godot/templates/. /root/.local/share/godot/export_templates/
 
 RUN [ "useradd", "appuser", "--create-home" ]
 
@@ -9,11 +18,10 @@ COPY . ./sc
 RUN mkdir ./builds
 
 #Build project
-RUN godot "./sc/project.godot" --export-debug "Linux Docker" /home/appuser/builds/server
+RUN godot "./sc/project.godot" --headless --export-debug "Linux Docker" /home/appuser/builds/server
 
 #Remove source code and Godot editor
 RUN rm -rf ./sc
-RUN ungodot
 
 EXPOSE 7308/udp
 
