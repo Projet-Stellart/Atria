@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://pni26eoj3br2"]
+
+[ext_resource type="PackedScene" uid="uid://c1o14bivnd8qb" path="res://Scenes/Nelson/player.tscn" id="1_fd5w1"]
+[ext_resource type="Script" path="res://Scripts/Gameplay/vortex.cs" id="2_hixga"]
+
+[node name="Vortex" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource("1_fd5w1")]
+script = ExtResource("2_hixga")

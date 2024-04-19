@@ -1,11 +1,18 @@
+using System;
+using System.Reflection;
 using Godot;
-using System.Diagnostics;
 public partial class player : LocalEntity
 {
 	///////VARIABLES
+	//Elite Soldier Classes
+	public virtual Soldier soldier {get;}
+	protected virtual int energyBar {get;}
+
+
 	//Nodes
 	Node3D head;
 	public Camera3D camera;
+	weapon_test gun;
 	RayCast3D aim;
 
 	//Scenes
@@ -25,6 +32,8 @@ public partial class player : LocalEntity
 	public bool isAiming = false;
 	public int Health = 100;
 
+	public bool hasWeapon = true;
+
 	//Camera
 	public float mouseSensitivity = 0.001f;
 	public float cam_shake = 0.3f;
@@ -33,9 +42,15 @@ public partial class player : LocalEntity
 	Vector3 direction = new Vector3();
 	Vector3 velocity = new Vector3();
 
-    
-	//FUNCTIONS
-	public override void InitPlayer()
+
+    //FUNCTIONS
+
+    public override void _Ready()
+    {
+        InitPlayer();
+    }
+	
+    public override void InitPlayer()
 	{
 		//Initialize Default Values
 		accel = accel_type.normal;
@@ -44,6 +59,7 @@ public partial class player : LocalEntity
 		//Initialize Nodes
 		head = GetNode<Node3D>("Head");
 		camera = GetNode<Camera3D>("Head/Camera");
+		gun = (weapon_test)GetNode<Node3D>("Head/Hand/ak_47_custom");
 
 		//Mouse in FPS
 		Input.MouseMode = Input.MouseModeEnum.Captured;
@@ -54,16 +70,28 @@ public partial class player : LocalEntity
 		if (Health<=0) {
 			_death(DeathCause.Health);
 		}
-    }
+	}
 
     public override void InputProcess(double delta)
 	{
+		if (Input.IsActionJustPressed("low_module"))
+			_lowModule();
+		else if (Input.IsActionJustPressed("medium_module"))
+		    _mediumModule();
+		else if (Input.IsActionJustPressed("high_module"))
+		    _highModule();
+
 		//Firing
-		_fire();
+		if (Input.IsActionPressed("fire"))
+			_fire();
+		
+		if (Input.IsActionJustPressed("reload"))
+		    _reload();
 
 		//Crouching Event
 		if (Input.IsActionJustPressed("crouch")||Input.IsActionJustReleased("crouch")) {
 			_crouch();
+			SendCrouch(isCrouching);
 		}
 
 		//Aiming Event
@@ -133,27 +161,26 @@ public partial class player : LocalEntity
 
 	//Gun Fire
 	public void _fire() {
-		if (Input.IsActionPressed("fire")) {
-			if (!GetNode<AnimationPlayer>("Gunfire").IsPlaying()) {
+		if (hasWeapon) {
+			if (!gun.firing.IsPlaying() && !gun.reloading.IsPlaying() && gun.currBullets > 0) {
 				FireLocal();
-	
-				GetNode<AudioStreamPlayer>("GunSound").Play();
+				gun.Fire();
 				//Camera Shake
-
-			}
-			if (!isAiming) { //Allows changing aim while playing the animation
-				GetNode<AnimationPlayer>("Gunfire").Play("NoAim");
-			}
-			else {
-				GetNode<AnimationPlayer>("Gunfire").Play("Aim");
 			}
 		}
 	}
+
+	public void _reload() {
+		if (gun.currBullets < gun.bulletPerMag && gun.bullets > 0 && !gun.reloading.IsPlaying())
+			gun.Reload();
+	}
 	public override void ShowFire() 
 	{
-		GetNode<AudioStreamPlayer>("GunSound").Play();
-		//Camera Shake
-		GetNode<AnimationPlayer>("Gunfire").Play("NoAim");
+		gun.Fire();
+	}
+
+	public override void ShowReload() {
+		gun.Reload();
 	}
 
 	public override void CalculateFire() { //Finding what you hit
@@ -161,16 +188,7 @@ public partial class player : LocalEntity
 		if (aim.IsColliding()) {
 			if (aim.IsColliding()) {
 				var collider = (Node)aim.GetCollider(); //Casting to Node to be able to Add Child
-				////Bullet Hole
-				var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
-				collider.AddChild(b); //Add child to collider
-				b.GlobalPosition = aim.GetCollisionPoint(); //Putting the bullet hole where we hit on the collider
-				if (aim.GetCollisionNormal().Dot(Vector3.Up) > 0.00001) {
-					var dir = aim.GetCollisionPoint() + aim.GetCollisionNormal(); //Calculating the direction
-					if (b.GlobalTransform.Origin != dir) {
-						b.LookAt(dir, Vector3.Up);
-					}
-				}
+				SpawnDecal(collider, aim);
 
 				//if (target is in group Ennemy -> Damage (Must define the groups for multi))
 				if (collider is enemy target) { //Casting collider to target to modify enemy properties
@@ -185,6 +203,25 @@ public partial class player : LocalEntity
 		}
 	}
 
+	public void SpawnDecal(Node collider, RayCast3D aimRay) {
+		////Bullet Hole
+		var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
+		collider.AddChild(b); //Add child to collider
+		b.GlobalPosition = aimRay.GetCollisionPoint(); //Putting the bullet hole where we hit on the collider
+		var value = aimRay.GetCollisionNormal().Dot(Vector3.Up);
+		if (value != 1) {
+			if (value != -1) {
+				var dir = aimRay.GetCollisionPoint() + aimRay.GetCollisionNormal(); //Calculating the direction
+				b.LookAt(dir, Vector3.Up);
+			} else {
+				b.RotationDegrees = new Vector3(-90,0,0);
+			}
+		} else {
+			b.RotationDegrees = new Vector3(90,0,0);
+		}
+
+	}
+
 
 
 	//Death
@@ -196,11 +233,11 @@ public partial class player : LocalEntity
 	public void _aim() {
 		//Aim
 		if (!isAiming) {
-			GetNode<AnimationPlayer>("Aiming").Play("Aiming");
+			gun.GetNode<AnimationPlayer>("Aiming").Play("Aiming");
 		}
 		//No Aim
 		else {
-			GetNode<AnimationPlayer>("Aiming").PlayBackwards("Aiming");
+			gun.GetNode<AnimationPlayer>("Aiming").PlayBackwards("Aiming");
 		}
 		isAiming = Input.IsActionPressed("aim");
 	}
@@ -218,7 +255,7 @@ public partial class player : LocalEntity
 		}
 		isCrouching = Input.IsActionPressed("crouch");
 	}
-	
+
 	//Camera
     public override void InputLocalEvent(InputEvent @event)
     {
@@ -240,6 +277,24 @@ public partial class player : LocalEntity
 		Vector3 RotationHead = new Vector3(rot.X,0,0);
 		GetNode<Node3D>("Head").Rotation = RotationHead;
     }
+
+
+
+	public virtual void _lowModule() {
+		throw new NotImplementedException();
+	}
+
+	public virtual void _mediumModule() {
+		throw new NotImplementedException();
+	}
+
+	public virtual void _highModule() {
+		throw new NotImplementedException();
+	}
+
+	public virtual void _coreModule() {
+		throw new NotImplementedException();
+	}
 }
 
 public struct Speed 
@@ -272,4 +327,43 @@ public enum DeathCause
 {
 	DeathRegion,
 	Health,
+}
+
+public class Soldier {
+	public string Name {get;}
+	public string Desc {get;}
+	public int EnergyBar {get;}
+	public ModuleInfo LowModule {get;}
+	public ModuleInfo MediumModule {get;}
+	public ModuleInfo HighModule {get;}
+	public ModuleInfo Core {get;}
+
+	public Soldier(string name, string desc, int energyBar, ModuleInfo lowModule, ModuleInfo mediumModule, ModuleInfo highModule, ModuleInfo core) {
+		Name = name;
+		Desc = desc;
+		EnergyBar = energyBar;
+		LowModule = lowModule;
+		MediumModule = mediumModule;
+		HighModule = highModule;
+		Core = Core;
+	}
+}
+
+public class ModuleInfo {
+	public string Title {get;}
+	public string Desc {get;}
+	public string TechDesc {get;}
+	public int? EnergyRequired {get;}
+
+	public ModuleInfo(string title, string desc, string techDesc, int energyRequired) {
+		Title = title;
+		Desc = desc;
+		TechDesc = techDesc;
+		EnergyRequired = energyRequired;
+	}
+	public ModuleInfo(string title, string desc, string techDesc) {
+		Title = title;
+		Desc = desc;
+		TechDesc = techDesc;
+	}
 }

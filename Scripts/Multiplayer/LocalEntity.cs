@@ -120,9 +120,12 @@ public abstract partial class LocalEntity : CharacterBody3D
     public abstract void CalculateFire();
 
     public abstract void ShowFire();
+    public abstract void ShowReload();
     
     public void FireLocal() 
     {
         CalculateFire();
     }
+
+    public void SendCrouch(bool isCrouch) {}
 }
