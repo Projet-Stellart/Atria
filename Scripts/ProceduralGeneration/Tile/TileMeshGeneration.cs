@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -32,6 +34,10 @@ public partial class TileMeshGeneration : Node3D
     /// The type that is used when accessing a tile outside the grid.
     /// </summary>
     private string borderType = "space";
+    private string[] northBorderType;
+    private string[] southBorderType;
+    private string[] eastBorderType;
+    private string[] westBorderType;
 
     /// <summary>
     /// Size of one dimension of a cubicle tile.
@@ -74,7 +80,7 @@ public partial class TileMeshGeneration : Node3D
 
         Task<int[,,]> generating = Task.Run(() =>
         {
-            return GenerateGrid(sizex, sizey, rand);
+            return GenerateGrid(sizex, sizey, new Vector2I[] { new Vector2I(-1, 3), new Vector2I(sizex, 4) }, rand);
         });
 
         PostGenerationProcess(generating, rand);
@@ -114,12 +120,61 @@ public partial class TileMeshGeneration : Node3D
     /// <param name="sizey"></param>
     /// <param name="rand"></param>
     /// <returns>The generated grid matrix</returns>
-    public int[,,] GenerateGrid(int sizex, int sizey, Random rand)
+    public int[,,] GenerateGrid(int sizex, int sizey, Vector2I[] spawns, Random rand)
     {
-        //tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
         int[,,] tGrid = new int[GameManager.singleton.GameData.mapParam.mapHeight, sizex, sizey];
 
-        Debug.Print(GameManager.singleton.GameData.mapParam.mapHeight.ToString());
+        northBorderType = new string[sizex];
+        for(int i = 0; i < northBorderType.Length; i++)
+        {
+            northBorderType[i] = "space";
+        }
+        foreach (Vector2I v in spawns)
+        {
+            if (v.Y == -1)
+            {
+                northBorderType[v.X] = "corridor";
+            }
+        }
+
+        southBorderType = new string[sizex];
+        for (int i = 0; i < southBorderType.Length; i++)
+        {
+            southBorderType[i] = "space";
+        }
+        foreach (Vector2I v in spawns)
+        {
+            if (v.Y == sizey)
+            {
+                southBorderType[v.X] = "corridor";
+            }
+        }
+
+        westBorderType = new string[sizey];
+        for (int i = 0; i < westBorderType.Length; i++)
+        {
+            westBorderType[i] = "space";
+        }
+        foreach (Vector2I v in spawns)
+        {
+            if (v.X == -1)
+            {
+                westBorderType[v.Y] = "corridor";
+            }
+        }
+
+        eastBorderType = new string[sizey];
+        for (int i = 0; i < eastBorderType.Length; i++)
+        {
+            eastBorderType[i] = "space";
+        }
+        foreach (Vector2I v in spawns)
+        {
+            if (v.X == sizex)
+            {
+                eastBorderType[v.Y] = "corridor";
+            }
+        }
 
         for (int i = 0; i < GameManager.singleton.GameData.mapParam.mapHeight; i++)
         {
@@ -127,6 +182,29 @@ public partial class TileMeshGeneration : Node3D
         }
 
         return tGrid;
+    }
+
+    public string SerializeMap(int[,,] grid)
+    {
+        string val = "";
+        val += "{\n";
+        for (int h = 0; h < grid.GetLength(0); h++)
+        {
+            val += "\t{\n";
+            for (int x = 0; x < grid.GetLength(1); x++)
+            {
+                val += "\t\t{\n";
+                for (int y = 0; y < grid.GetLength(2); y++)
+                {
+                    val += "\t\t\t" + grid[h, x, y] + ",\n";
+                }
+                val += "\t\t},\n";
+            }
+            val += "\t},\n";
+        }
+        val += "}\n";
+
+        return val;
     }
 
     public Vector3 GetRandSpawnPoint(int[,,] tGrid, Random rand)
@@ -303,10 +381,44 @@ public partial class TileMeshGeneration : Node3D
         }*/
         //Getting adjacent ids
         //Verify x limit and get value
-        string n = borderType;
-        string s = borderType;
-        string e = borderType;
-        string w = borderType;
+        string n;
+        string s;
+        string e;
+        string w;
+        if (y == 0 && GameManager.singleton.GameData.mapParam.startHeight == height)
+        {
+            n = northBorderType[x];
+        }
+        else
+        {
+            n = borderType;
+        }
+        if (y == grid.GetLength(2)-1 && GameManager.singleton.GameData.mapParam.startHeight == height)
+        {
+            s = southBorderType[x];
+        }
+        else
+        {
+            s = borderType;
+        }
+
+        if (x == 0 && GameManager.singleton.GameData.mapParam.startHeight == height)
+        {
+            w = westBorderType[y];
+        }
+        else
+        {
+            w = borderType;
+        }
+        if (x == grid.GetLength(1)-1 && GameManager.singleton.GameData.mapParam.startHeight == height)
+        {
+            e = eastBorderType[y];
+        }
+        else
+        {
+            e = borderType;
+        }
+
         if (x != 0)
         {
             int idW = grid[height, x - 1, y];
