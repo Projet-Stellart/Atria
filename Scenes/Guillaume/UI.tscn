@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://cthdwsw2b1hp6"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
-[ext_resource type="Texture2D" uid="uid://d0j1yn5gce2qt" path="res://Ressources/UI/_0e64fb47-7d02-42c7-8fe4-ba00e8761c2d.jpeg" id="2_jyfkf"]
 [ext_resource type="AudioStream" uid="uid://b0efel5c7odhb" path="res://Ressources/UI/Sci-Fi Sound Effects (mp3cut (mp3cut.net).mp3" id="3_41h6r"]
 [ext_resource type="Texture2D" uid="uid://2x54dyrtl6yq" path="res://Ressources/UI/UI-Elements/SmallEmptyButton.png" id="3_pga3l"]
+[ext_resource type="Texture2D" uid="uid://0iq52avqno4l" path="res://Ressources/UI/Fond.jpeg" id="4_0mpe5"]
 [ext_resource type="AudioStream" uid="uid://bisdnb3vq2dvx" path="res://Ressources/UI/Trap.mp3" id="4_7w28x"]
 [ext_resource type="Shortcut" uid="uid://cx64jymi5t2sa" path="res://Ressources/UI/shortcat.tres" id="6_yjv84"]
 
@@ -30,7 +30,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_jyfkf")
+texture = ExtResource("4_0mpe5")
+expand_mode = 1
 
 [node name="Main" type="Control" parent="."]
 layout_mode = 3
@@ -567,6 +568,92 @@ size_flags_vertical = 3
 placeholder_text = "Username"
 scroll_fit_content_height = true
 
+[node name="MatchMaker" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer6" type="MarginContainer" parent="MatchMaker"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.382813
+anchor_top = 0.347222
+anchor_right = 0.617188
+anchor_bottom = 0.395833
+offset_bottom = -0.00012207
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MatchMaker/MarginContainer6"]
+layout_mode = 2
+
+[node name="MatchMakerIP" type="TextEdit" parent="MatchMaker/MarginContainer6/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "MatchMaker IP"
+scroll_fit_content_height = true
+
+[node name="MarginContainer2" type="MarginContainer" parent="MatchMaker"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.015625
+anchor_top = 0.861111
+anchor_right = 0.121094
+anchor_bottom = 0.972222
+grow_horizontal = 2
+grow_vertical = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MatchMaker/MarginContainer2"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="MatchMaker/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
+text = "
+Exit
+
+"
+icon = ExtResource("3_pga3l")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="MarginContainer3" type="MarginContainer" parent="MatchMaker"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.015625
+anchor_top = 0.861111
+anchor_right = 0.125
+anchor_bottom = 0.972222
+offset_left = 550.0
+offset_top = -270.0
+offset_right = 550.0
+offset_bottom = -270.0
+grow_horizontal = 2
+grow_vertical = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MatchMaker/MarginContainer3"]
+layout_mode = 2
+
+[node name="OK" type="Button" parent="MatchMaker/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+shortcut = ExtResource("6_yjv84")
+text = "
+OK
+
+"
+icon = ExtResource("3_pga3l")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
 [node name="Options" type="Control" parent="."]
 visible = false
 layout_mode = 3
@@ -579,10 +666,9 @@ grow_vertical = 2
 [node name="MarginContainer3" type="MarginContainer" parent="Options"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.386719
-anchor_top = 0.0625
-anchor_right = 0.613281
-anchor_bottom = 0.743056
+anchor_left = 0.382813
+anchor_right = 0.617188
+anchor_bottom = 0.972222
 metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="Control" parent="Options/MarginContainer3"]
@@ -590,10 +676,12 @@ layout_mode = 2
 
 [node name="Sound" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
 layout_mode = 2
-anchor_left = 0.0689655
-anchor_top = 0.0408163
-anchor_right = 0.931035
-anchor_bottom = 0.346939
+anchor_left = 0.0666667
+anchor_top = 0.0285714
+anchor_right = 0.933333
+anchor_bottom = 0.242857
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_font_sizes/font_size = 30
 text = "Sound"
 icon = ExtResource("3_pga3l")
@@ -604,10 +692,11 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Graphics" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
 layout_mode = 2
-anchor_left = 0.0689655
-anchor_top = 0.346939
-anchor_right = 0.931035
-anchor_bottom = 0.653061
+anchor_left = 0.0666667
+anchor_top = 0.271429
+anchor_right = 0.933333
+anchor_bottom = 0.485714
+offset_top = -1.52588e-05
 theme_override_font_sizes/font_size = 30
 text = "Graphics"
 icon = ExtResource("3_pga3l")
@@ -618,12 +707,29 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Controls" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
 layout_mode = 2
-anchor_left = 0.0689655
-anchor_top = 0.653061
-anchor_right = 0.931035
-anchor_bottom = 0.959184
+anchor_left = 0.0666667
+anchor_top = 0.514286
+anchor_right = 0.933333
+anchor_bottom = 0.728571
+offset_top = -3.05176e-05
+offset_bottom = 3.05176e-05
 theme_override_font_sizes/font_size = 30
 text = "Binds"
+icon = ExtResource("3_pga3l")
+flat = true
+icon_alignment = 1
+expand_icon = true
+metadata/_edit_use_anchors_ = true
+
+[node name="MatchMaker" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0666667
+anchor_top = 0.757143
+anchor_right = 0.933333
+anchor_bottom = 0.971429
+theme_override_font_sizes/font_size = 30
+text = "MatchMaker"
 icon = ExtResource("3_pga3l")
 flat = true
 icon_alignment = 1
@@ -840,9 +946,13 @@ Exit
 [connection signal="pressed" from="Play/MarginContainer4/VBoxContainer/Online" to="." method="_on_online_pressed"]
 [connection signal="pressed" from="Play/MarginContainer5/VBoxContainer/Custom" to="." method="_on_custom_pressed"]
 [connection signal="text_changed" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_changed"]
+[connection signal="text_changed" from="MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP" to="." method="_on_match_maker_ip_text_changed"]
+[connection signal="pressed" from="MatchMaker/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_mm"]
+[connection signal="pressed" from="MatchMaker/MarginContainer3/VBoxContainer/OK" to="." method="_on_ok_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
+[connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/MatchMaker" to="." method="_on_match_maker_pressed"]
 [connection signal="pressed" from="Options/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed_options"]
 [connection signal="pressed" from="Online/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_online"]
 [connection signal="pressed" from="Custom/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_custom"]

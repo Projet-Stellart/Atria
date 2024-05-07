@@ -1,0 +1,213 @@
+[gd_scene load_steps=4 format=3 uid="uid://dqxls3fq7a0h2"]
+
+[ext_resource type="Script" path="res://Scripts/Guillaume/HealthBar.cs" id="1_6lp28"]
+[ext_resource type="Script" path="res://Scripts/Guillaume/Bullets.cs" id="2_6g4bk"]
+[ext_resource type="Script" path="res://Scripts/Guillaume/EnergyBar.cs" id="3_pk823"]
+
+[node name="Data_OSD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Health" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.015625
+anchor_top = 0.0277778
+anchor_right = 0.25
+anchor_bottom = 0.0833333
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6lp28")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Health"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HB_BG" type="Control" parent="Health"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Health/HB_BG"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.45098, 0.45098, 0.45098, 1)
+
+[node name="HB" type="Control" parent="Health/HB_BG/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Health/HB_BG/ColorRect/HB"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 1, 0.0235294, 1)
+
+[node name="Bullets" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.867188
+anchor_top = 0.916667
+anchor_right = 0.984375
+anchor_bottom = 0.972223
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_6g4bk")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Bullets"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HB_BG" type="Control" parent="Bullets"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Bullets/HB_BG"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.464288
+anchor_bottom = 0.99999
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.45098, 0.45098, 0.45098, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="TextEdit" type="RichTextLabel" parent="Bullets/HB_BG/ColorRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.0833333
+anchor_right = 1.0
+anchor_bottom = 1.08333
+offset_top = 2.5
+offset_bottom = -2.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="Bullets/HB_BG"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.535717
+anchor_right = 1.0
+anchor_bottom = 0.99999
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.45098, 0.45098, 0.45098, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="TextEdit" type="RichTextLabel" parent="Bullets/HB_BG/ColorRect2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.0833333
+anchor_right = 1.0
+anchor_bottom = 1.08333
+offset_top = 2.5
+offset_bottom = -2.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+metadata/_edit_use_anchors_ = true
+
+[node name="Energy" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.953125
+anchor_top = 0.0277778
+anchor_right = 0.984375
+anchor_bottom = 0.444444
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_pk823")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Energy"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HB_BG" type="Control" parent="Energy"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Energy/HB_BG"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.45098, 0.45098, 0.45098, 1)
+
+[node name="HB" type="Control" parent="Energy/HB_BG/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Energy/HB_BG/ColorRect/HB"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.247059, 0, 1, 1)
