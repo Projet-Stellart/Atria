@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dh3olwlvda6ut"]
+[gd_scene load_steps=24 format=3 uid="uid://dh3olwlvda6ut"]
 
 [ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Tile/TileMeshGeneration.cs" id="1_47gua"]
 [ext_resource type="PackedScene" uid="uid://kfagsisbvgc5" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridor.tscn" id="2_k50b4"]
@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bea4i6d85n505" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/EndCorridor.tscn" id="6_aeu1b"]
 [ext_resource type="PackedScene" uid="uid://cp2k7ghni5rt4" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorHigh.tscn" id="7_f81mn"]
 [ext_resource type="PackedScene" uid="uid://dhe4pk44yu6l" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorLow.tscn" id="8_mfmig"]
-[ext_resource type="PackedScene" path="res://Scenes/Nelson/player.tscn" id="8_ntvs2"]
+[ext_resource type="PackedScene" uid="uid://dwx8ndyw304ra" path="res://Scenes/Nelson/player.tscn" id="8_ntvs2"]
 [ext_resource type="PackedScene" uid="uid://bcfda48sknxyd" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLow.tscn" id="9_iif0w"]
 [ext_resource type="PackedScene" uid="uid://bc70yrulkw3sa" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHigh.tscn" id="10_sngcm"]
 [ext_resource type="Texture2D" uid="uid://bs5javsrf65mq" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridorMap.png" id="13_vo813"]
@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://doofrg8sbuiio" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorLowMap.png" id="19_p1fc3"]
 [ext_resource type="Texture2D" uid="uid://cyrmgu6sfrvvn" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLowMap.png" id="20_0sulw"]
 [ext_resource type="Texture2D" uid="uid://cjxqmw0dxwl48" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHighMap.png" id="21_s2tq3"]
+[ext_resource type="PackedScene" uid="uid://dugmoboqppof5" path="res://Ressources/ProceduralGenerationTempRes/Rooms/TestRoom.tscn" id="23_8qqax"]
 
 [node name="TileMapGenerator" type="Node3D"]
 script = ExtResource("1_47gua")
@@ -30,3 +31,5 @@ metadata/TileParams = ["StraitCorridor;75;0;0;corridor;corridor;space;space", "C
 metadata/PlayerTemplate = ExtResource("8_ntvs2")
 metadata/mapHeight = 3
 metadata/TileImage = [ExtResource("13_vo813"), ExtResource("14_pgt3r"), ExtResource("15_qkkk2"), ExtResource("16_41f3u"), ExtResource("17_krnui"), ExtResource("18_sccs1"), ExtResource("19_p1fc3"), ExtResource("20_0sulw"), ExtResource("21_s2tq3"), ExtResource("15_omdf6")]
+metadata/RoomTemplate = [ExtResource("23_8qqax")]
+metadata/RoomParams = ["0|5,6;8,7"]

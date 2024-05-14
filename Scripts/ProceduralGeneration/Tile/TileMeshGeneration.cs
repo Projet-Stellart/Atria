@@ -6,7 +6,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Transactions;
+using static Godot.Projection;
 using static System.Formats.Asn1.AsnWriter;
+using static TilePrefa;
 
 public partial class TileMeshGeneration : Node3D
 {
@@ -18,6 +21,8 @@ public partial class TileMeshGeneration : Node3D
     /// Array of all tiles template for grid generation. Will be set to private in the final version
     /// </summary>
     public TilePrefa[] tileTemplates;
+
+    public RoomPrefa[] roomTemplates;
 
     private PackedScene playerTemplate;
 
@@ -80,7 +85,7 @@ public partial class TileMeshGeneration : Node3D
 
         Task<int[,,]> generating = Task.Run(() =>
         {
-            return GenerateGrid(sizex, sizey, new Vector2I[] { new Vector2I(-1, 3), new Vector2I(sizex, 4) }, rand);
+            return GenerateGrid(sizex, sizey, new Vector2I[] { new Vector2I(-1, GameManager.singleton.GameData.mapParam.sizeY/2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY/10, GameManager.singleton.GameData.mapParam.sizeY/10)), new Vector2I(sizex, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10)) }, rand);
         });
 
         PostGenerationProcess(generating, rand);
@@ -124,8 +129,22 @@ public partial class TileMeshGeneration : Node3D
     {
         int[,,] tGrid = new int[GameManager.singleton.GameData.mapParam.mapHeight, sizex, sizey];
 
+        ProcessSpawns(sizex, sizey, spawns);
+
+        tGrid = SetRooms(tGrid, GameManager.singleton.GameData.mapParam.startHeight, 10, tGrid.GetLength(1)/4, tGrid.GetLength(2)/4, rand);
+
+        for (int i = 0; i < GameManager.singleton.GameData.mapParam.mapHeight; i++)
+        {
+            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, GameManager.singleton.GameData.mapParam.startHeight), (float)i / GameManager.singleton.GameData.mapParam.mapHeight, rand);
+        }
+
+        return tGrid;
+    }
+
+    private void ProcessSpawns(int sizex, int sizey, Vector2I[] spawns)
+    {
         northBorderType = new string[sizex];
-        for(int i = 0; i < northBorderType.Length; i++)
+        for (int i = 0; i < northBorderType.Length; i++)
         {
             northBorderType[i] = "space";
         }
@@ -175,10 +194,48 @@ public partial class TileMeshGeneration : Node3D
                 eastBorderType[v.Y] = "corridor";
             }
         }
+    }
 
-        for (int i = 0; i < GameManager.singleton.GameData.mapParam.mapHeight; i++)
+    private int[,,] SetRooms(int[,,] tGrid, int spawnHeight, int nbRooms, int xMargin, int yMargin, Random rand)
+    {
+        for (int r = 0; r < nbRooms; r++)
         {
-            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, GameManager.singleton.GameData.mapParam.startHeight), (float)i / GameManager.singleton.GameData.mapParam.mapHeight, rand);
+            RoomPrefa type = roomTemplates[rand.Next(0, roomTemplates.Length)];
+            bool valid = false;
+            int n = 0;
+            while (!valid)
+            {
+                if (n > 10)
+                    break;
+
+                Vector2I roomPos = new Vector2I(rand.Next(xMargin, tGrid.GetLength(1) - xMargin - type.tileTypes.GetLength(0)), rand.Next(yMargin, tGrid.GetLength(2) - yMargin - type.tileTypes.GetLength(1)));
+
+                valid = true;
+
+                for (int i = 0; i < type.tileTypes.GetLength(0); i++)
+                {
+                    for (int j = 0; j < type.tileTypes.GetLength(1); j++)
+                    {
+                        if (tGrid[spawnHeight, roomPos.X + i, roomPos.Y + j] != 0)
+                        {
+                            valid = false;
+                            n++;
+                            break;
+                        }
+                    }
+                }
+
+                if (!valid)
+                    continue;
+
+                for (int i = 0; i < type.tileTypes.GetLength(0); i++)
+                {
+                    for (int j = 0; j < type.tileTypes.GetLength(1); j++)
+                    {
+                        tGrid[spawnHeight, roomPos.X + i, roomPos.Y + j] = type.tileTypes[i, j];
+                    }
+                }
+            }
         }
 
         return tGrid;
@@ -521,6 +578,9 @@ public partial class TileMeshGeneration : Node3D
         Godot.Collections.Array<Resource> mpRes = GetMeta("TileImage").AsGodotArray<Resource>();
 		Godot.Collections.Array<string> tilesParams = GetMeta("TileParams").AsGodotArray<string>();
 
+        Godot.Collections.Array<PackedScene> rooms = GetMeta("RoomTemplate").AsGodotArray<PackedScene>();
+        Godot.Collections.Array<string> roomsParams = GetMeta("RoomParams").AsGodotArray<string>();
+
         //Create array: inputed tiles + 3 other rotated tile
         tileTemplates = new TilePrefa[tiles.Count*4];
 
@@ -529,6 +589,8 @@ public partial class TileMeshGeneration : Node3D
             //Original tile
 			string[] par = tilesParams[i].Split(';');
             tileTemplates[i * 4] = new TilePrefa(tiles[i], mpRes[i].ResourcePath, par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);
+            /*if (tileTemplates[i * 4].est == "corridor" && tileTemplates[i * 4].west == "corridor" && tileTemplates[i * 4].north == "corridor" && tileTemplates[i * 4].south == "corridor")
+                Debug.Print("X is at pos: " + (i * 4));*/
             tileTemplates[i * 4].rotation = 0;
             tileTemplates[i * 4].transition = int.Parse(par[2]);
             int conjugateRef = int.Parse(par[3]);
@@ -560,12 +622,19 @@ public partial class TileMeshGeneration : Node3D
             }
         }
 
-        //Debug print to visualize data
-        /*for (int i = 0; i < tileTemplates.Length; i++) 
+        roomTemplates = new RoomPrefa[roomsParams.Count];
+
+        for (int i = 0; i < roomsParams.Count; i++)
         {
-            TilePrefa tile = tileTemplates[i];
-            Debug.Print(i + ":\n" + tile.ToString());
-        }*/
+            roomTemplates[i] = new RoomPrefa(roomsParams[i], rooms[i]);
+        }
+
+        //Debug print to visualize data
+            /*for (int i = 0; i < tileTemplates.Length; i++) 
+            {
+                TilePrefa tile = tileTemplates[i];
+                Debug.Print(i + ":\n" + tile.ToString());
+            }*/
     }
 
     /// <summary>
@@ -691,8 +760,56 @@ public class TilePrefa
         this.west = w;
     }
 
+    
+
     public override string ToString()
     {
         return $"Tile {name}:\n    weight: {weight}\n    rotation: {rotation}\n    transition: {transition}\n    north: {north}\n    south: {south}\n    est: {est}\n    west: {west}\n    Ref to: {conjugate}";
+    }
+
+    public enum RoomType
+    {
+        Inert,
+        Placing
+    }
+}
+
+public class RoomPrefa
+{
+    public RoomType type;
+    public int[,] tileTypes;
+    public PackedScene room;
+
+    public RoomPrefa(string data, PackedScene scene)
+    {
+        string[] parts = data.Split('|');
+        type = (RoomType)(int.Parse(parts[0]));
+        string[] lines = parts[1].Split(";");
+        tileTypes = new int[lines.Length, lines[0].Split(',').Length];
+        for (int i = 0; i < lines.Length; i++)
+        {
+            string[] o = lines[i].Split(",");
+            for (int j = 0; j < o.Length; j++)
+            {
+                tileTypes[i, j] = int.Parse(o[j]);
+            }
+        }
+
+        room = scene;
+    }
+
+    public override string ToString()
+    {
+        string b = "";
+        for (int i = 0; i < tileTypes.GetLength(0); i++)
+        {
+            for (int j = 0; j < tileTypes.GetLength(1); j++)
+            {
+                b += tileTypes[i, j] + ",";
+            }
+            b += '\n';
+        }
+
+        return "Room of type " + type.ToString() + "\n" + b;
     }
 }
