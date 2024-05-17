@@ -13,6 +13,32 @@ public partial class GameManager : Node
     public TileMeshGeneration tileMapGenerator;
     public HudManager hudManager;
 
+    private float previousAdvencmentChecked;
+
+    public static Dictionary<ServerStatus, string> statusText = new Dictionary<ServerStatus, string>
+    {
+        { ServerStatus.Paused, "Paused" },
+        { ServerStatus.Generating, "Generating map" },
+        { ServerStatus.Waiting, "Waiting for players" },
+        { ServerStatus.Starting, "Game starting in x seconds" },
+        { ServerStatus.Running, "Started" },
+    };
+
+    private ServerStatus _serverStatus = ServerStatus.Paused;
+
+    public ServerStatus serverStatus { get => _serverStatus; private set => SetServerStatus(value); }
+
+    private void SetServerStatus(ServerStatus value)
+    {
+        _serverStatus = value;
+        multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)value, 0f });
+    }
+
+    private void SyncServAdv(float adv)
+    {
+        multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)_serverStatus, adv });
+    }
+
     public const string playerTemplate = "res://Scenes/Nelson/player.tscn";
 
     private const string lobbyTemplate = "res://Scenes/Guillaume/Lobby.tscn";
@@ -72,6 +98,15 @@ public partial class GameManager : Node
             Vector3 rot = (tileMapGenerator).Rotation + new Vector3(0.3f, 0.3f, 0.3f) * (float)delta;
             multiplayerManager.RotateMapServer(rot);
         }*/
+        if (tileMapGenerator != null && tileMapGenerator.isGenerating)
+        {
+            float prec = 20;
+            if ( (int)(tileMapGenerator.gridGenerationAdvencement * prec) > (int)(previousAdvencmentChecked * prec))
+            {
+                previousAdvencmentChecked = tileMapGenerator.gridGenerationAdvencement;
+                SyncServAdv(tileMapGenerator.gridGenerationAdvencement);
+            }
+        }
         if (delayedActions == null)
             return;
         for (int i = 0; i < delayedActions.Count; i++)
@@ -212,6 +247,7 @@ public partial class GameManager : Node
         if (args.Contains("--server"))
         {
             multiplayerManager.InitServer((int)GameData.port, (int)GameData.nbPlayer);
+            serverStatus = ServerStatus.Generating;
             delayedActions = new List<(ulong, Action)>();
             InitMap();
         }
@@ -231,6 +267,7 @@ public partial class GameManager : Node
         tileMapGenerator.OnMapGenerated += () =>
         {
             multiplayerManager.MapGenerated();
+            serverStatus = ServerStatus.Waiting;
             if (Multiplayer.GetPeers().Length == GameData.nbPlayer)
             {
                 BeginMatch();
@@ -242,6 +279,14 @@ public partial class GameManager : Node
 
     public void ManageNewClient(long id)
     {
+        if (tileMapGenerator != null && tileMapGenerator.isGenerating)
+        {
+            multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)serverStatus, tileMapGenerator.gridGenerationAdvencement });
+        }
+        else
+        {
+            multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)serverStatus, 0f });
+        }
         if (tileMapGenerator == null)
             return;
         if (matchStatus > -2)
@@ -308,6 +353,7 @@ public partial class GameManager : Node
     private void BeginMatch()
     {
         matchStatus = -1;
+        serverStatus = ServerStatus.Starting;
 
         Debug.Print("Players will be dispatch in " + GameData.spawnDelay + " seconds!");
         delayedActions.Add((Time.GetTicksMsec() + GameData.spawnDelay*1000, SpawnPlayers));
@@ -318,8 +364,9 @@ public partial class GameManager : Node
     private void SpawnPlayers()
     {
         matchStatus = 0;
+        serverStatus = ServerStatus.Running;
 
-        foreach(int id in Multiplayer.GetPeers())
+        foreach (int id in Multiplayer.GetPeers())
         {
             Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
             multiplayerManager.InstantiateNewPlayer(id, npos);
@@ -422,4 +469,13 @@ public struct PlayerData
 public struct TeamData
 {
     public int score;
+}
+
+public enum ServerStatus
+{
+    Paused,
+    Generating,
+    Waiting,
+    Starting,
+    Running
 }

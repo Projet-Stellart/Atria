@@ -26,11 +26,25 @@ public partial class TileMeshGeneration : Node3D
 
     private PackedScene playerTemplate;
 
+    public string[] roomRes = new string[]
+    {
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGenerationTempRes/Rooms/Tiles/Filled.png"
+    };
+
     //TempVariable
     Node3D player;
 
     //Dependant on the map generation Task
-    private float gridGenerationAdvencement;
+    public float gridGenerationAdvencement { get; private set; }
     public bool isGenerating { get; private set; }
 
     public int[,,] tileMap;
@@ -57,7 +71,7 @@ public partial class TileMeshGeneration : Node3D
 
     public void Init(int sizeX, int sizeY)
     {
-        Task generating = GenerateMapAsync(sizeX, sizeY);
+        Task generation = GenerateMapAsync(sizeX, sizeY);
     }
 
     //Debug only
@@ -131,7 +145,7 @@ public partial class TileMeshGeneration : Node3D
 
         ProcessSpawns(sizex, sizey, spawns);
 
-        tGrid = SetRooms(tGrid, GameManager.singleton.GameData.mapParam.startHeight, 10, tGrid.GetLength(1)/4, tGrid.GetLength(2)/4, rand);
+        tGrid = SetRooms(tGrid, GameManager.singleton.GameData.mapParam.startHeight, 1, tGrid.GetLength(1)/4, tGrid.GetLength(2)/4, rand);
 
         for (int i = 0; i < GameManager.singleton.GameData.mapParam.mapHeight; i++)
         {
@@ -297,6 +311,8 @@ public partial class TileMeshGeneration : Node3D
             {
                 for (int y = 0; y < sizey; y++)
                 {
+                    if (tGrid[height, x, y] < 0)
+                        continue;
                     TilePrefa template = tileTemplates[tGrid[height, x, y] - 1];
                     Node3D tmpTile = template.tile.Instantiate<Node3D>();
                     //tileGrid[height, x, y] = template.tile.Instantiate<Node3D>();
@@ -478,23 +494,23 @@ public partial class TileMeshGeneration : Node3D
 
         if (x != 0)
         {
-            int idW = grid[height, x - 1, y];
+            int idW = Math.Abs(grid[height, x - 1, y]);
             w = idW == 0 ? "" : tileTemplates[idW - 1].est;
         }
         if (x != grid.GetLength(1) - 1)
         {
-            int idE = grid[height, x + 1, y];
+            int idE = Math.Abs(grid[height, x + 1, y]);
             e = idE == 0 ? "" : tileTemplates[idE - 1].west;
         }
         //Verify y limit and get value
         if (y != 0)
         {
-            int idN = grid[height, x, y - 1];
+            int idN = Math.Abs(grid[height, x, y - 1]);
             n = idN == 0 ? "" : tileTemplates[idN - 1].south;
         }
         if (y != grid.GetLength(2) - 1)
         {
-            int idS = grid[height, x, y + 1];
+            int idS = Math.Abs(grid[height, x, y + 1]);
             s = idS == 0 ? "" : tileTemplates[idS - 1].north;
         }
         //Getting tile's restrictions

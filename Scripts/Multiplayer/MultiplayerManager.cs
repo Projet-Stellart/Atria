@@ -240,7 +240,6 @@ public partial class MultiplayerManager : Node
     }
 
     //Lobby sync
-
     public void LobbySync()
     {
         if (!Multiplayer.IsServer())
@@ -297,6 +296,7 @@ public partial class MultiplayerManager : Node
         SyncHUDLobbyClient();
     }
 
+
     private void SyncHUDLobbyClient()
     {
         if (GameManager.singleton.lobby == null)
@@ -313,6 +313,14 @@ public partial class MultiplayerManager : Node
                 lobby.PlayerJoin(username, (uint)i);
             }
         }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SyncServerStatusClientRpc(Variant statusIndex, Variant progressionVar)
+    {
+        ServerStatus status = (ServerStatus)((int)statusIndex);
+        float progression = (float)progressionVar;
+        Debug.Print("Server status: " + status.ToString() + " advancment: " + progression.ToString());
     }
 
     //Fun Function

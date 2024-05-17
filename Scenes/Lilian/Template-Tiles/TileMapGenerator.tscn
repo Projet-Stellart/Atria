@@ -32,4 +32,4 @@ metadata/PlayerTemplate = ExtResource("8_ntvs2")
 metadata/mapHeight = 3
 metadata/TileImage = [ExtResource("13_vo813"), ExtResource("14_pgt3r"), ExtResource("15_qkkk2"), ExtResource("16_41f3u"), ExtResource("17_krnui"), ExtResource("18_sccs1"), ExtResource("19_p1fc3"), ExtResource("20_0sulw"), ExtResource("21_s2tq3"), ExtResource("15_omdf6")]
 metadata/RoomTemplate = [ExtResource("23_8qqax")]
-metadata/RoomParams = ["0|5,6;8,7"]
+metadata/RoomParams = ["0|-2,-6;-8,-7"]

@@ -124,10 +124,18 @@ public partial class MapManager : Control
                 Control tNode = ImageTemplate.Instantiate<Control>();
                 Grid.AddChild(tNode);
                 TextureRect displayer = (TextureRect)tNode.GetChild(0);
-                Texture2D texture = GD.Load<Texture2D>(TM.tileTemplates[TM.tileMap[height, x, y] - 1].mapRes);
+                Texture2D texture;
+                if (TM.tileMap[height, x, y] < 0)
+                {
+                    texture = GD.Load<Texture2D>(TM.roomRes[(Math.Abs(TM.tileMap[height, x, y]) - 1)/4]);
+                }
+                else
+                {
+                    texture = GD.Load<Texture2D>(TM.tileTemplates[TM.tileMap[height, x, y] - 1].mapRes);
+                }
                 displayer.Texture = texture;
                 displayer.PivotOffset = piv;
-                displayer.RotationDegrees = -TM.tileTemplates[TM.tileMap[height, x, y] - 1].rotation;
+                displayer.RotationDegrees = -TM.tileTemplates[Math.Abs(TM.tileMap[height, x, y]) - 1].rotation;
                 
             }
         }
