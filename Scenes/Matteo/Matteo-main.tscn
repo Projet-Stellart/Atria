@@ -1,3 +1,7 @@
-[gd_scene format=3 uid="uid://c4vt11bfa12av"]
+[gd_scene load_steps=2 format=3 uid="uid://c4vt11bfa12av"]
+
+[ext_resource type="PackedScene" uid="uid://dh3olwlvda6ut" path="res://Scenes/Lilian/Template-Tiles/TileMapGenerator.tscn" id="1_m6dtm"]
 
 [node name="Matteo" type="Node3D"]
+
+[node name="TileMapGenerator" parent="." instance=ExtResource("1_m6dtm")]
