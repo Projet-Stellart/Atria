@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://8robqvb6ylgx"]
+[gd_scene load_steps=6 format=3 uid="uid://8robqvb6ylgx"]
 
+[ext_resource type="Script" path="res://Scripts/Gameplay/Test/blockdata.cs" id="1_mdula"]
 [ext_resource type="Texture2D" uid="uid://dtblxc1u6ps60" path="res://Ressources/GamePlay/Textures/quadrillage.png" id="1_mn6kc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lhacp"]
@@ -14,6 +15,7 @@ uv1_world_triplanar = true
 material = SubResource("StandardMaterial3D_tbkex")
 
 [node name="Block" type="StaticBody3D"]
+script = ExtResource("1_mdula")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_lhacp")

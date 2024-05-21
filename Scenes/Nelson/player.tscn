@@ -1,9 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://c1o14bivnd8qb"]
+[gd_scene load_steps=8 format=3 uid="uid://c1o14bivnd8qb"]
 
-[ext_resource type="Script" path="res://Scripts/Gameplay/player.cs" id="1_ryegq"]
-[ext_resource type="PackedScene" uid="uid://10cgdl330dew" path="res://Scenes/Nelson/weapon_test.tscn" id="3_4sp6h"]
-[ext_resource type="PackedScene" uid="uid://dd7pol44d7bok" path="res://Scenes/Nelson/muzzle_flash.tscn" id="3_8tuus"]
-[ext_resource type="Script" path="res://Scripts/Gameplay/layerrenderer.cs" id="4_lk7uv"]
+[ext_resource type="Script" path="res://Scripts/Gameplay/Soldiers/player.cs" id="1_gl11l"]
+[ext_resource type="Script" path="res://Scripts/Gameplay/Soldiers/layerrenderer.cs" id="4_lk7uv"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_srdf2"]
 radius = 0.375
@@ -97,7 +95,7 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody3D"]
-script = ExtResource("1_ryegq")
+script = ExtResource("1_gl11l")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -110,20 +108,19 @@ shape = SubResource("CapsuleShape3D_2wcmm")
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
-[node name="Hand" type="Node3D" parent="Head"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, -0.6, -0.3)
-
-[node name="ak_47_custom" parent="Head/Hand" instance=ExtResource("3_4sp6h")]
-transform = Transform3D(-0.173648, 0, -0.984808, 0, 1, 0, 0.984808, 0, -0.173648, 0, 0, 0)
-muzzleFlashScene = ExtResource("3_8tuus")
-bullets = 125
-
 [node name="Camera" type="Camera3D" parent="Head"]
-cull_mask = 1048573
+cull_mask = 1048569
 near = 0.001
 
-[node name="Aim" type="RayCast3D" parent="Head/Camera"]
-target_position = Vector3(0, 0, -200)
+[node name="Arms" type="Node3D" parent="Head"]
+
+[node name="rig" type="Node3D" parent="Head/Arms"]
+
+[node name="PrimaryAnimator" type="AnimationPlayer" parent="Head/Arms"]
+
+[node name="SecondaryAnimator" type="AnimationPlayer" parent="Head/Arms"]
+
+[node name="MeleeAnimator" type="AnimationPlayer" parent="Head/Arms"]
 
 [node name="Crouching" type="AnimationPlayer" parent="."]
 libraries = {
@@ -147,5 +144,7 @@ render_target_update_mode = 4
 [node name="LayerRenderer" type="Camera3D" parent="LayersManager/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 cull_mask = 2
+fov = 30.0
+near = 0.001
 script = ExtResource("4_lk7uv")
 camera_path = NodePath("../../../Head/Camera")
