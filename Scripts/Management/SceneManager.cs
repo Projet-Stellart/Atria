@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 public partial class SceneManager : Node
 {
@@ -45,6 +46,13 @@ public partial class SceneManager : Node
 		//Connect hooks
 		mainMenu.OnPlay += (string username) =>
 		{
+			string? server = MultiplayerManager.GetPublicServer("127.0.0.1", 12345);
+
+			if (server == null)
+				return;
+
+			Debug.Print("Connect to server: " + server);
+
 			LoadGame(args, new PlayerData() { Username = username });
 		};
 
