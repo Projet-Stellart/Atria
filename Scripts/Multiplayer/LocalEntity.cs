@@ -202,7 +202,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         if (!IsLocalPlayer)
             return;
         RpcId(1, "FireServerRpc", new Variant[] {Position, Rotation});
-        ShowFire();
+        //ShowFire();
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]

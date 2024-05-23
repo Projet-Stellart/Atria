@@ -70,7 +70,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	public bool isCrouching = false;
 	public bool isAiming = false;
 	public bool hasWeapon = false;
-	public int Health = 100;
+	public float Health = 100;
 
 
 	//Weapons
