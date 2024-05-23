@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://c76mp6tlqu677"
+path="res://.godot/imported/NOMA - Brain Power - LYRICS!.mp3-496b86d49f66609e9dfcb8d6a774c423.mp3str"
+
+[deps]
+
+source_file="res://Ressources/GamePlay/Sounds/NOMA - Brain Power - LYRICS!.mp3"
+dest_files=["res://.godot/imported/NOMA - Brain Power - LYRICS!.mp3-496b86d49f66609e9dfcb8d6a774c423.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

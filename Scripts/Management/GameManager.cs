@@ -265,12 +265,6 @@ public partial class GameManager : Node
         {
             BeginMatch();
         }
-        /*foreach(KeyValuePair<long, playerScript> player in multiplayerManager.playersControler)
-        {
-            multiplayerManager.SendPlayer(id, player.Key, player.Value.Position);
-        }
-        Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
-        multiplayerManager.InstantiateNewPlayer(id, npos);*/
     }
 
     public void ManageDisconnectedClient(long id)
