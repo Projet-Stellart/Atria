@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Guillaume/Lobby_Script.cs" id="1_bi12c"]
 [ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_eqo5k"]
 [ext_resource type="Texture2D" uid="uid://dowuts2osg2p0" path="res://Ressources/UI/MapLayers/layer-download-svgrepo-com - Copy.svg" id="2_jp1ac"]
+[ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_vuha2"]
 [ext_resource type="Texture2D" uid="uid://b5n5nr41bqeou" path="res://Ressources/UI/MapLayers/layer-upload-svgrepo-com - Copy.svg" id="3_dwoyv"]
 
 [node name="Lobby" type="CanvasLayer"]
@@ -15,6 +16,25 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="LobbyTitle" type="RichTextLabel" parent="Custom"]
+layout_mode = 0
+anchor_left = 0.304688
+anchor_top = 0.0277778
+anchor_right = 0.484375
+anchor_bottom = 0.0833333
+bbcode_enabled = true
+metadata/_edit_use_anchors_ = true
+
+[node name="LobbyProgress" type="RichTextLabel" parent="Custom"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.515625
+anchor_top = 0.0277778
+anchor_right = 0.546875
+anchor_bottom = 0.0833333
+bbcode_enabled = true
+metadata/_edit_use_anchors_ = true
 
 [node name="MarginContainer5" type="MarginContainer" parent="Custom"]
 layout_mode = 1

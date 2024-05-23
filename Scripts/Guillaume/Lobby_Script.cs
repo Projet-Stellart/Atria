@@ -62,4 +62,19 @@ public partial class Lobby_Script : CanvasLayer
             pl.QueueFree();
         }
     }
+
+	public void SetLobbyTitle(string titleData)
+	{
+		var title = GetNode<RichTextLabel>("Custom/LobbyTitle");
+        title.Text = "[center]" + titleData;
+	}
+
+	public void SetLobbyProgress(bool display, float value)
+	{
+		var progress = GetNode<RichTextLabel>("Custom/LobbyProgress");
+        if (display) progress.Text = "[center]" + value * 100;
+		else progress.Text = "";
+	}
+
+
 }

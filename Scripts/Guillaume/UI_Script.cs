@@ -194,10 +194,33 @@ public partial class UI_Script : CanvasLayer
 		}
 	}
 
+	private void _on_match_maker_ip_text_changed()
+	{
+		var ok = GetNode<Button>("MatchMaker/MarginContainer3/VBoxContainer/OK");
+		ok.Disabled = false;
+		string ip = GetNode<TextEdit>("MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP").Text;
+		foreach (char c in ip)
+		{
+		
+			if (!is_authorized_char(c))
+			{
+				ok.Disabled = true;
+			}
+		}
+		if (ip.Length <= 6 || ip.Contains(" "))
+		{
+			ok.Disabled = true;
+		}
+		if (ip.Split('.').Length != 4)
+		{
+			ok.Disabled = true;	
+			return;
+		}
+	}
+
 	private bool is_authorized_char(char c)
 	{
-		if (c <= 'z' && c >= 'a') return true;
-		if (c <= 'Z' && c >= 'A') return true;
+		if (c == '.' || c == ':') return true;
 		if (c <= '9' && c >= '0') return true;
 		return false;
 	}
@@ -229,6 +252,35 @@ public partial class UI_Script : CanvasLayer
 	private void _on_son_fond_finished()
 	{
 		GetNode<AudioStreamPlayer>("SonFond").Play();
+	}
+
+	private void _on_ok_pressed()
+	{
+		string ip_port = GetNode<TextEdit>("MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP").Text;
+		string[] parts = ip_port.Split(':');
+		int string_port = int.Parse(parts[1]??"1234");
+		string ip = parts[0];
+		if (ip.Split('.').Length != 4) return;
+	}
+
+	private void _on_match_maker_pressed()
+	{
+		var mm = GetNode<Control>("MatchMaker");
+		var options = GetNode<Control>("Options");
+		mm.Visible = true;
+		options.Visible = false;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+		var ok = GetNode<Button>("MatchMaker/MarginContainer3/VBoxContainer/OK");
+		ok.Disabled = true;
+	}
+
+	private void _on_exit_pressed_mm()
+	{
+		var mm = GetNode<Control>("MatchMaker");
+		var options = GetNode<Control>("Options");
+		mm.Visible = false;
+		options.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 }
