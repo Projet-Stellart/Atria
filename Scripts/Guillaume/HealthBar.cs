@@ -45,5 +45,4 @@ public partial class HealthBar : Control
 			SetHealth(health);
 		}
 	}
-
 }

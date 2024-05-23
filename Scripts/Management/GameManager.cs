@@ -23,6 +23,8 @@ public partial class GameManager : Node
 
     private List<(ulong, Action)> delayedActions;
 
+    public PlayerData localPlayerData;
+
     private Dictionary<long, PlayerData> playerInfo;
 
     public Dictionary<long, PlayerData> PlayerInfo { get => playerInfo; set => SetPlayerInfo(value); }
@@ -332,6 +334,32 @@ public partial class GameManager : Node
         multiplayerManager.SyncStartGame();
 
         Debug.Print("Match will begin in " + (GameData.beginDelay) + " seconds!");
+    }
+
+    public void PlayerDeath(LocalEntity player, DeathCause cause)
+    {
+        if (!Multiplayer.IsServer())
+            return;
+
+        Debug.Print($"{playerInfo[player.uid].Username} died by {cause.ToString()}");
+
+        player.SyncVisibility(false);
+
+        delayedActions.Add((Time.GetTicksMsec() + 5000, () =>
+        {
+            RespawnPlayer(player);
+        }
+        ));
+    }
+
+    public void RespawnPlayer(LocalEntity player)
+    {
+        Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
+        if (player is player playerScript)
+            playerScript.Health = 100;
+        player.SendServerPosVelo(npos, Vector3.Zero);
+        player.SyncVisibility(true);
+        player.SyncRespawnServer();
     }
 
     private void StartMatch()

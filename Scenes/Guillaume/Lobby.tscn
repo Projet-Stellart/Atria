@@ -1,6 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://crg0ua4vy7tlf"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/Lobby_Script.cs" id="1_bi12c"]
+[ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_eqo5k"]
 [ext_resource type="Texture2D" uid="uid://dowuts2osg2p0" path="res://Ressources/UI/MapLayers/layer-download-svgrepo-com - Copy.svg" id="2_jp1ac"]
 [ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_vuha2"]
 [ext_resource type="Texture2D" uid="uid://b5n5nr41bqeou" path="res://Ressources/UI/MapLayers/layer-upload-svgrepo-com - Copy.svg" id="3_dwoyv"]
@@ -56,9 +57,6 @@ theme_override_constants/margin_bottom = 25
 [node name="MiniMapContainer" type="Control" parent="Custom/MarginContainer5"]
 layout_mode = 2
 
-[node name="MiniMap" parent="Custom/MarginContainer5/MiniMapContainer" instance=ExtResource("2_vuha2")]
-layout_mode = 1
-
 [node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer5/MiniMapContainer"]
 layout_mode = 1
 anchors_preset = 15
@@ -66,6 +64,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.0666667, 0.0980392, 0.168627, 1)
+
+[node name="MiniMap" parent="Custom/MarginContainer5/MiniMapContainer" instance=ExtResource("2_eqo5k")]
+layout_mode = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Custom"]
 layout_mode = 1

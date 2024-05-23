@@ -23,7 +23,22 @@ public partial class player : LocalEntity
 	public bool doubleJump = true;
 	public bool isCrouching = false;
 	public bool isAiming = false;
-	public int Health = 100;
+
+	public float _health = 100;
+	public float Health { get => _health; set => SetHealth(value); }
+
+	public void SetHealth(float value)
+	{
+		_health = value;
+        if (Multiplayer.IsServer())
+        {
+            SyncHealth(_health);
+        }
+        if (Health <= 0)
+        {
+            _death(DeathCause.Health);
+        }
+    }
 
 	//Camera
 	public float mouseSensitivity = 0.001f;
@@ -47,13 +62,6 @@ public partial class player : LocalEntity
 
 		//Mouse in FPS
 		Input.MouseMode = Input.MouseModeEnum.Captured;
-	}
-
-    public override void _Process(double delta)
-    {
-		if (Health<=0) {
-			_death(DeathCause.Health);
-		}
     }
 
     public override void InputProcess(double delta)
@@ -66,8 +74,13 @@ public partial class player : LocalEntity
 			_crouch();
 		}
 
-		//Aiming Event
-		if (Input.IsActionJustPressed("aim")||Input.IsActionJustReleased("aim"))	 {
+        if (Input.IsActionJustPressed("fullscreen"))
+        {
+            DisplayServer.WindowSetMode(DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Windowed ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed);
+        }
+
+        //Aiming Event
+        if (Input.IsActionJustPressed("aim")||Input.IsActionJustReleased("aim"))	 {
 			_aim();
 		}
 
@@ -139,7 +152,6 @@ public partial class player : LocalEntity
 	
 				GetNode<AudioStreamPlayer>("GunSound").Play();
 				//Camera Shake
-
 			}
 			if (!isAiming) { //Allows changing aim while playing the animation
 				GetNode<AnimationPlayer>("Gunfire").Play("NoAim");
@@ -185,11 +197,16 @@ public partial class player : LocalEntity
 		}
 	}
 
-
-
 	//Death
 	public void _death(DeathCause cause) {
-		GD.Print($"dead by {cause}");
+		if (!IsLocalPlayer && !Multiplayer.IsServer())
+			return;
+		if (IsLocalPlayer)
+		{
+			GameManager.singleton.hudManager.deathHud.Visible = true;
+		}
+		dead = true;
+		GameManager.singleton.PlayerDeath(this, cause);
 	}
 
 	//Aim with Weapon
