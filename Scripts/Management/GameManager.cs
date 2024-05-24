@@ -457,6 +457,8 @@ public partial class GameManager : Node
     {
         matchStatus = 1;
 
+        multiplayerManager.Rpc("StartMatchClient");
+
         Debug.Print("Match started!");
     }
 

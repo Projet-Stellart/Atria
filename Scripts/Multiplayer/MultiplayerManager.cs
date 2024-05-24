@@ -262,6 +262,15 @@ public partial class MultiplayerManager : Node
         GameManager.singleton.lobby.QueueFree();
     }
 
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void StartMatchClient()
+    {
+        foreach (var sp in GameManager.singleton.tileMapGenerator.spawns)
+        {
+            sp.GetNode<Node3D>("Door").Position += new Vector3(0, GameManager.singleton.tileMapGenerator.tileSize, 0);
+        }
+    }
+
     //Lobby sync
     public void LobbySync()
     {

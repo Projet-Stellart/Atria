@@ -62,7 +62,7 @@ public partial class TileMeshGeneration : Node3D
     /// <summary>
     /// Size of one dimension of a cubicle tile.
     /// </summary>
-    private float tileSize = 6.4f;
+    public float tileSize = 6.4f;
 
     /*public override void _Ready()
 	{
