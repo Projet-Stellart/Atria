@@ -1,3 +1,4 @@
+using Atria.Scripts.Management;
 using Godot;
 using System;
 using System.Collections;
@@ -22,11 +23,7 @@ public partial class TileMeshGeneration : Node3D
     /// </summary>
     public TilePrefa[] tileTemplates;
 
-    public RoomPrefa[] roomTemplates;
-
-    private PackedScene playerTemplate;
-
-    private const string spawnTemplate = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/Spawn/Spawn.tscn";
+    private PackedScene playerTemplate = GD.Load<PackedScene>("res://Scenes/Nelson/player.tscn");
 
     public string[] roomRes = new string[]
     {
@@ -65,7 +62,7 @@ public partial class TileMeshGeneration : Node3D
     /// <summary>
     /// Size of one dimension of a cubicle tile.
     /// </summary>
-    private float tileSize = 6.4f;
+    public float tileSize = 6.4f;
 
     /*public override void _Ready()
 	{
@@ -73,9 +70,9 @@ public partial class TileMeshGeneration : Node3D
         Init();
     }*/
 
-    public void Init(int sizeX, int sizeY)
+    public void Init(int sizeX, int sizeY, Random rand)
     {
-        Task generation = GenerateMapAsync(sizeX, sizeY);
+        Task generation = GenerateMapAsync(sizeX, sizeY, rand);
     }
 
     //Debug only
@@ -93,11 +90,9 @@ public partial class TileMeshGeneration : Node3D
     /// <param name="sizex"></param>
     /// <param name="sizey"></param>
     /// <returns>The asynchronous task to generate the grid</returns>
-    public Task GenerateMapAsync(int sizex, int sizey)
+    public Task GenerateMapAsync(int sizex, int sizey, Random rand)
     {
         GetData();
-
-        Random rand = new Random();
 
         isGenerating = true;
 
@@ -148,6 +143,25 @@ public partial class TileMeshGeneration : Node3D
         InstantiateModel(grid, node, mat);
 
         SpawnSpawnsModel(spawns, grid.GetLength(1), node, mat);
+
+        return node;
+    }
+
+    public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, Node3D Parent, Material mat, Vector3I pos, string resPath)
+    {
+        Node3D node = new Node3D();
+
+        Parent.AddChild(node);
+
+        InstantiateModel(grid, node, mat);
+
+        SpawnSpawnsModel(spawns, grid.GetLength(1), node, mat);
+
+        Node3D obj = GD.Load<PackedScene>(resPath).Instantiate<Node3D>();
+
+        node.AddChild(obj);
+
+        obj.Position = new Vector3(pos.X * tileSize, pos.Y * tileSize, pos.Z * tileSize);
 
         return node;
     }
@@ -237,7 +251,7 @@ public partial class TileMeshGeneration : Node3D
         for (int i = 0; i < _spawns.Length; i++)
         {
             Vector2I v = _spawns[i];
-            Node3D spawn = GD.Load<PackedScene>(spawnTemplate).Instantiate<Node3D>();
+            Node3D spawn = DataManager.spawnTemplate.Instantiate<Node3D>();
             AddChild(spawn);
             spawns[i] = spawn;
             spawn.Position = new Vector3(v.X * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize, v.Y * tileSize);
@@ -261,9 +275,15 @@ public partial class TileMeshGeneration : Node3D
             Node3D model = GenerateMapModel(grid, _spawns, mapModelContainer, new StandardMaterial3D()
             {
                 Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
-                AlbedoColor = new Color(0, 0.63f, 0.63f, 0.5f)
-            });
+                AlbedoColor = new Color(0, 0.63f, 0.63f, 0.5f),
+                EmissionEnabled = true,
+                Emission = new Color(0, 0.63f, 0.63f)
+            },
+            new Vector3I(v.X, GameManager.singleton.GameData.mapParam.startHeight, v.Y),
+            "res://Ressources/ProceduralGenerationTempRes/Objects/YouAreHere.tscn");
             mapModelContainer.Scale = new Vector3(0.2f, 0.2f, 0.2f) / Math.Max(grid.GetLength(1), grid.GetLength(2));
+            Vector3 offset = new Vector3((grid.GetLength(1) / 2f) * tileSize, 0f, (grid.GetLength(2) / 2f) * tileSize);
+            model.Position -= offset;
         }
     }
 
@@ -272,11 +292,11 @@ public partial class TileMeshGeneration : Node3D
         for (int i = 0; i < _spawns.Length; i++)
         {
             Vector2I v = _spawns[i];
-            Node3D spawn = GD.Load<PackedScene>(spawnTemplate).Instantiate<Node3D>();
+            Node3D spawn = DataManager.spawnModelTemplate.Instantiate<Node3D>();
             Parent.AddChild(spawn);
             spawn.Position = new Vector3(v.X * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize, v.Y * tileSize);
-            spawn.GetChild<MeshInstance3D>(0).MaterialOverride = mat;
-            spawn.GetNode<Node3D>("Lights").QueueFree();
+            if (mat != null)
+                spawn.GetChild<MeshInstance3D>(0).MaterialOverride = mat;
             if (v.X < 0)
             {
                 spawn.Rotation = new Vector3(0, Mathf.Pi / 2f, 0);
@@ -300,7 +320,7 @@ public partial class TileMeshGeneration : Node3D
     {
         for (int r = 0; r < nbRooms; r++)
         {
-            RoomPrefa type = roomTemplates[rand.Next(0, roomTemplates.Length)];
+            RoomPrefa type = DataManager.roomPrefas[rand.Next(0, DataManager.roomPrefas.Length)];
             bool valid = false;
             int n = 0;
             while (!valid)
@@ -364,7 +384,12 @@ public partial class TileMeshGeneration : Node3D
         return val;
     }
 
-    public Vector3 GetRandSpawnPoint(int[,,] tGrid, Random rand)
+    public Vector3 GetRandPoint(int[,,] tGrid, Random rand)
+    {
+        return new Vector3(tileSize, tileSize - 1, tileSize) * GetRandTile(tGrid, rand);
+    }
+
+    public Vector3I GetRandTile(int[,,] tGrid, Random rand)
     {
         player = playerTemplate.Instantiate<Node3D>();
         AddChild(player);
@@ -375,7 +400,19 @@ public partial class TileMeshGeneration : Node3D
             (px, py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
             tile = tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] < 1 ? null : tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
         }
-        return new Vector3(px * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize-1, py * tileSize);
+        return new Vector3I(px, GameManager.singleton.GameData.mapParam.startHeight, py);
+    }
+
+    public Vector3 GetRandPlayerSpawn(int team, Random rand)
+    {
+        Node3D node = GetTeamSpawnPointList(team);
+
+        return node.GetChild<Node3D>(rand.Next(node.GetChildCount())).GlobalPosition;
+    }
+
+    public Node3D GetTeamSpawnPointList(int team)
+    {
+        return spawns[team].GetNode<Node3D>("SpawnPoints");
     }
 
     /// <summary>
@@ -405,7 +442,7 @@ public partial class TileMeshGeneration : Node3D
                     tmpTile.Name = template.name + "|id:" + (x+y*sizex+height*sizex*sizey);
                     AddChild(tmpTile);
                     tmpTile.Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
-                    tmpTile.GlobalPosition = new Vector3(x * tileSize, height * tileSize, y * tileSize);
+                    tmpTile.Position = new Vector3(x * tileSize, height * tileSize, y * tileSize);
                 }
             }
         }
@@ -413,7 +450,6 @@ public partial class TileMeshGeneration : Node3D
 
     public void InstantiateModel(int[,,] tGrid, Node3D Parent, Material mat)
     {
-
         tileMap = tGrid;
 
         int sizex = tGrid.GetLength(1);
@@ -428,15 +464,13 @@ public partial class TileMeshGeneration : Node3D
                     if (tGrid[height, x, y] < 0)
                         continue;
                     TilePrefa template = tileTemplates[tGrid[height, x, y] - 1];
-                    Node3D tmpTile = template.tile.Instantiate<Node3D>();
+                    Node3D tmpTile = template.modelTile.Instantiate<Node3D>();
                     tmpTile.Name = template.name + "|id:" + (x + y * sizex + height * sizex * sizey);
                     Parent.AddChild(tmpTile);
                     tmpTile.Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
-                    tmpTile.GlobalPosition = new Vector3(x * tileSize, height * tileSize, y * tileSize);
-                    if (tmpTile.GetChildCount() > 0 && tmpTile.GetChild(0) is MeshInstance3D mesh)
+                    tmpTile.Position = new Vector3(x * tileSize, height * tileSize, y * tileSize);
+                    if (mat != null && tmpTile.GetChildCount() > 0 && tmpTile.GetChild(0) is MeshInstance3D mesh)
                         mesh.MaterialOverride = mat;
-                    if (tmpTile.GetChildCount() > 1 && tmpTile.GetChild(1) is OmniLight3D light)
-                        light.QueueFree();
                 }
             }
         }
@@ -704,29 +738,18 @@ public partial class TileMeshGeneration : Node3D
     /// </summary>
     public void GetData()
 	{
-        //Get metadata
-        playerTemplate = (PackedScene)GetMeta("PlayerTemplate");
-
-        Godot.Collections.Array<PackedScene> tiles = GetMeta("TileTemplate").AsGodotArray<PackedScene>();
-        Godot.Collections.Array<Resource> mpRes = GetMeta("TileImage").AsGodotArray<Resource>();
-		Godot.Collections.Array<string> tilesParams = GetMeta("TileParams").AsGodotArray<string>();
-
-        Godot.Collections.Array<PackedScene> rooms = GetMeta("RoomTemplate").AsGodotArray<PackedScene>();
-        Godot.Collections.Array<string> roomsParams = GetMeta("RoomParams").AsGodotArray<string>();
-
         //Create array: inputed tiles + 3 other rotated tile
-        tileTemplates = new TilePrefa[tiles.Count*4];
+        tileTemplates = new TilePrefa[DataManager.prefas.Length*4];
 
-        for (int i = 0; i < tiles.Count; i++)
+        for (int i = 0; i < DataManager.prefas.Length; i++)
 		{
             //Original tile
-			string[] par = tilesParams[i].Split(';');
-            tileTemplates[i * 4] = new TilePrefa(tiles[i], mpRes[i].ResourcePath, par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);
+            tileTemplates[i * 4] = DataManager.prefas[i];
+            /*string[] par = tilesParams[i].Split(';');
+            tileTemplates[i * 4] = new TilePrefa(tiles[i], mpRes[i].ResourcePath, par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);*/
             /*if (tileTemplates[i * 4].est == "corridor" && tileTemplates[i * 4].west == "corridor" && tileTemplates[i * 4].north == "corridor" && tileTemplates[i * 4].south == "corridor")
                 Debug.Print("X is at pos: " + (i * 4));*/
-            tileTemplates[i * 4].rotation = 0;
-            tileTemplates[i * 4].transition = int.Parse(par[2]);
-            int conjugateRef = int.Parse(par[3]);
+            int conjugateRef = tileTemplates[i * 4].conjugate;
             if (conjugateRef * 4 + 2 < i * 4)
             {
                 tileTemplates[conjugateRef * 4 + 2].conjugate = i * 4;
@@ -753,13 +776,6 @@ public partial class TileMeshGeneration : Node3D
                     }
                 }
             }
-        }
-
-        roomTemplates = new RoomPrefa[roomsParams.Count];
-
-        for (int i = 0; i < roomsParams.Count; i++)
-        {
-            roomTemplates[i] = new RoomPrefa(roomsParams[i], rooms[i]);
         }
 
         //Debug print to visualize data
@@ -816,6 +832,7 @@ public class MapParam
 public class TilePrefa
 {
 	public PackedScene tile;
+    public PackedScene modelTile;
     public string mapRes;
     public int weight;
     public string name;
@@ -860,6 +877,7 @@ public class TilePrefa
     public TilePrefa(TilePrefa copy)
     {
         this.tile = copy.tile;
+        this.modelTile = copy.modelTile;
         this.mapRes = copy.mapRes;
         this.weight = copy.weight;
         this.name = copy.name;
@@ -913,21 +931,10 @@ public class RoomPrefa
     public int[,] tileTypes;
     public PackedScene room;
 
-    public RoomPrefa(string data, PackedScene scene)
+    public RoomPrefa(RoomType _type, int[,] _tileTypes, PackedScene scene)
     {
-        string[] parts = data.Split('|');
-        type = (RoomType)(int.Parse(parts[0]));
-        string[] lines = parts[1].Split(";");
-        tileTypes = new int[lines.Length, lines[0].Split(',').Length];
-        for (int i = 0; i < lines.Length; i++)
-        {
-            string[] o = lines[i].Split(",");
-            for (int j = 0; j < o.Length; j++)
-            {
-                tileTypes[i, j] = int.Parse(o[j]);
-            }
-        }
-
+        type = _type;
+        tileTypes = _tileTypes;
         room = scene;
     }
 

@@ -13,7 +13,11 @@ public partial class GameManager : Node
     public TileMeshGeneration tileMapGenerator;
     public HudManager hudManager;
 
+    public Random random;
+
     private float previousAdvencmentChecked;
+
+    private string[] startingArgs;
 
     public static Dictionary<ServerStatus, string> statusText = new Dictionary<ServerStatus, string>
     {
@@ -107,6 +111,15 @@ public partial class GameManager : Node
                 SyncServAdv(tileMapGenerator.gridGenerationAdvencement);
             }
         }
+
+        if (tileMapGenerator.spawns != null)
+        {
+            foreach (var sp in tileMapGenerator.spawns)
+            {
+                sp.GetNode<Node3D>("MapModel").Rotation -= new Vector3(0, 0.2f * (float)delta, 0f);
+            }
+        }
+
         if (delayedActions == null)
             return;
         for (int i = 0; i < delayedActions.Count; i++)
@@ -119,6 +132,8 @@ public partial class GameManager : Node
                 action.Item2.Invoke();
             }
         }
+
+        
     }
 
     public void Init(string[] args)
@@ -126,6 +141,12 @@ public partial class GameManager : Node
         if (singleton != null)
             throw new Exception("Their is two GameManager in the scene!");
         singleton = this;
+
+        startingArgs = args;
+
+        random = new Random();
+
+        delayedActions = new List<(ulong, Action)>();
 
         LoadData(args);
 
@@ -163,6 +184,24 @@ public partial class GameManager : Node
         //Display lobby
         lobby = GD.Load<PackedScene>(lobbyTemplate).Instantiate();
         AddChild(lobby);
+    }
+
+    public void CloseScene()
+    {
+        multiplayerManager.CloseServer();
+        singleton = null;
+        //GetTree().Quit();
+    }
+
+    public void StartClientTimeout()
+    {
+        delayedActions.Add((Time.GetTicksMsec() + 5 * 1000, () =>
+        {
+            Debug.Print(Multiplayer.GetPeers().Length.ToString());
+            if (Multiplayer.GetPeers().Length == 0)
+                SceneManager.singelton.LoadMainMenu(OS.GetCmdlineArgs());
+        }
+        ));
     }
 
     private void LoadData(string[] args)
@@ -248,7 +287,6 @@ public partial class GameManager : Node
         {
             multiplayerManager.InitServer((int)GameData.port, (int)GameData.nbPlayer);
             serverStatus = ServerStatus.Generating;
-            delayedActions = new List<(ulong, Action)>();
             InitMap();
         }
         else
@@ -274,7 +312,7 @@ public partial class GameManager : Node
             }
         };
 
-        tileMapGenerator.Init(GameData.mapParam.sizeX, GameData.mapParam.sizeY);
+        tileMapGenerator.Init(GameData.mapParam.sizeX, GameData.mapParam.sizeY, random);
     }
 
     public void ManageNewClient(long id)
@@ -323,7 +361,17 @@ public partial class GameManager : Node
         if (matchStatus >= 0)
         {
             //Players allready spawned
-            multiplayerManager.DeletePlayer(id);
+            if (multiplayerManager.playersControler.ContainsKey(id))
+                multiplayerManager.DeletePlayer(id);
+            if (Multiplayer.GetPeers().Length == 0)
+            {
+                //Restart game
+                Debug.Print($"All players disconnected, reloading in {GameData.emptyReloadDelay} seconds");
+                delayedActions.Add((Time.GetTicksMsec() + GameData.emptyReloadDelay * 1000, () =>
+                {
+                    SceneManager.singelton.LoadGame(startingArgs, new PlayerData());
+                }));
+            }
         }
         else
         {
@@ -368,7 +416,8 @@ public partial class GameManager : Node
 
         foreach (int id in Multiplayer.GetPeers())
         {
-            Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
+            Vector3 npos = tileMapGenerator.GetRandPlayerSpawn(FindPlayerTeam(id), random);
+            //Vector3 npos = tileMapGenerator.GetRandPoint(tileMapGenerator.tileMap, new Random());
             multiplayerManager.InstantiateNewPlayer(id, npos);
         }
 
@@ -395,7 +444,8 @@ public partial class GameManager : Node
 
     public void RespawnPlayer(LocalEntity player)
     {
-        Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
+        Vector3 npos = tileMapGenerator.GetRandPlayerSpawn(FindPlayerTeam(player.uid), random);
+        //Vector3 npos = tileMapGenerator.GetRandPoint(tileMapGenerator.tileMap, new Random());
         if (player is player playerScript)
             playerScript.Health = 100;
         player.SendServerPosVelo(npos, Vector3.Zero);
@@ -406,6 +456,8 @@ public partial class GameManager : Node
     private void StartMatch()
     {
         matchStatus = 1;
+
+        multiplayerManager.Rpc("StartMatchClient");
 
         Debug.Print("Match started!");
     }
@@ -444,6 +496,10 @@ public struct GameData
     /// Delay betwin spawn of player and match start in seconds
     /// </summary>
     public uint beginDelay { get; set; }
+    /// <summary>
+    /// Delay starting when all players disconnect and reloading the server
+    /// </summary>
+    public uint emptyReloadDelay { get; set; }
     /// <summary>
     /// Port the server will listen
     /// </summary>

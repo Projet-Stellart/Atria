@@ -134,7 +134,7 @@ public partial class UI_Script : CanvasLayer
 	{
 		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
 		if (OnPlay != null) OnPlay.Invoke(username);
-		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+		//GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_custom_pressed()

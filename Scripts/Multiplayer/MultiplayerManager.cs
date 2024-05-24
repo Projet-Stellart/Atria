@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 public partial class MultiplayerManager : Node
 {
@@ -28,6 +29,12 @@ public partial class MultiplayerManager : Node
         SetupMultiplayerHooks();
     }
 
+    public void CloseServer()
+    {
+        Multiplayer.MultiplayerPeer.Close();
+        Multiplayer.MultiplayerPeer = null;
+    }
+
     /// <summary>
     /// Init a client connection
     /// </summary>
@@ -39,6 +46,8 @@ public partial class MultiplayerManager : Node
         ENetMultiplayerPeer peer = new ENetMultiplayerPeer();
         peer.CreateClient(adr, port);
         Multiplayer.MultiplayerPeer = peer;
+
+        GameManager.singleton.StartClientTimeout();
 
         SetupMultiplayerHooks();
     }
@@ -251,6 +260,15 @@ public partial class MultiplayerManager : Node
     private void StartGameClient()
     {
         GameManager.singleton.lobby.QueueFree();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void StartMatchClient()
+    {
+        foreach (var sp in GameManager.singleton.tileMapGenerator.spawns)
+        {
+            sp.GetNode<Node3D>("Door").Position += new Vector3(0, GameManager.singleton.tileMapGenerator.tileSize, 0);
+        }
     }
 
     //Lobby sync
