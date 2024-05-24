@@ -11,6 +11,7 @@ public partial class MultiplayerManager : Node
     public Dictionary<long, player> playersControler = new Dictionary<long, player>();
 
     private int[,,] tempGrid;
+    private Vector2I[] tempSpawns;
 
     /// <summary>
     /// Init a server connection
@@ -122,7 +123,7 @@ public partial class MultiplayerManager : Node
         int h = GameManager.singleton.tileMapGenerator.tileMap.GetLength(0);
         int x = GameManager.singleton.tileMapGenerator.tileMap.GetLength(1);
         int y = GameManager.singleton.tileMapGenerator.tileMap.GetLength(2);
-        RpcId(id, "StartMapSync", new Variant[] {h, x, y});
+        RpcId(id, "StartMapSync", new Variant[] {h, x, y, GameManager.singleton.tileMapGenerator.spawnsPos.Length});
         for (int i = 0; i < h; i++)
         {
             for (int j = 0; j < x; j++)
@@ -132,6 +133,10 @@ public partial class MultiplayerManager : Node
                     RpcId(id, "ReceiveMapData", new Variant[] { i, j, k, GameManager.singleton.tileMapGenerator.tileMap[i, j, k] });
                 }
             }
+        }
+        for (int i = 0; i < GameManager.singleton.tileMapGenerator.spawnsPos.Length; i++)
+        {
+            RpcId(id, "ReceiveSpawnData", new Variant[] { i, GameManager.singleton.tileMapGenerator.spawnsPos[i] });
         }
         RpcId(id, "FinishedMap", new Variant[] { GameManager.singleton.GameData.mapParam.startHeight });
     }
@@ -202,10 +207,11 @@ public partial class MultiplayerManager : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void StartMapSync(Variant h, Variant x, Variant y)
+    private void StartMapSync(Variant h, Variant x, Variant y, Variant s)
     {
         GameManager.singleton.tileMapGenerator.GetData();
         tempGrid = new int[h.As<int>(), x.As<int>(), y.As<int>()];
+        tempSpawns = new Vector2I[s.AsInt32()];
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -216,9 +222,17 @@ public partial class MultiplayerManager : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ReceiveSpawnData(Variant i, Variant value)
+    {
+        //Debug.Print(new Vector3I(h.As<int>(), x.As<int>(), y.As<int>()) + "");
+        tempSpawns[i.AsInt32()] = value.AsVector2I();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void FinishedMap(Variant layer)
     {
         GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
+        GameManager.singleton.tileMapGenerator.SpawnSpawns(tempSpawns, tempGrid, tempGrid.GetLength(1));
         if (GameManager.singleton.lobby == null)
             return;
         ((Lobby_Script)GameManager.singleton.lobby).InitMiniMap((int)layer);

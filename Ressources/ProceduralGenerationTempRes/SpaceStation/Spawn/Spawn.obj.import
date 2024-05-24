@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://l12sfbrtpmrm"
+path="res://.godot/imported/Spawn.obj-f1bc2fa0a21140830193cbdc8ad32569.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Spawn.obj-f1bc2fa0a21140830193cbdc8ad32569.mesh"]
+
+source_file="res://Ressources/ProceduralGenerationTempRes/SpaceStation/Spawn/Spawn.obj"
+dest_files=["res://.godot/imported/Spawn.obj-f1bc2fa0a21140830193cbdc8ad32569.mesh", "res://.godot/imported/Spawn.obj-f1bc2fa0a21140830193cbdc8ad32569.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
