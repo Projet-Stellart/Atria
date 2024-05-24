@@ -29,6 +29,12 @@ public partial class MultiplayerManager : Node
         SetupMultiplayerHooks();
     }
 
+    public void CloseServer()
+    {
+        Multiplayer.MultiplayerPeer.Close();
+        Multiplayer.MultiplayerPeer = null;
+    }
+
     /// <summary>
     /// Init a client connection
     /// </summary>

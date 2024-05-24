@@ -17,6 +17,8 @@ public partial class GameManager : Node
 
     private float previousAdvencmentChecked;
 
+    private string[] startingArgs;
+
     public static Dictionary<ServerStatus, string> statusText = new Dictionary<ServerStatus, string>
     {
         { ServerStatus.Paused, "Paused" },
@@ -140,6 +142,8 @@ public partial class GameManager : Node
             throw new Exception("Their is two GameManager in the scene!");
         singleton = this;
 
+        startingArgs = args;
+
         random = new Random();
 
         LoadData(args);
@@ -182,7 +186,9 @@ public partial class GameManager : Node
 
     public void CloseScene()
     {
+        multiplayerManager.CloseServer();
         singleton = null;
+        //GetTree().Quit();
     }
 
     private void LoadData(string[] args)
@@ -348,6 +354,11 @@ public partial class GameManager : Node
             if (Multiplayer.GetPeers().Length == 0)
             {
                 //Restart game
+                Debug.Print($"All players disconnected, reloading in {GameData.emptyReloadDelay} seconds");
+                delayedActions.Add((Time.GetTicksMsec() + GameData.emptyReloadDelay * 1000, () =>
+                {
+                    SceneManager.singelton.LoadGame(startingArgs, new PlayerData());
+                }));
             }
         }
         else
@@ -471,6 +482,10 @@ public struct GameData
     /// Delay betwin spawn of player and match start in seconds
     /// </summary>
     public uint beginDelay { get; set; }
+    /// <summary>
+    /// Delay starting when all players disconnect and reloading the server
+    /// </summary>
+    public uint emptyReloadDelay { get; set; }
     /// <summary>
     /// Port the server will listen
     /// </summary>

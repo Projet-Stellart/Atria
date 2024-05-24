@@ -32,14 +32,17 @@ public partial class SceneManager : Node
 	{
 		for (int i = 0; i < GetChildCount(); i++)
 		{
-			if (GetChild(i) is GameManager game)
+            Node child = GetChild(i);
+            if (child is GameManager game)
 				game.CloseScene();
-			GetChild(i).QueueFree();
+			RemoveChild(child);
+            child.QueueFree();
 		}
 	}
 
 	public void LoadMainMenu(string[] args)
 	{
+		Input.MouseMode = Input.MouseModeEnum.Visible;
 		Debug.Print("MainMenu");
 		ClearChildren();
 		UI_Script mainMenu = GD.Load<PackedScene>(MainMenuScene).Instantiate<UI_Script>();
@@ -65,8 +68,10 @@ public partial class SceneManager : Node
 	{
 		ClearChildren();
 		GameManager gameScene = GD.Load<PackedScene>(GameScene).Instantiate<GameManager>();
-		AddChild(gameScene);
-		gameScene.localPlayerData = data;
+        AddChild(gameScene);
+        //gameScene.Name = GameScene.Split('/')[^1].Split('.')[0];
+		Debug.Print(gameScene.Name);
+        gameScene.localPlayerData = data;
 		gameScene.Init(loadParameters);
 	}
 

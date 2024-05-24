@@ -20,16 +20,16 @@ shape = SubResource("ConcavePolygonShape3D_ggq6r")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.2, -6.4)
 
 [node name="Node3D" type="Node3D" parent="SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.04718, 3, 4.04956)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.04718, 2, 4.04956)
 
 [node name="Node3D2" type="Node3D" parent="SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.35665, 3, 3.76214)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.35665, 2, 3.76214)
 
 [node name="Node3D3" type="Node3D" parent="SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.635, 3, -5.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.635, 2, -5.1)
 
 [node name="Node3D4" type="Node3D" parent="SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.217, 3, -5.062)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.217, 2, -5.062)
 
 [node name="MapModel" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -6.9)
