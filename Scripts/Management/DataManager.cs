@@ -13,9 +13,9 @@ public static class DataManager
     {
         new TilePrefa()
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridor.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/ModelStraitCorridor.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridorMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/StraitCorridor/StraitCorridor.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/StraitCorridor/ModelStraitCorridor.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/StraitCorridor/StraitCorridorMap.png",
             name = "StraitCorridor",    //0
             weight = 75,                //1
             transition = 0,             //2
@@ -28,9 +28,9 @@ public static class DataManager
         },
         new TilePrefa() //CurvedCorridor;60;0;0;space;corridor;corridor;space
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/CurvedCorridor/CurvedCorridor.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/CurvedCorridor/ModelCurveCorridor.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/CurvedCorridor/CurvedCorridorMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/CurvedCorridor/CurvedCorridor.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/CurvedCorridor/ModelCurveCorridor.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/CurvedCorridor/CurvedCorridorMap.png",
             name = "CurvedCorridor",
             weight = 60,
             transition = 0,
@@ -43,9 +43,9 @@ public static class DataManager
         },
         new TilePrefa() //TCorridor;30;0;0;corridor;corridor;corridor;space
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/TCorridor/TCorridor.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/TCorridor/ModelTCorridor.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/TCorridor/TCorridorMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/TCorridor/TCorridor.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/TCorridor/ModelTCorridor.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/TCorridor/TCorridorMap.png",
             name = "TCorridor",
             weight = 30,
             transition = 0,
@@ -58,9 +58,9 @@ public static class DataManager
         },
         new TilePrefa() //XCorridor;1;0;0;corridor;corridor;corridor;corridor
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/XCorridor/XCorridor.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/XCorridor/ModelXCorridor.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/XCorridor/XCorridorMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/XCorridor/XCorridor.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/XCorridor/ModelXCorridor.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/XCorridor/XCorridorMap.png",
             name = "XCorridor",
             weight = 1,
             transition = 0,
@@ -73,9 +73,9 @@ public static class DataManager
         },
         new TilePrefa() //EndCorridor;1;0;0;space;corridor;space;space
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/EndCorridor.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/ModelEndCorridor.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/EndCorridorMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/EndCorridor/EndCorridor.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/EndCorridor/ModelEndCorridor.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/EndCorridor/EndCorridorMap.png",
             name = "EndCorridor",
             weight = 1,
             transition = 0,
@@ -88,9 +88,9 @@ public static class DataManager
         },
         new TilePrefa() //StairHighCorridor;10;-1;6;space;corridor;space;space
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorHigh.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/ModelStairCorridorHigh.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorHighMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/StairCorridor/StairCorridorHigh.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/StairCorridor/ModelStairCorridorHigh.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/StairCorridor/StairCorridorHighMap.png",
             name = "StairHighCorridor",
             weight = 10,
             transition = -1,
@@ -103,9 +103,9 @@ public static class DataManager
         },
         new TilePrefa() //StairLowCorridor;10;1;5;space;corridor;space;space
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorLow.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/ModelStairCorridorLow.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorLowMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/StairCorridor/StairCorridorLow.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/StairCorridor/ModelStairCorridorLow.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/StairCorridor/StairCorridorLowMap.png",
             name = "StairLowCorridor",
             weight = 10,
             transition = 1,
@@ -118,9 +118,9 @@ public static class DataManager
         },
         new TilePrefa() //MultiXVentLowCorridor;50;1;8;corridor;corridor;space;space
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorLow.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/ModelMultiVentLvlXCorridorLow.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorLowMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorLow.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/ModelMultiVentLvlXCorridorLow.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorLowMap.png",
             name = "MultiXVentLowCorridor",
             weight = 50,
             transition = 1,
@@ -133,9 +133,9 @@ public static class DataManager
         },
         new TilePrefa() //MultiXVentHighCorridor;50;-1;7;space;space;corridor;corridor
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorHigh.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/ModelMultiVentLvlXCorridorHigh.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorHighMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorHigh.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/ModelMultiVentLvlXCorridorHigh.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorHighMap.png",
             name = "MultiXVentHighCorridor",
             weight = 50,
             transition = -1,
@@ -148,9 +148,9 @@ public static class DataManager
         },
         new TilePrefa() //Empty;700;0;0;space;space;space;space
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/Space/Empty.tscn"),
-            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/Space/Empty.tscn"),
-            mapRes = "res://Ressources/ProceduralGenerationTempRes/SpaceStation/Space/EmptyMap.png",
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/Space/Empty.tscn"),
+            modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/Space/Empty.tscn"),
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/Space/EmptyMap.png",
             name = "Empty",
             weight = 700,
             transition = 0,
@@ -172,9 +172,9 @@ public static class DataManager
                 { -2,-6 },
                 { -8,-7 }
             },
-            GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/Rooms/TestRoom.tscn")),
+            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/TestRoom.tscn")),
     };
 
-    public static PackedScene spawnTemplate = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/Spawn/Spawn.tscn");
-    public static PackedScene spawnModelTemplate = GD.Load<PackedScene>("res://Ressources/ProceduralGenerationTempRes/SpaceStation/Spawn/ModelSpawn.tscn");
+    public static PackedScene spawnTemplate = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/Spawn/Spawn.tscn");
+    public static PackedScene spawnModelTemplate = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/Spawn/ModelSpawn.tscn");
 }
