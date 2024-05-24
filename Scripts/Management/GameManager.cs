@@ -180,6 +180,11 @@ public partial class GameManager : Node
         AddChild(lobby);
     }
 
+    public void CloseScene()
+    {
+        singleton = null;
+    }
+
     private void LoadData(string[] args)
     {
         tileMapGenerator = (TileMeshGeneration)GetChild(0);
@@ -338,7 +343,12 @@ public partial class GameManager : Node
         if (matchStatus >= 0)
         {
             //Players allready spawned
-            multiplayerManager.DeletePlayer(id);
+            if (multiplayerManager.playersControler.ContainsKey(id))
+                multiplayerManager.DeletePlayer(id);
+            if (Multiplayer.GetPeers().Length == 0)
+            {
+                //Restart game
+            }
         }
         else
         {

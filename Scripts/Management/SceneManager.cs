@@ -32,6 +32,8 @@ public partial class SceneManager : Node
 	{
 		for (int i = 0; i < GetChildCount(); i++)
 		{
+			if (GetChild(i) is GameManager game)
+				game.CloseScene();
 			GetChild(i).QueueFree();
 		}
 	}
