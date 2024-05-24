@@ -147,6 +147,25 @@ public partial class TileMeshGeneration : Node3D
         return node;
     }
 
+    public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, Node3D Parent, Material mat, Vector3I pos, string resPath)
+    {
+        Node3D node = new Node3D();
+
+        Parent.AddChild(node);
+
+        InstantiateModel(grid, node, mat);
+
+        SpawnSpawnsModel(spawns, grid.GetLength(1), node, mat);
+
+        Node3D obj = GD.Load<PackedScene>(resPath).Instantiate<Node3D>();
+
+        node.AddChild(obj);
+
+        obj.Position = new Vector3(pos.X * tileSize, pos.Y * tileSize, pos.Z * tileSize);
+
+        return node;
+    }
+
     //Switch from public to private
     /// <summary>
     /// Entry point to generate the grid. Will be set to private on the final version
@@ -259,7 +278,9 @@ public partial class TileMeshGeneration : Node3D
                 AlbedoColor = new Color(0, 0.63f, 0.63f, 0.5f),
                 EmissionEnabled = true,
                 Emission = new Color(0, 0.63f, 0.63f)
-            });
+            },
+            new Vector3I(v.X, GameManager.singleton.GameData.mapParam.startHeight, v.Y),
+            "res://Ressources/ProceduralGenerationTempRes/Objects/YouAreHere.tscn");
             mapModelContainer.Scale = new Vector3(0.2f, 0.2f, 0.2f) / Math.Max(grid.GetLength(1), grid.GetLength(2));
             Vector3 offset = new Vector3((grid.GetLength(1) / 2f) * tileSize, 0f, (grid.GetLength(2) / 2f) * tileSize);
             model.Position -= offset;
