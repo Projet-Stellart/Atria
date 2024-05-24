@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cy5by0is8vo1y"]
+
+[ext_resource type="ArrayMesh" uid="uid://cpgqfmi1qh1pn" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorHigh.obj" id="1_5e08j"]
+
+[node name="ModelStairCorridorHigh" type="Node3D"]
+
+[node name="StairCorridorHigh" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_5e08j")
