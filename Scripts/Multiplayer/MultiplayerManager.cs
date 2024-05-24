@@ -47,6 +47,8 @@ public partial class MultiplayerManager : Node
         peer.CreateClient(adr, port);
         Multiplayer.MultiplayerPeer = peer;
 
+        GameManager.singleton.StartClientTimeout();
+
         SetupMultiplayerHooks();
     }
 

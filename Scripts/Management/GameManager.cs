@@ -146,6 +146,8 @@ public partial class GameManager : Node
 
         random = new Random();
 
+        delayedActions = new List<(ulong, Action)>();
+
         LoadData(args);
 
         string paramPath = ProjectSettings.GlobalizePath("res://serverParams.json");
@@ -189,6 +191,17 @@ public partial class GameManager : Node
         multiplayerManager.CloseServer();
         singleton = null;
         //GetTree().Quit();
+    }
+
+    public void StartClientTimeout()
+    {
+        delayedActions.Add((Time.GetTicksMsec() + 5 * 1000, () =>
+        {
+            Debug.Print(Multiplayer.GetPeers().Length.ToString());
+            if (Multiplayer.GetPeers().Length == 0)
+                SceneManager.singelton.LoadMainMenu(OS.GetCmdlineArgs());
+        }
+        ));
     }
 
     private void LoadData(string[] args)
@@ -274,7 +287,6 @@ public partial class GameManager : Node
         {
             multiplayerManager.InitServer((int)GameData.port, (int)GameData.nbPlayer);
             serverStatus = ServerStatus.Generating;
-            delayedActions = new List<(ulong, Action)>();
             InitMap();
         }
         else
