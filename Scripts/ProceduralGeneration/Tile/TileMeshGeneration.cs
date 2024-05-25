@@ -38,6 +38,8 @@ public partial class TileMeshGeneration : Node3D
     /// </summary>
     private float tileSize = 6.4f;
 
+    private int sH;
+
     /*public override void _Ready()
 	{
         //Prototype call
@@ -120,6 +122,7 @@ public partial class TileMeshGeneration : Node3D
         int[,,] tGrid = new int[GameManager.singleton.GameData.mapParam.mapHeight, sizex, sizey];
 
         Debug.Print(GameManager.singleton.GameData.mapParam.mapHeight.ToString());
+        sH = GameManager.singleton.GameData.mapParam.mapHeight;
 
         for (int i = 0; i < GameManager.singleton.GameData.mapParam.mapHeight; i++)
         {
@@ -129,18 +132,31 @@ public partial class TileMeshGeneration : Node3D
         return tGrid;
     }
 
+    public int[,,] GenerateGridDebug(int sizex, int sizey, int height, int sHeight, Random rand)
+    {
+        //tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
+        int[,,] tGrid = new int[height, sizex, sizey];
+
+        sH = sHeight;
+
+        for (int i = 0; i < height; i++)
+        {
+            GenerateGridLayer(tGrid, TwoStepsOscillatoryFunction(i, sHeight), (float)i / height, rand);
+        }
+
+        return tGrid;
+    }
+
     public Vector3 GetRandSpawnPoint(int[,,] tGrid, Random rand)
     {
-        player = playerTemplate.Instantiate<Node3D>();
-        AddChild(player);
         (int px, int py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
-        TilePrefa tile = tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
+        TilePrefa tile = tileTemplates[tGrid[sH, px, py] - 1];
         while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)
         {
             (px, py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
-            tile = tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
+            tile = tileTemplates[tGrid[sH, px, py] - 1];
         }
-        return new Vector3(px * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize-1, py * tileSize);
+        return new Vector3(px, py, sH);
     }
 
     /// <summary>
@@ -370,7 +386,7 @@ public partial class TileMeshGeneration : Node3D
                 continue;
             }
             //Rule: stairs point to the correct next layer
-            if (templ.transition * (height - GameManager.singleton.GameData.mapParam.startHeight) < 0)
+            if (templ.transition * (height - sH) < 0)
             {
                 continue;
             }
