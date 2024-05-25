@@ -144,7 +144,11 @@ public partial class GameManager : Node
 
         startingArgs = args;
 
-        random = new Random();
+        int seed = (int)(Time.GetTicksMsec() % int.MaxValue);
+
+        random = new Random(seed);
+
+        Debug.Print("Match seed: " + seed);
 
         delayedActions = new List<(ulong, Action)>();
 

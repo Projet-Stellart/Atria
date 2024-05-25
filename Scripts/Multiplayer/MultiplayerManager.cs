@@ -12,6 +12,7 @@ public partial class MultiplayerManager : Node
     public Dictionary<long, player> playersControler = new Dictionary<long, player>();
 
     private int[,,] tempGrid;
+    private (int, Vector3I)[] tempRooms;
     private Vector2I[] tempSpawns;
 
     /// <summary>
@@ -132,7 +133,7 @@ public partial class MultiplayerManager : Node
         int h = GameManager.singleton.tileMapGenerator.tileMap.GetLength(0);
         int x = GameManager.singleton.tileMapGenerator.tileMap.GetLength(1);
         int y = GameManager.singleton.tileMapGenerator.tileMap.GetLength(2);
-        RpcId(id, "StartMapSync", new Variant[] {h, x, y, GameManager.singleton.tileMapGenerator.spawnsPos.Length});
+        RpcId(id, "StartMapSync", new Variant[] {h, x, y, GameManager.singleton.tileMapGenerator.spawnsPos.Length, GameManager.singleton.tileMapGenerator.tempRoom.Count});
         for (int i = 0; i < h; i++)
         {
             for (int j = 0; j < x; j++)
@@ -142,6 +143,14 @@ public partial class MultiplayerManager : Node
                     RpcId(id, "ReceiveMapData", new Variant[] { i, j, k, GameManager.singleton.tileMapGenerator.tileMap[i, j, k] });
                 }
             }
+        }
+        for (int i = 0; i < GameManager.singleton.tileMapGenerator.tempRoom.Count; i++)
+        {
+            RpcId(id, "ReceiveRoomData", new Variant[] { i, 
+                new Godot.Collections.Array() 
+                {
+                    (Variant)GameManager.singleton.tileMapGenerator.tempRoom[i].Item1, (Variant)GameManager.singleton.tileMapGenerator.tempRoom[i].Item2
+                } });
         }
         for (int i = 0; i < GameManager.singleton.tileMapGenerator.spawnsPos.Length; i++)
         {
@@ -216,11 +225,12 @@ public partial class MultiplayerManager : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void StartMapSync(Variant h, Variant x, Variant y, Variant s)
+    private void StartMapSync(Variant h, Variant x, Variant y, Variant ss, Variant rs)
     {
         GameManager.singleton.tileMapGenerator.GetData();
         tempGrid = new int[h.As<int>(), x.As<int>(), y.As<int>()];
-        tempSpawns = new Vector2I[s.AsInt32()];
+        tempRooms = new (int, Vector3I)[rs.AsInt32()];
+        tempSpawns = new Vector2I[ss.AsInt32()];
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -228,6 +238,14 @@ public partial class MultiplayerManager : Node
     {
         //Debug.Print(new Vector3I(h.As<int>(), x.As<int>(), y.As<int>()) + "");
         tempGrid[h.As<int>(), x.As<int>(), y.As<int>()] = value.As<int>();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ReceiveRoomData(Variant i, Variant value)
+    {
+        //Debug.Print(new Vector3I(h.As<int>(), x.As<int>(), y.As<int>()) + "");
+        var items = value.AsGodotArray();
+        tempRooms[i.AsInt32()] = (items[0].AsInt32(), items[1].AsVector3I());
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -241,6 +259,7 @@ public partial class MultiplayerManager : Node
     private void FinishedMap(Variant layer)
     {
         GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
+        GameManager.singleton.tileMapGenerator.InstantiateRooms(tempRooms);
         GameManager.singleton.tileMapGenerator.SpawnSpawns(tempSpawns, tempGrid, tempGrid.GetLength(1));
         if (GameManager.singleton.lobby == null)
             return;

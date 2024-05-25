@@ -28,16 +28,19 @@ public partial class TileMeshGeneration : Node3D
     public string[] roomRes = new string[]
     {
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/CorridorSouthCorner.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/CorridorSouth.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
-        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
-        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
-        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Corner.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png"
     };
+
+    public List<(int, Vector3I)> tempRoom;
+    public Node3D[] rooms;
 
     //TempVariable
     Node3D player;
@@ -126,11 +129,14 @@ public partial class TileMeshGeneration : Node3D
 
         InstantiateGrid(tGrid);
 
+        InstantiateRooms(tempRoom.ToArray());
+
         SpawnSpawns(spawns, tGrid, tGrid.GetLength(1));
 
         generation.Dispose();
 
         OnMapGenerated.Invoke();
+
         Debug.Print("Map ready!");
     }
 
@@ -316,11 +322,36 @@ public partial class TileMeshGeneration : Node3D
         }
     }
 
+    public void InstantiateRooms((int, Vector3I)[] _rooms)
+    {
+        rooms = new Node3D[_rooms.Length];
+        for (int i = 0; i < _rooms.Length; i++)
+        {
+            rooms[i] = DataManager.roomPrefas[_rooms[i].Item1].room.Instantiate<Node3D>();
+            AddChild(rooms[i]);
+            rooms[i].Position = ((Vector3)_rooms[i].Item2) * tileSize;
+        }
+    }
+
+    private void InstantiateRoomsModel(Node3D Parent, (int, Vector3I)[] rooms, Material mat)
+    {
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            Node3D node = DataManager.roomPrefas[rooms[i].Item1].model.Instantiate<Node3D>();
+
+            Parent.AddChild(node);
+            node.Position = (Vector3)rooms[i].Item2 * tileSize;
+            node.GetChild<MeshInstance3D>(0).MaterialOverride = mat;
+        }
+    }
+
     private int[,,] SetRooms(int[,,] tGrid, int spawnHeight, int nbRooms, int xMargin, int yMargin, Random rand)
     {
+        tempRoom = new List<(int, Vector3I)>();
         for (int r = 0; r < nbRooms; r++)
         {
-            RoomPrefa type = DataManager.roomPrefas[rand.Next(0, DataManager.roomPrefas.Length)];
+            int id = rand.Next(0, DataManager.roomPrefas.Length);
+            RoomPrefa type = DataManager.roomPrefas[id];
             bool valid = false;
             int n = 0;
             while (!valid)
@@ -347,6 +378,8 @@ public partial class TileMeshGeneration : Node3D
 
                 if (!valid)
                     continue;
+
+                tempRoom.Add((id, new Vector3I(roomPos.X, spawnHeight, roomPos.Y)));
 
                 for (int i = 0; i < type.tileTypes.GetLength(0); i++)
                 {
@@ -930,12 +963,15 @@ public class RoomPrefa
     public RoomType type;
     public int[,] tileTypes;
     public PackedScene room;
+    public PackedScene model;
 
-    public RoomPrefa(RoomType _type, int[,] _tileTypes, PackedScene scene)
+    public RoomPrefa(RoomType _type, int[,] _tileTypes, PackedScene scene, PackedScene _model)
     {
         type = _type;
         tileTypes = _tileTypes;
         room = scene;
+        model = _model;
+
     }
 
     public override string ToString()

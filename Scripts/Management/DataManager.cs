@@ -169,10 +169,11 @@ public static class DataManager
             TilePrefa.RoomType.Inert,
             new int[2,2]
             {
-                { -2,-6 },
-                { -8,-7 }
+                { -8,-18 },
+                { -20,-6 }
             },
-            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/TestRoom.tscn")),
+            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room2x2/Room2x2.tscn"),
+            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room2x2/ModelRoom2x2.tscn")),
     };
 
     public static PackedScene spawnTemplate = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/Spawn/Spawn.tscn");

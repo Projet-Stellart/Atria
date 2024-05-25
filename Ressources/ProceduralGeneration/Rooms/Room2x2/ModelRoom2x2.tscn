@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://nylqlupv86f0"]
+
+[ext_resource type="ArrayMesh" uid="uid://kod4bkjraw7o" path="res://Ressources/ProceduralGeneration/Rooms/Room2x2/Room2x2.obj" id="1_ctvje"]
+
+[node name="ModelRoom2x2" type="Node3D"]
+
+[node name="Room2x2" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_ctvje")
