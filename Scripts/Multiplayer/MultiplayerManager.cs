@@ -260,7 +260,7 @@ public partial class MultiplayerManager : Node
     {
         GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
         GameManager.singleton.tileMapGenerator.InstantiateRooms(tempRooms);
-        GameManager.singleton.tileMapGenerator.SpawnSpawns(tempSpawns, tempGrid, tempGrid.GetLength(1));
+        GameManager.singleton.tileMapGenerator.SpawnSpawns(tempSpawns, tempRooms, tempGrid, tempGrid.GetLength(1));
         if (GameManager.singleton.lobby == null)
             return;
         ((Lobby_Script)GameManager.singleton.lobby).InitMiniMap((int)layer);

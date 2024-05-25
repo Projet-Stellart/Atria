@@ -174,6 +174,16 @@ public static class DataManager
             },
             GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room2x2/Room2x2.tscn"),
             GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room2x2/ModelRoom2x2.tscn")),
+        new RoomPrefa(
+            TilePrefa.RoomType.Inert,
+            new int[3,3]
+            {
+                { -17, -12,-18 },
+                { -4, -13, -2 },
+                { -20, -10,-19 }
+            },
+            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room3x3/Room3x3.tscn"),
+            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room3x3/ModelRoom3x3.tscn")),
     };
 
     public static PackedScene spawnTemplate = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/Spawn/Spawn.tscn");

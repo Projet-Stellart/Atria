@@ -27,7 +27,7 @@ public partial class TileMeshGeneration : Node3D
 
     public string[] roomRes = new string[]
     {
-        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Wall.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/CorridorSouthCorner.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/CorridorSouth.png",
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
@@ -131,7 +131,7 @@ public partial class TileMeshGeneration : Node3D
 
         InstantiateRooms(tempRoom.ToArray());
 
-        SpawnSpawns(spawns, tGrid, tGrid.GetLength(1));
+        SpawnSpawns(spawns, tempRoom.ToArray(), tGrid, tGrid.GetLength(1));
 
         generation.Dispose();
 
@@ -140,26 +140,30 @@ public partial class TileMeshGeneration : Node3D
         Debug.Print("Map ready!");
     }
 
-    public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, Node3D Parent, Material mat)
+    public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, (int, Vector3I)[] rooms, Node3D Parent, Material mat)
     {
         Node3D node = new Node3D();
 
         Parent.AddChild(node);
 
         InstantiateModel(grid, node, mat);
+
+        InstantiateRoomsModel(node, rooms, mat);
 
         SpawnSpawnsModel(spawns, grid.GetLength(1), node, mat);
 
         return node;
     }
 
-    public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, Node3D Parent, Material mat, Vector3I pos, string resPath)
+    public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, (int, Vector3I)[] rooms, Node3D Parent, Material mat, Vector3I pos, string resPath)
     {
         Node3D node = new Node3D();
 
         Parent.AddChild(node);
 
         InstantiateModel(grid, node, mat);
+
+        InstantiateRoomsModel(node, rooms, mat);
 
         SpawnSpawnsModel(spawns, grid.GetLength(1), node, mat);
 
@@ -186,7 +190,7 @@ public partial class TileMeshGeneration : Node3D
 
         ProcessSpawns(sizex, sizey, spawns);
 
-        tGrid = SetRooms(tGrid, GameManager.singleton.GameData.mapParam.startHeight, 1, tGrid.GetLength(1)/4, tGrid.GetLength(2)/4, rand);
+        tGrid = SetRooms(tGrid, GameManager.singleton.GameData.mapParam.startHeight, rand.Next(GameManager.singleton.GameData.mapParam.minRoom, GameManager.singleton.GameData.mapParam.maxRoom + 1), tGrid.GetLength(1)/4, tGrid.GetLength(2)/4, rand);
 
         for (int i = 0; i < GameManager.singleton.GameData.mapParam.mapHeight; i++)
         {
@@ -251,7 +255,7 @@ public partial class TileMeshGeneration : Node3D
         }
     }
 
-    public void SpawnSpawns(Vector2I[] _spawns, int[,,] grid, int sizeX)
+    public void SpawnSpawns(Vector2I[] _spawns, (int, Vector3I)[] _rooms, int[,,] grid, int sizeX)
     {
         spawns = new Node3D[_spawns.Length];
         for (int i = 0; i < _spawns.Length; i++)
@@ -278,7 +282,7 @@ public partial class TileMeshGeneration : Node3D
                 spawn.Rotation = new Vector3(0, Mathf.Pi, 0);
             }
             Node3D mapModelContainer = spawn.GetNode<Node3D>("MapModel");
-            Node3D model = GenerateMapModel(grid, _spawns, mapModelContainer, new StandardMaterial3D()
+            Node3D model = GenerateMapModel(grid, _spawns, _rooms, mapModelContainer, new StandardMaterial3D()
             {
                 Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
                 AlbedoColor = new Color(0, 0.63f, 0.63f, 0.5f),
@@ -857,6 +861,8 @@ public class MapParam
     public int startHeight { get; set; }
     public int sizeX { get; set; }
     public int sizeY { get; set; }
+    public int minRoom { get; set; }
+    public int maxRoom { get; set; }
 }
 
 /// <summary>

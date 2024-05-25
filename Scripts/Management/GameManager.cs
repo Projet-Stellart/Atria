@@ -84,7 +84,9 @@ public partial class GameManager : Node
             mapHeight = 3,
             startHeight = 1,
             sizeX = 10,
-            sizeY = 10
+            sizeY = 10,
+            minRoom = 1,
+            maxRoom = 2,
         },
         nbPlayer = 10,
         spawnDelay = 5,
