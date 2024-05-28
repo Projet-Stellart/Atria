@@ -182,8 +182,8 @@ public static class DataManager
                 { -4, -13, -2 },
                 { -20, -10,-19 }
             },
-            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room3x3/Room3x3.tscn"),
-            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room3x3/ModelRoom3x3.tscn")),
+            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room3x3Gene/Room3x3Gene.tscn"),
+            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room3x3Gene/Room3x3GeneModel.tscn")),
     };
 
     public static PackedScene spawnTemplate = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/Spawn/Spawn.tscn");

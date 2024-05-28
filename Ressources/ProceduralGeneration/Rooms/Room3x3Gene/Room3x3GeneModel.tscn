@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddw80robpw7q6"]
+
+[ext_resource type="ArrayMesh" uid="uid://dui3l57bw0ui6" path="res://Ressources/ProceduralGeneration/Rooms/Room3x3Gene/BigGeneratorRoom.obj" id="1_mu6fg"]
+
+[node name="Room3x3GeneModel" type="Node3D"]
+
+[node name="BigGeneratorRoom" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+mesh = ExtResource("1_mu6fg")

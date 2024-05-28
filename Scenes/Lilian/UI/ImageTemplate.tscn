@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://csm33w1x8n0ia"]
 
-[ext_resource type="Texture2D" uid="uid://dv8ywhrct323h" path="res://icon.svg" id="1_pt7n1"]
+[ext_resource type="Texture2D" uid="uid://dv8ywhrct323h" path="res://icon.svg" id="1_8cy4k"]
 
 [node name="ImageTemplate" type="Control"]
 custom_minimum_size = Vector2(10, 10)
@@ -23,6 +23,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(28, 28)
-texture = ExtResource("1_pt7n1")
+texture = ExtResource("1_8cy4k")
 expand_mode = 1
 stretch_mode = 5

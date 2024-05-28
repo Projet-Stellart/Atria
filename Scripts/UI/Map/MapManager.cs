@@ -8,6 +8,9 @@ public partial class MapManager : Control
     /*public string[,,] mapRes;
     public int[,,] mapRot;*/
 
+    private PackedScene GridTemplate = GD.Load<PackedScene>("res://Scenes/Lilian/UI/GridTemplate.tscn");
+    private PackedScene ImageTemplate = GD.Load<PackedScene>("res://Scenes/Lilian/UI/ImageTemplate.tscn");
+
     private int selectedLayer;
 
     public void ClearMap()
@@ -87,7 +90,6 @@ public partial class MapManager : Control
     {
         TileMeshGeneration TM = GameManager.singleton.tileMapGenerator;
         Control Container = (Control)GetChild(0);
-        PackedScene GridTemplate = (PackedScene)GetMeta("GridTemplate");
         for (int i = 0; i < TM.tileMap.GetLength(0); i++)
         {
             Control tGrid = GridTemplate.Instantiate<Control>();
@@ -102,7 +104,6 @@ public partial class MapManager : Control
     public void LoadMapLayerMap(int height)
 	{
         TileMeshGeneration TM = GameManager.singleton.tileMapGenerator;
-        PackedScene ImageTemplate = (PackedScene)GetMeta("ImageTemplate");
 
         Control Container = (Control)GetChild(0);
         GridContainer Grid = (GridContainer)Container.GetChild(height);

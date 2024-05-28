@@ -290,7 +290,7 @@ public partial class TileMeshGeneration : Node3D
                 Emission = new Color(0, 0.63f, 0.63f)
             },
             new Vector3I(v.X, GameManager.singleton.GameData.mapParam.startHeight, v.Y),
-            "res://Ressources/ProceduralGeneration/Objects/YouAreHere.tscn");
+            "res://Scenes/Lilian/Objects/YouAreHere.tscn");
             mapModelContainer.Scale = new Vector3(0.2f, 0.2f, 0.2f) / Math.Max(grid.GetLength(1), grid.GetLength(2));
             Vector3 offset = new Vector3((grid.GetLength(1) / 2f) * tileSize, 0f, (grid.GetLength(2) / 2f) * tileSize);
             model.Position -= offset;
