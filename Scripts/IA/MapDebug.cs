@@ -73,7 +73,7 @@ public class MapDebug
 
     public static void PrintMap(int[,,] grid)
     {
-        for (int h = 0; h < GameManager.singleton.GameData.mapParam.mapHeight; h++)
+        for (int h = 0; h < grid.GetLength(0); h++)
         {
             Debug.Print("Layer " + h + ":\n" + MapDebug.GridToString(grid, h));
         }
