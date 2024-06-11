@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using Godot;
 
-public partial class player : LocalEntity, IDamagable, IPhysicsModifier
+public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDisable
 {
 	/*----------------------°\
 	|		References	     |
@@ -38,6 +38,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes
 	public Vector3 gravity = new(0,-ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle(),0);
+	bool customGravity = false;
 
 
 	//Camera
@@ -71,6 +72,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	public bool isAiming = false;
 	public bool hasWeapon = false;
 	public int Health = 100;
+	public bool moduleEnable = true;
 
 
 	//Weapons
@@ -105,9 +107,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	\°----------------------*/
 	bool test = true; // TO REMOVE
 	
-	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
-	public PackedScene weaponTest = GD.Load<PackedScene>("res://Scenes/Nelson/predator.tscn");
-	public PackedScene weaponTest2 = GD.Load<PackedScene>("res://Scenes/Nelson/predator_test.tscn");
+	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
+	public PackedScene weaponTest = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/predator.tscn");
+	public PackedScene weaponTest2 = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/predator_test.tscn");
 
 
 
@@ -210,14 +212,16 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 
 
 			//[MODULES]
-			if (Input.IsActionJustPressed("low_module"))
-				_ActivateModule(FocusState.LowModule);
-			else if (Input.IsActionJustPressed("medium_module"))
-			    _ActivateModule(FocusState.MediumModule);
-			else if (Input.IsActionJustPressed("high_module"))
-			    _ActivateModule(FocusState.HighModule);
-			else if (Input.IsActionJustPressed("core_module"))
-				_ActivateModule(FocusState.CoreModule);
+			if (moduleEnable) {
+				if (Input.IsActionJustPressed("low_module"))
+					_ActivateModule(FocusState.LowModule);
+				else if (Input.IsActionJustPressed("medium_module"))
+			    	_ActivateModule(FocusState.MediumModule);
+				else if (Input.IsActionJustPressed("high_module"))
+				    _ActivateModule(FocusState.HighModule);
+				else if (Input.IsActionJustPressed("core_module"))
+					_ActivateModule(FocusState.CoreModule);
+			}
 		
 		} else {
 			//Building Key Controls
@@ -582,11 +586,40 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	}
 
 	public void ChangeGravity(Vector3 vector) {
-		gravity = vector;
+		if (!customGravity)
+			gravity = vector;
+		else
+			gravity = new Vector3(Mathf.Clamp(gravity.X + vector.X, Mathf.Min(gravity.X, vector.X), Mathf.Max(gravity.X, vector.X)),
+				Mathf.Clamp(gravity.Y + vector.Y, Mathf.Min(gravity.Y, vector.Y), Mathf.Max(gravity.Y, vector.Y)),
+				Mathf.Clamp(gravity.Z + vector.Z, Mathf.Min(gravity.Z, vector.Z), Mathf.Max(gravity.Z, vector.Z)));
+		customGravity = true;
 	}
 
 	public void ResetGravity() {
 		gravity = new Vector3(0,-ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle(),0);
+		customGravity = false;
+	}
+
+
+	public void Disable() {
+		if (HasNode("Effects/TechDisable")) {
+			GetNode<Timer>("Effects/TechDisable").Start();
+		} else { //Create new
+			var timer = new Timer() {
+				OneShot = true,
+				WaitTime = 3,
+				Autostart = true,
+			};
+			AddChild(timer);
+			timer.Connect("timeout", new Callable(this, nameof(Enable)));
+			moduleEnable = false;
+			if (FocusState != FocusState.Weapon)
+				_CancelModule();
+		}
+	}
+
+	public void Enable() {
+		moduleEnable = true;
 	}
 
 
@@ -624,6 +657,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 public class Soldier {
 	public string Name {get;}
 	public string Desc {get;}
+	public SoldierRole[] Roles {get;}
 	public int InitialEnergy {get; set;}
 	public int EnergyBar {get;}
 	public ModuleInfo LowModule {get;}
@@ -631,9 +665,10 @@ public class Soldier {
 	public ModuleInfo HighModule {get;}
 	public ModuleInfo Core {get;}
 
-	public Soldier(string name, string desc, int initialEnergy, int energyBar, ModuleInfo lowModule, ModuleInfo mediumModule, ModuleInfo highModule, ModuleInfo core) {
+	public Soldier(string name, string desc, SoldierRole[] roles, int initialEnergy, int energyBar, ModuleInfo lowModule, ModuleInfo mediumModule, ModuleInfo highModule, ModuleInfo core) {
 		Name = name;
 		Desc = desc;
+		Roles = roles;
 		InitialEnergy = initialEnergy;
 		EnergyBar = energyBar;
 		LowModule = lowModule;
@@ -709,6 +744,19 @@ public enum FocusState {
 	MediumModule,
 	HighModule,
 	CoreModule
+}
+
+public enum SoldierRole {
+	Stealth, //Self-Explanatory
+	Recon, //Self-Explanatory
+	Tactician, //Self-Explanatory
+	Architect, //Build upon the map like their playground to give them the best advantages
+	Manipulator, //Control, confuse or influence ennemies
+	Enforcer, //Mass Destruction frontline
+	Saboteur, //Traps and corrupt enemies
+	Harbinger, //Foresee and counter modules
+	Invoker, //Bonus Entities
+	Guardian, //Protects a
 }
 
 public class KeyState {

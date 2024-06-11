@@ -1,7 +1,6 @@
-using System.Diagnostics;
 using Godot;
 
-public partial class enemy : CharacterBody3D, IDamagable, IPhysicsModifier
+public partial class enemy : CharacterBody3D, IDamagable
 {
 	[Export]
 	public int Health {get; set;} = 100;
@@ -13,12 +12,5 @@ public partial class enemy : CharacterBody3D, IDamagable, IPhysicsModifier
 			return true;
 		}
 		return false;
-	}
-
-	public void ChangeGravity(Vector3 vector) {
-		//Nothing for ennemies i guess(?)
-	}
-
-	public void ResetGravity() {
 	}
 }

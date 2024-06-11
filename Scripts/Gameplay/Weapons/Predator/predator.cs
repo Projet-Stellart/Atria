@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 public partial class predator : WeaponAmo
@@ -24,8 +25,19 @@ public partial class predator : WeaponAmo
 
     public override bool canAimFire {get;} = false;
 
+    Camera3D camera;
+    Node3D position;
+
     public override void _Ready()
     {
+        camera = GetNode<Camera3D>("Skeleton3D/BoneAttachment3D2/SubViewport/Camera3D");
+        position = GetNode<Node3D>("Skeleton3D/BoneAttachment3D2/Position");
+
+        GetNode<MeshInstance3D>("Skeleton3D/BoneAttachment3D/Scope").SetSurfaceOverrideMaterial(0, new StandardMaterial3D(){
+            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            AlbedoTexture = GetNode<SubViewport>("Skeleton3D/BoneAttachment3D2/SubViewport").GetTexture()
+        });
+
         animations = (AnimationLibrary)GD.Load("res://Ressources/GamePlay/Animation/predator_normal.tres");
         stream1 = GetNode<AudioStreamPlayer3D>("GunSound1");
         reloadStream = GetNode<AudioStreamPlayer3D>("ReloadSound");
@@ -35,6 +47,11 @@ public partial class predator : WeaponAmo
         reloadTime = GetNode<Timer>("Reload");
         bullets -= bulletPerMag;
         currBullets = bulletPerMag;
+    }
+
+    public override void _Process(double delta)
+    {
+        camera.GlobalTransform = position.GlobalTransform;
     }
 
     public override void Fire() {
