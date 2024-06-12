@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bea4i6d85n505" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/EndCorridor.tscn" id="6_aeu1b"]
 [ext_resource type="PackedScene" uid="uid://cp2k7ghni5rt4" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorHigh.tscn" id="7_f81mn"]
 [ext_resource type="PackedScene" uid="uid://dhe4pk44yu6l" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorLow.tscn" id="8_mfmig"]
-[ext_resource type="PackedScene" path="res://Scenes/Nelson/player.tscn" id="8_ntvs2"]
+[ext_resource type="PackedScene" uid="uid://c1o14bivnd8qb" path="res://Scenes/Nelson/Soldiers/player.tscn" id="8_ntvs2"]
 [ext_resource type="PackedScene" uid="uid://bcfda48sknxyd" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLow.tscn" id="9_iif0w"]
 [ext_resource type="PackedScene" uid="uid://bc70yrulkw3sa" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHigh.tscn" id="10_sngcm"]
 [ext_resource type="Texture2D" uid="uid://bs5javsrf65mq" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridorMap.png" id="13_vo813"]

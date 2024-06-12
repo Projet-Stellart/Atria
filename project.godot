@@ -200,6 +200,7 @@ core_module={
 3d_render/layer_2="Weapons"
 3d_physics/layer_1="World"
 3d_physics/layer_2="RayCast"
+3d_physics/layer_3="Entities"
 
 [rendering]
 

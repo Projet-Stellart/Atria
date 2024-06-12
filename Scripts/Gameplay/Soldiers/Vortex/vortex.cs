@@ -12,7 +12,9 @@ public partial class vortex : player
     private static int energyMax {get;set;} = 200;
     protected Soldier _soldier = new Soldier(
         "Vortex",
-        "Desc of Vortex",
+        "Vortex is a master manipulator of gravitational forces, using advanced technology to control the battlefield.\n" +
+        "Capable of disrupting enemy movements and creating chaos, Vortex excels at crowd control and tactical disruption, making them a strategic powerhouse.",
+        new SoldierRole[] {SoldierRole.Tactician, SoldierRole.Enforcer},
         50,
         energyMax,
         new ModuleInfo(
@@ -57,9 +59,9 @@ public partial class vortex : player
     public float fieldDuration = 0;
 
     //Scenes
-    PackedScene warpProjectile = (PackedScene)GD.Load("res://Scenes/Nelson/Soldiers/Vortex/warp_projectile.tscn");
-    PackedScene pulsarProjectile = (PackedScene)GD.Load("res://Scenes/Nelson/Soldiers/Vortex/pulsar_projectile.tscn");
-    PackedScene supernovaScene = (PackedScene)GD.Load("res://Scenes/Nelson/Soldiers/Vortex/supernova.tscn");
+    PackedScene warpProjectile = GD.Load<PackedScene>("res://Scenes/Nelson/Soldiers/Vortex/warp_projectile.tscn");
+    PackedScene pulsarProjectile = GD.Load<PackedScene>("res://Scenes/Nelson/Soldiers/Vortex/pulsar_projectile.tscn");
+    PackedScene supernovaScene = GD.Load<PackedScene>("res://Scenes/Nelson/Soldiers/Vortex/supernova.tscn");
 
     //External References
     public warp_projectile currentWarp;
@@ -88,7 +90,6 @@ public partial class vortex : player
         //Properties
         forceField.Parent = this;
         base.InitPlayer();
-        atria = true;
     }
 
     public override bool canUpdateModule(KeyState fire, KeyState altfire, KeyState rotate, KeyState module)
@@ -119,7 +120,7 @@ public partial class vortex : player
 		if (IsOnFloor()) 
 			doubleJump = true;
 		
-		if (jumpKey && (IsOnFloor()||doubleJump)) {
+		if (jumpKey && (IsOnFloor()||(doubleJump && moduleEnable))) {
 			if (!IsOnFloor()) doubleJump = false;
 			if (Velocity.Y < JUMP_VELOCITY) //Jumping should add onto the positive Y velocity or reset it if negatively directed
 				Velocity = new Vector3(Velocity.X, JUMP_VELOCITY, Velocity.Z);

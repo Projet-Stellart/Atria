@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://pni26eoj3br2"]
+[gd_scene load_steps=14 format=3 uid="uid://ca6nfi0ihyd2b"]
 
-[ext_resource type="PackedScene" uid="uid://c1o14bivnd8qb" path="res://Scenes/Nelson/player.tscn" id="1_fd5w1"]
-[ext_resource type="Script" path="res://Scripts/Gameplay/Soldiers/Vortex/vortex.cs" id="2_hixga"]
+[ext_resource type="PackedScene" uid="uid://c1o14bivnd8qb" path="res://Scenes/Nelson/Soldiers/player.tscn" id="1_fd5w1"]
+[ext_resource type="Script" path="res://Scripts/Gameplay/Soldiers/Vortex/vortex.cs" id="2_c1m7q"]
 [ext_resource type="Texture2D" uid="uid://io4iqyrd4hbk" path="res://Ressources/GamePlay/3D_Models/vortexArmRig_arm2Color.png" id="3_wdt68"]
 [ext_resource type="Texture2D" uid="uid://dosi8fgg2tq7l" path="res://Ressources/GamePlay/3D_Models/vortexArmRig_arm2Roughness.png" id="4_4q7n6"]
 [ext_resource type="Texture2D" uid="uid://ml0r1spoh005" path="res://Ressources/GamePlay/3D_Models/vortexArmRig_arm2Normal.png" id="5_6u7m4"]
+[ext_resource type="PackedScene" uid="uid://caft8edb48qg1" path="res://Scenes/Nelson/Soldiers/Vortex/force_field.tscn" id="6_cufce"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mi5wd"]
 resource_name = "arms.002"
@@ -191,10 +192,26 @@ bind/49/name = &"DEF-palm.04.R"
 bind/49/bone = -1
 bind/49/pose = Transform3D(0.606392, 0.792216, -0.0684295, 0.516734, -0.327189, 0.79116, 0.60438, -0.515113, -0.60777, 0.142852, -0.0653402, 0.363041)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_32xxd"]
+albedo_color = Color(0.172549, 0.545098, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_8u3w1"]
+material = SubResource("StandardMaterial3D_32xxd")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5sygf"]
+albedo_color = Color(0.12549, 1, 0.627451, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_gcp0w"]
+material = SubResource("StandardMaterial3D_5sygf")
+radius = 0.1
+height = 0.2
+
 [node name="Vortex" type="Node3D"]
 
 [node name="Player" parent="." instance=ExtResource("1_fd5w1")]
-script = ExtResource("2_hixga")
+script = ExtResource("2_c1m7q")
 
 [node name="Arms" parent="Player/Head" index="1"]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, -0.354, -0.737)
@@ -558,5 +575,49 @@ bones/49/scale = Vector3(1.00001, 0.999996, 0.999991)
 layers = 2
 mesh = SubResource("ArrayMesh_0b7lc")
 skin = SubResource("Skin_756pr")
+
+[node name="HUD_3D" type="Node" parent="Player"]
+
+[node name="A" type="MeshInstance3D" parent="Player/HUD_3D"]
+transform = Transform3D(0.249981, -0.00308043, 0, 0.00308043, 0.249981, 0, 0, 0, 0.25, 0, 0, -0.962492)
+visible = false
+layers = 4
+mesh = SubResource("SphereMesh_8u3w1")
+skeleton = NodePath("../..")
+
+[node name="B" type="MeshInstance3D" parent="Player/HUD_3D/A"]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 0.28, 0)
+layers = 4
+mesh = SubResource("SphereMesh_gcp0w")
+skeleton = NodePath("../../..")
+
+[node name="Force Field" parent="Player" instance=ExtResource("6_cufce")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1)
+visible = false
+
+[node name="3DHUDManager" type="SubViewportContainer" parent="Player"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -640.0
+offset_top = -470.0
+offset_right = 640.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Player/3DHUDManager"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1280, 720)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="Player/3DHUDManager/SubViewport"]
+cull_mask = 1047556
+fov = 30.0
+near = 0.001
 
 [editable path="Player"]
