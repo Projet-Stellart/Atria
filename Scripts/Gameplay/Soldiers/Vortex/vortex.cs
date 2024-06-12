@@ -9,14 +9,14 @@ public partial class vortex : player
 	\°----------------------*/
 
     public override Soldier soldier => _soldier;
-    private static int energyMax {get;set;} = 200;
+    public override int energyMax {get;} = 200;
     protected Soldier _soldier = new Soldier(
         "Vortex",
         "Vortex is a master manipulator of gravitational forces, using advanced technology to control the battlefield.\n" +
         "Capable of disrupting enemy movements and creating chaos, Vortex excels at crowd control and tactical disruption, making them a strategic powerhouse.",
         new SoldierRole[] {SoldierRole.Tactician, SoldierRole.Enforcer},
         50,
-        energyMax,
+        200,//energyMax
         new ModuleInfo(
             "Force Field",
             "Deploys an energy shield in front of the player that absorbs incoming projectiles and produces energy from the radioactive ones.",
@@ -39,7 +39,7 @@ public partial class vortex : player
             "Supernova",
             "Produces a strong blast affecting any entities depending on the range distance. Effects varies from module deffect to instant death.",
             "FIRE to create a blast at your feet, dealing different effects to players based on the distance, from instant death to module deffect.",
-            energyMax
+            200//energyMax
         )
     );
 
@@ -97,6 +97,18 @@ public partial class vortex : player
         return fire.Active() || altfire.Active() || rotate.Active() || module.Passive();;
     }
 
+    protected override void InitSub()
+    {
+        if (IsLocalPlayer)
+            return;
+        GetNode<SubViewportContainer>("3DHUDManager").Visible = false;
+        GetNode<SubViewportContainer>("LayersManager").Visible = false;
+        uint layer = (uint)(IsLocalPlayer ? 2 : 1);
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/arm").Layers = layer;
+        if (Weapon is null)
+            return;
+        Weapon.SetRenderLayer(layer);
+    }
 
     //Event Function
     public override void InputLocalEvent(InputEvent @event) {

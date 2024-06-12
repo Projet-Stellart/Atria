@@ -14,14 +14,14 @@ public partial class predator : WeaponAmo
     public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Primary, WeaponType.Normal, "Predator", "None", null);
 
     [Export]
-    public override int bullets {get; protected set;} = 16;
+    public override int bullets {get; set;} = 16;
     public override double fallOff { get; protected set;} = 80;
    	public override float penetration {get; protected set;} = 3;
     [Export]
     public override int bulletPerMag {get; protected set;} = 4;
 
     [Export]
-    public override int damage {get; protected set;} = 300;
+    public override int damage {get; protected set;} = 20;
 
     public override bool canAimFire {get;} = false;
 
@@ -54,13 +54,24 @@ public partial class predator : WeaponAmo
         camera.GlobalTransform = position.GlobalTransform;
     }
 
-    public override void Fire() {
+    public override void FireMeca()
+    {
         //Variables
         currBullets--;
+    }
+
+    public override void Fire() 
+    {
         //Sound
         PlaySound();
         //Effects
         Effects();
+    }
+
+    public override void SetRenderLayer(uint layer)
+    {
+        GetNode<MeshInstance3D>("Skeleton3D/BoneAttachment3D/Scope").Layers = layer;
+        GetNode<MeshInstance3D>("Skeleton3D/scifi_gun").Layers = layer;
     }
 
     public override void AltFire()
@@ -78,8 +89,12 @@ public partial class predator : WeaponAmo
     }
 
     public override void onReload() {
-        bullets -= bulletPerMag - currBullets;
-        currBullets = bulletPerMag;
+        if (Multiplayer.IsServer())
+        {
+            bullets -= bulletPerMag - currBullets;
+            currBullets = bulletPerMag;
+            Player.SyncBulletsServer();
+        }
     }
 
     public override void Effects() {

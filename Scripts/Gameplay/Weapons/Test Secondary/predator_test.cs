@@ -13,7 +13,7 @@ public partial class predator_test : WeaponAmo
     public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Secondary, WeaponType.Normal, "Predator Test", "None", null);
 
     [Export]
-    public override int bullets {get; protected set;} = 16;
+    public override int bullets {get; set;} = 16;
     [Export]
     public override int bulletPerMag {get; protected set;} = 4;
 
@@ -37,13 +37,24 @@ public partial class predator_test : WeaponAmo
         currBullets = bulletPerMag;
     }
 
-    public override void Fire() {
+    public override void FireMeca()
+    {
         //Variables
         currBullets--;
+    }
+
+    public override void Fire() 
+    {
         //Sound
         PlaySound();
         //Effects
         Effects();
+    }
+
+    public override void SetRenderLayer(uint layer)
+    {
+        GetNode<MeshInstance3D>("Skeleton3D/BoneAttachment3D/Scope").Layers = layer;
+        GetNode<MeshInstance3D>("Skeleton3D/scifi_gun").Layers = layer;
     }
 
     public override void AltFire()

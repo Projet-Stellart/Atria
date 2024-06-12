@@ -7,7 +7,7 @@ using Godot;
 \°--------------------*/
 public abstract partial class WeaponAmo : Weapon
 {
-    public abstract int bullets {get; protected set;}
+    public abstract int bullets {get; set;}
     public abstract int bulletPerMag {get; protected set;}
 	public abstract double fallOff {get; protected set;}
 	public abstract float penetration {get; protected set;}
@@ -15,6 +15,8 @@ public abstract partial class WeaponAmo : Weapon
 
     public abstract void Reload();
     public abstract void onReload();
+
+	public abstract void FireMeca();
 
     public override void CalculateFire(player Player) {
         var spaceState = GetWorld3D().DirectSpaceState;

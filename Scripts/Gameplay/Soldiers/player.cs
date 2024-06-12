@@ -61,7 +61,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 				energyBar = soldier.EnergyBar;
 			else
 				energyBar = value;
-		}
+            SyncEnergyServer();
+        }
 	}
 
 	public bool atria = false; //Need Atria Module for Core Module
@@ -74,9 +75,11 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public int Health = 100;
 	public bool moduleEnable = true;
 
+	public virtual int energyMax { get; } = 100;
 
-	//Weapons
-	public FocusState FocusState = FocusState.Weapon;
+
+    //Weapons
+    public FocusState FocusState = FocusState.Weapon;
 	public Weapon Melee;
 	public Weapon Secondary;
 	public Weapon Primary;
@@ -108,9 +111,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	bool test = true; // TO REMOVE
 	
 	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
-	public PackedScene weaponTest = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/predator.tscn");
-	public PackedScene weaponTest2 = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/predator_test.tscn");
-
+	public string weaponTest = "res://Scenes/Nelson/Weapons/predator.tscn";
+	public string weaponTest2 = "res://Scenes/Nelson/Weapons/predator_test.tscn";
+    public override string defaultWeapon => weaponTest;
 
 
 
@@ -125,11 +128,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
     /*----------------------°\
 	|		FUNCTIONS	     |
 	\°----------------------*/
-
-    public override void _Ready() //TO REMOVE
-    {
-        InitPlayer();
-    }
 	
     public override void InitPlayer()
 	{
@@ -145,18 +143,25 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		secondaryAnimator = head.GetNode<AnimationPlayer>("Arms/SecondaryAnimator");
 		meleeAnimator = head.GetNode<AnimationPlayer>("Arms/MeleeAnimator");
 
-		//Mouse in FPS
-		Input.MouseMode = Input.MouseModeEnum.Captured;
+		InitSub();
 
-		GetWeapon((Weapon)weaponTest.Instantiate()); //TO REMOVE IN FUTURE
+        //Mouse in FPS
+        Input.MouseMode = Input.MouseModeEnum.Captured;
+
+		//GetWeaponClient((Weapon)weaponTest.Instantiate()); //TO REMOVE IN FUTURE
+	}
+
+	protected virtual void InitSub()
+	{
+
 	}
 
     public override void InputProcess(double delta)
 	{
-		if (test && Input.IsActionJustPressed("test")) {
+		/*if (test && Input.IsActionJustPressed("test")) {
 			test = false;
-			GetWeapon((Weapon)weaponTest2.Instantiate());
-		}
+			GetWeaponClient((Weapon)weaponTest2.Instantiate());
+		}*/
 
 		//[BUILD KEY CONTROLS]
 		KeyState fire = new KeyState("fire");
@@ -366,8 +371,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		{
 			if (weapon.currBullets < weapon.bulletPerMag && weapon.bullets > 0 && focusAnimator.CurrentAnimation != "Reload") //Checking if you can reload
 			{
-				weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
-				ShowAnimation("Reload");
+				ReloadLocal();
+				/*weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
+				ShowAnimation("Reload");*/
 				if (isAiming)
 					isAiming = false;
 			}
@@ -382,6 +388,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	//Death
 	public void _death(DeathCause cause) {
+		GameManager.singleton.PlayerDeath(this, cause);
 		GD.Print($"dead by {cause}");
 	}
 
@@ -512,7 +519,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		Weapon.Swap();
 	}
 
-	public override void GetWeapon(Weapon weapon) {
+	public override void GetWeaponClient(Weapon weapon) {
 		var type = weapon.info.WeaponClass;
 		//Instantiating it
 		GetNode<Node3D>("Head/Arms").AddChild(weapon);
@@ -534,12 +541,19 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		validPlayer.AddAnimationLibrary("", weapon.animations);
 		SwapWeapon(weapon.info.WeaponClass); //Called by LocalEntity??
 		hasWeapon = true;
-	}
+		if (!(Melee is null))
+            Melee.SetRenderLayer((uint)(IsLocalPlayer ? 2 : 1));
+        if (!(Primary is null))
+            Primary.SetRenderLayer((uint)(IsLocalPlayer ? 2 : 1));
+        if (!(Secondary is null))
+            Secondary.SetRenderLayer((uint)(IsLocalPlayer ? 2 : 1));
+    }
 
 	public void DropWeapon() {}
 
 	private void ClearAnimations(AnimationPlayer player) {
 		foreach (var anim_name in player.GetAnimationList()) {
+			Debug.Print(anim_name.ToString());
 			player.RemoveAnimationLibrary(anim_name);
 		}
 	}
@@ -578,6 +592,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	public bool Damaged(int damage) {
 		Health-=damage;
+		SyncHealth(Health);
 		if (Health <= 0) {
 			_death(DeathCause.Health);
 			return true;

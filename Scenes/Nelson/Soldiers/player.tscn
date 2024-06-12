@@ -9,9 +9,6 @@ radius = 0.375
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2wcmm"]
 radius = 0.375
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2wcmm"]
-radius = 0.375
-
 [sub_resource type="Animation" id="Animation_c7n3a"]
 resource_name = "Crouch"
 length = 0.25

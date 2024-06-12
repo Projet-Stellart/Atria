@@ -148,10 +148,11 @@ public partial class MultiplayerManager : Node
         player.Position = pos;
         player.IsLocalPlayer = false;
         player.uid = id;
-        player.Name = "Player" + id;
+        player.GetParent().Name = "Player" + id;
         player.Init();
         player.camera.ClearCurrent(false);
         Rpc("InstantiatePlayer", new Variant[] { id, pos });
+        player.GetWeaponServer(player.defaultWeapon);
     }
 
     public void SendPlayer(long receiver, long id, Vector3 pos)
@@ -169,7 +170,7 @@ public partial class MultiplayerManager : Node
         bool localPl = Multiplayer.GetUniqueId() == id.As<long>();
         player.IsLocalPlayer = localPl;
         player.uid = id.As<long>();
-        player.Name = "Player" + id;
+        player.GetParent().Name = "Player" + id;
         player.Init();
         player.camera.Current = localPl;
         if (localPl)

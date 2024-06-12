@@ -9,7 +9,6 @@ public partial class EnergyBar : Control
     float energy = 1;
 	float e = 1;
     float timer = 0;
-    int c = 0;
 
 	public void SetEnergy(float d)
 	{
@@ -28,21 +27,10 @@ public partial class EnergyBar : Control
 
 	}
 
-	public override void _Ready()
-	{
-		var energyRect = GetNode<Control>("HB_BG/ColorRect/HB/ColorRect");
-		energyRect.Position = new Vector2(0, 0);
-	}
-
 	public override void _Process(double delta)
 	{
         
 	 	var energyRect = GetNode<ColorRect>("HB_BG/ColorRect/HB/ColorRect");
-		if (energyRect != null)
-		{
-			SetEnergy(energy);
-            if (Input.IsKeyPressed(Key.Space)) energy -= 0.005f;
-		}
         timer += (float)delta;
 		if (e == 1)
 		{
