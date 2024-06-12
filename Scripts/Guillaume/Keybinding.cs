@@ -21,7 +21,7 @@ public class Keybinding
 
     public void _Ready()
     {
-        jump = GetNode<Button>(Jump);
+        /*jump = GetNode<Button>(Jump);
         crouch = GetNode<Button>(Crouch);
         jumpLabel = GetNode<Label>(JumpLabel);
         crouchLabel = GetNode<Label>(CrouchLabel);
@@ -32,7 +32,7 @@ public class Keybinding
 
         UpdateLabels();
 
-        infoPanel.Hide();
+        infoPanel.Hide();*/
     }
 
     private void OnButtonPressed(Button button)

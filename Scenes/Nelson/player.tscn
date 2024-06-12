@@ -91,6 +91,9 @@ _data = {
 "RESET": SubResource("Animation_5pxwa")
 }
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_srdf2"]
+radius = 0.375
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_gl11l")
 

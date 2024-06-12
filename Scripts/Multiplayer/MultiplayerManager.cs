@@ -142,8 +142,8 @@ public partial class MultiplayerManager : Node
             return;
         if (playersControler.ContainsKey(id))
             return;
-        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<player>();
-        GameManager.singleton.GetChild(1).AddChild(player);
+        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate().GetChild<player>(0);
+        GameManager.singleton.GetChild(1).AddChild(player.GetParent());
         playersControler.Add(id, player);
         player.Position = pos;
         player.IsLocalPlayer = false;
@@ -162,8 +162,8 @@ public partial class MultiplayerManager : Node
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void InstantiatePlayer(Variant id, Variant pos)
     {
-        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<player>();
-        GameManager.singleton.GetChild(1).AddChild(player);
+        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate().GetChild<player>(0);
+        GameManager.singleton.GetChild(1).AddChild(player.GetParent());
         playersControler.Add(id.As<long>(), player);
         player.Position = pos.AsVector3();
         bool localPl = Multiplayer.GetUniqueId() == id.As<long>();

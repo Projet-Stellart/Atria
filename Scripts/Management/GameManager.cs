@@ -13,7 +13,7 @@ public partial class GameManager : Node
     public TileMeshGeneration tileMapGenerator;
     public HudManager hudManager;
 
-    public const string playerTemplate = "res://Scenes/Nelson/player.tscn";
+    public const string playerTemplate = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn";
 
     private const string lobbyTemplate = "res://Scenes/Guillaume/Lobby.tscn";
     public Node lobby;
