@@ -2,6 +2,10 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 public partial class UI_Script : CanvasLayer
 
@@ -14,8 +18,9 @@ public partial class UI_Script : CanvasLayer
 	public override void _Ready()
 	{
 		GetNode<AudioStreamPlayer>("SonFond").Play();
-		// SetFullScreenIndicator();
-		// SetResolutionIndicator();
+        // SetFullScreenIndicator();
+        // SetResolutionIndicator();
+        GetGitHubDataAsync();
 	}
 
 	private void _on_quit_pressed()
@@ -352,4 +357,84 @@ public partial class UI_Script : CanvasLayer
     //     FullscreenOptionButton.Selected = index;
 	// }
 
+	static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+
+	private async Task GetGitHubDataAsync()
+	{		
+		try
+		{
+			client.DefaultRequestHeaders.Add("User-Agent", "Atria News API");
+			using HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/Projet-Stellart/Atria/releases/latest");
+			response.EnsureSuccessStatusCode();
+			string responseBody = await response.Content.ReadAsStringAsync();
+			Release release = JsonSerializer.Deserialize<Release>(responseBody);
+			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel").Text = "[center]Release:\n\n\n\n\n" + release.name;			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel2").Text = "[center]Description:\n\n\n\n\n" + release.body;
+		}
+		catch (HttpRequestException e)
+		{
+			Debug.Print(e.Message);
+		}
+	}
+
+}
+
+public class Release
+{
+	public string url { get; set; }
+	public string assets_url { get; set; }
+	public string upload_url { get; set; }
+	public string html_url { get; set; }
+	public long id { get; set; }
+	public author author { get; set; }
+	public string node_id { get; set; }
+	public string tag_name { get; set; }
+	public string target_commitish { get; set; }
+	public string name { get; set; }
+	public bool draft { get; set; }
+	public bool prerelease { get; set; }
+	public DateTime created_at { get; set; }
+	public DateTime published_at { get; set; }
+	public List<asset> assets { get; set; }
+	public string tarball_url { get; set; }
+	public string zipball_url { get; set; }
+	public string body { get; set; }
+}
+
+public class author
+{
+    public string login { get; set; }
+    public long id { get; set; }
+    public string node_id { get; set; }
+    public string avatar_url { get; set; }
+    public string gravatar_id { get; set; }
+    public string url { get; set; }
+    public string html_url { get; set; }
+    public string followers_url { get; set; }
+    public string following_url { get; set; }
+    public string gists_url { get; set; }
+    public string starred_url { get; set; }
+    public string subscriptions_url { get; set; }
+    public string organizations_url { get; set; }
+    public string repos_url { get; set; }
+    public string events_url { get; set; }
+    public string received_events_url { get; set; }
+    public string type { get; set; }
+    public bool site_admin { get; set; }
+}
+
+public class asset
+{
+    public string url { get; set; }
+    public long id { get; set; }
+    public string node_id { get; set; }
+    public string name { get; set; }
+    public string label { get; set; }
+    public author uploader { get; set; }
+    public string content_type { get; set; }
+    public string state { get; set; }
+    public long size { get; set; }
+    public int download_count { get; set; }
+    public DateTime created_at { get; set; }
+    public DateTime updated_at { get; set; }
+    public string browser_download_url { get; set; }
 }

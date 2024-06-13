@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://cthdwsw2b1hp6"]
+[gd_scene load_steps=9 format=3 uid="uid://cthdwsw2b1hp6"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
 [ext_resource type="AudioStream" uid="uid://csf76jfs71xhc" path="res://Ressources/UI/Click.mp3" id="3_46j4r"]
 [ext_resource type="AudioStream" uid="uid://bisdnb3vq2dvx" path="res://Ressources/UI/Trap.mp3" id="4_7w28x"]
+[ext_resource type="Texture2D" uid="uid://c8y5sbbjq55ge" path="res://Ressources/UI/Logo.png" id="4_plkpr"]
 [ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="5_obcn5"]
 [ext_resource type="Texture2D" uid="uid://dgxynxnhxc4of" path="res://Ressources/UI/Button_CLicked.png" id="7_tekix"]
 [ext_resource type="Texture2D" uid="uid://bxkcfq3dhpm75" path="res://Ressources/UI/Button_Moused.png" id="8_gcfsc"]
@@ -30,8 +31,25 @@ grow_vertical = 2
 texture = SubResource("CompressedTexture2D_42bj2")
 expand_mode = 1
 
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = -1
+anchor_left = 0.0195313
+anchor_top = 0.756944
+anchor_right = 0.136719
+anchor_bottom = 0.965278
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="TextureRect" parent="ColorRect"]
+layout_mode = 0
+anchor_left = 0.0666667
+anchor_top = 0.0666667
+anchor_right = 0.933333
+anchor_bottom = 0.933333
+texture = ExtResource("4_plkpr")
+expand_mode = 2
+metadata/_edit_use_anchors_ = true
+
 [node name="Main" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -164,6 +182,40 @@ bbcode_enabled = true
 text = "[center]Options"
 metadata/_edit_use_anchors_ = true
 
+[node name="ColorRect" type="ColorRect" parent="Main"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.679688
+anchor_top = 0.0694444
+anchor_right = 0.960938
+anchor_bottom = 0.736111
+color = Color(1, 1, 1, 0.784314)
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="Main/ColorRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.138889
+anchor_top = 0.104167
+anchor_right = 0.861111
+anchor_bottom = 0.895833
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/ColorRect/MarginContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+
 [node name="Controls" type="Control" parent="."]
 visible = false
 layout_mode = 3
@@ -176,10 +228,10 @@ grow_vertical = 2
 [node name="MarginContainer" type="MarginContainer" parent="Controls"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.386719
-anchor_top = 0.0708333
-anchor_right = 0.613281
-anchor_bottom = 0.725
+anchor_left = 0.335938
+anchor_top = 0.0694444
+anchor_right = 0.664063
+anchor_bottom = 0.930556
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
@@ -205,7 +257,7 @@ stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
 [node name="Mouse Settings" type="RichTextLabel" parent="Controls/MarginContainer/VBoxContainer/Mouse Settings2"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
@@ -214,9 +266,9 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/normal_font_size = 25
 bbcode_enabled = true
-text = "[center]Graphics"
+text = "[center]Mouse Settings"
 metadata/_edit_use_anchors_ = true
 
 [node name="Keyboard Settings2" type="TextureButton" parent="Controls/MarginContainer/VBoxContainer"]
@@ -237,7 +289,7 @@ stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
 [node name="Keyboard Settings" type="RichTextLabel" parent="Controls/MarginContainer/VBoxContainer/Keyboard Settings2"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
@@ -246,9 +298,9 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/normal_font_size = 25
 bbcode_enabled = true
-text = "[center]Controls"
+text = "[center]Keyboard Settings"
 metadata/_edit_use_anchors_ = true
 
 [node name="Exit" type="TextureButton" parent="Controls"]
@@ -364,6 +416,7 @@ text = "[center]Exit"
 metadata/_edit_use_anchors_ = true
 
 [node name="Graphics" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -409,7 +462,6 @@ text = "Resolution: "
 layout_mode = 2
 size_flags_horizontal = 3
 item_count = 3
-allow_reselect = true
 popup/item_0/text = "1920x1080"
 popup/item_0/id = 0
 popup/item_1/text = "1280x720"
