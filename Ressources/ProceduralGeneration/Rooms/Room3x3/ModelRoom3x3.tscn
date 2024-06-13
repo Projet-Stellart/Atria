@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dxsqbnkgqjwgq"]
+
+[ext_resource type="ArrayMesh" uid="uid://bnf0k73l3d3wy" path="res://Ressources/ProceduralGeneration/Rooms/Room3x3/Room3x3.obj" id="1_myn66"]
+
+[node name="ModelRoom3x3" type="Node3D"]
+
+[node name="Room3x3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+mesh = ExtResource("1_myn66")

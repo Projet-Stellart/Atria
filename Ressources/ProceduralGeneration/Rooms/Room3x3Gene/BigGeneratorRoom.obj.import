@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dui3l57bw0ui6"
+path="res://.godot/imported/BigGeneratorRoom.obj-59419826b09bfcb7cec81c63518fa1bd.mesh"
+
+[deps]
+
+files=["res://.godot/imported/BigGeneratorRoom.obj-59419826b09bfcb7cec81c63518fa1bd.mesh"]
+
+source_file="res://Ressources/ProceduralGeneration/Rooms/Room3x3Gene/BigGeneratorRoom.obj"
+dest_files=["res://.godot/imported/BigGeneratorRoom.obj-59419826b09bfcb7cec81c63518fa1bd.mesh", "res://.godot/imported/BigGeneratorRoom.obj-59419826b09bfcb7cec81c63518fa1bd.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
