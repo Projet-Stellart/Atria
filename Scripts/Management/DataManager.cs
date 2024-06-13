@@ -165,7 +165,7 @@ public static class DataManager
 
     public static RoomPrefa[] roomPrefas = new RoomPrefa[]
     {
-        new RoomPrefa(
+        /*new RoomPrefa(
             TilePrefa.RoomType.Inert,
             new int[2,2]
             {
@@ -173,7 +173,7 @@ public static class DataManager
                 { -20,-6 }
             },
             GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room2x2/Room2x2.tscn"),
-            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room2x2/ModelRoom2x2.tscn")),
+            GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/Rooms/Room2x2/ModelRoom2x2.tscn")),*/
         new RoomPrefa(
             TilePrefa.RoomType.Inert,
             new int[3,3]

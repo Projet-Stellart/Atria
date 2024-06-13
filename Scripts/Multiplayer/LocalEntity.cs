@@ -1,10 +1,15 @@
-﻿using Godot;
+﻿using Atria.Scripts.ProceduralGeneration.Objects;
+using Godot;
+using Microsoft.VisualBasic;
 
 public abstract partial class LocalEntity : CharacterBody3D
 {
     public bool IsLocalPlayer;
     public long uid;
     public bool dead;
+
+    public bool interacting;
+    public Interactible interation;
 
     public void SyncEntity()
     {
@@ -50,6 +55,11 @@ public abstract partial class LocalEntity : CharacterBody3D
 
         MoveAndSlide();
 
+        if (interacting && !InteractionTest())
+        {
+            StopInteractionServer();
+        }
+
         if (IsLocalPlayer)
         {
             SyncEntity();
@@ -62,6 +72,75 @@ public abstract partial class LocalEntity : CharacterBody3D
         {
             InputLocalEvent(@event);
         }
+    }
+
+    private bool InteractionTest()
+    {
+        player player = ((player)this);
+        PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(player.camera.GlobalPosition, player.camera.GlobalPosition + (player.camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+        Godot.Collections.Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+        if (hit.ContainsKey("collider"))
+        {
+            if ((Node)hit["collider"] != interation)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public void SendInteractionStart(Interactible inter)
+    {
+        RpcId(1, "InteractionStartServer", new Variant[] { inter.GetPath() });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void InteractionStartServer(Variant interPath)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        interation = GetTree().Root.GetNode<Interactible>(interPath.AsString());
+        interacting = true;
+        if (InteractionTest())
+        {
+            interation.OnClickBegin((player)this);
+        }
+    }
+
+    public void SendInteractionEnd()
+    {
+        RpcId(1, "InteractionEndServerFromClient");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void InteractionEndServerFromClient()
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        if (interation != null)
+            interation.OnClickEnd((player)this);
+        interacting = false;
+        interation = null;
+    }
+
+    public void StopInteractionServer()
+    {
+        if (interation is null)
+            return;
+        interation.OnClickEnd((player)this);
+        interation = null;
+        interacting = false;
+        RpcId(uid, "StopInteractionClient");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void StopInteractionClient()
+    {
+        ((player)this).interacting = false;
     }
 
     public abstract void InitPlayer();

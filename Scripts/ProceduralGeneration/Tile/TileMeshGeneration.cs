@@ -78,6 +78,22 @@ public partial class TileMeshGeneration : Node3D
         Task generation = GenerateMapAsync(sizeX, sizeY, rand);
     }
 
+    public void ClearMap()
+    {
+        foreach (var child in GetChildren())
+        {
+            child.QueueFree();
+        }
+        tileMap = null;
+        spawnsPos = null;
+        spawns = null;
+        northBorderType = null;
+        southBorderType = null;
+        eastBorderType = null;
+        westBorderType = null;
+        Debug.Print("Ok");
+    }
+
     //Debug only
     public override void _Process(double delta)
     {

@@ -1,4 +1,7 @@
+using Atria.Scripts.Management.GameMode;
+using Atria.Scripts.ProceduralGeneration.Objects;
 using Godot;
+using Godot.Collections;
 using System.Diagnostics;
 public partial class player : LocalEntity
 {
@@ -8,8 +11,10 @@ public partial class player : LocalEntity
 	public Camera3D camera;
 	RayCast3D aim;
 
-	//Scenes
-	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/bullet_decal.tscn");
+    Interactible interaction;
+
+    //Scenes
+    public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/bullet_decal.tscn");
 
 	//Movements
 	public Acceleration accel_type = new Acceleration();
@@ -107,6 +112,50 @@ public partial class player : LocalEntity
 		    if (Input.IsActionPressed("sprint")&&Input.IsActionPressed("forward")&&IsOnFloor()) {
 				speed = speed_type.sprint;
 			}
+		}
+
+		if (Input.IsActionJustPressed("interact"))
+		{
+            PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(camera.GlobalPosition, camera.GlobalPosition + (camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+			Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+			if (hit.ContainsKey("collider"))
+			{
+				Node obj = (Node)hit["collider"];
+				if (obj is Interactible inter)
+				{
+					SendInteractionStart(inter);
+					interaction = inter;
+				}
+            }
+		}
+		else if (Input.IsActionPressed("interact"))
+		{
+			if (interaction != null)
+			{
+				PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(camera.GlobalPosition, camera.GlobalPosition + (camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+				Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+				if (hit.ContainsKey("collider"))
+				{
+					if ((Node)hit["collider"] != interaction)
+					{
+						SendInteractionEnd();
+                        interaction = null;
+                    }
+				}
+				else
+				{
+                    SendInteractionEnd();
+                    interaction = null;
+                }
+			}
+        }
+		else
+		{
+			if (interaction != null)
+			{
+                SendInteractionEnd();
+                interaction = null;
+            }
 		}
 
 		// Add the gravity.

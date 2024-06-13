@@ -213,15 +213,9 @@ public partial class MultiplayerManager : Node
     {
         long pid = id.As<long>();
         bool localPl = Multiplayer.GetUniqueId() == pid;
-        if (localPl)
-        {
-            //Quit server
-        }
-        else
-        {
-            playersControler[pid].QueueFree();
-            playersControler.Remove(pid);
-        }
+
+        playersControler[pid].QueueFree();
+        playersControler.Remove(pid);
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -266,6 +260,12 @@ public partial class MultiplayerManager : Node
         ((Lobby_Script)GameManager.singleton.lobby).InitMiniMap((int)layer);
     }
 
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ClearMap()
+    {
+        GameManager.singleton.tileMapGenerator.ClearMap();
+    }
+
     //Game management
 
     public void SyncStartGame()
@@ -275,18 +275,42 @@ public partial class MultiplayerManager : Node
         Rpc("StartGameClient");
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void StartGameClient()
     {
         GameManager.singleton.lobby.QueueFree();
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void DisplayLobby()
+    {
+        GameManager.singleton.lobby = GD.Load<PackedScene>(GameManager.lobbyTemplate).Instantiate();
+        GameManager.singleton.AddChild(GameManager.singleton.lobby);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void HideHUD()
+    {
+        GameManager.singleton.hudManager.Visible = false;
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void StartMatchClient()
     {
         foreach (var sp in GameManager.singleton.tileMapGenerator.spawns)
         {
             sp.GetNode<Node3D>("Door").Position += new Vector3(0, GameManager.singleton.tileMapGenerator.tileSize, 0);
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ResetRoundClient()
+    {
+        Debug.Print("Ok");
+        foreach (var sp in GameManager.singleton.tileMapGenerator.spawns)
+        {
+            Node3D spD = sp.GetNode<Node3D>("Door");
+            spD.Position = new Vector3(spD.Position.X, GameManager.singleton.tileMapGenerator.tileSize * GameManager.singleton.GameData.mapParam.startHeight, spD.Position.Z);
         }
     }
 
