@@ -182,8 +182,8 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_username_input_text_changed()
 	{
-		var custom = GetNode<Button>("Play/MarginContainer5/VBoxContainer/Custom");
-		var online = GetNode<Button>("Play/MarginContainer4/VBoxContainer/Online");
+		var custom = GetNode<TextureButton>("Play/Custom");
+		var online = GetNode<TextureButton>("Play/Online");
 		custom.Disabled = false;
 		online.Disabled = false;
 		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;

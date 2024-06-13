@@ -1,17 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://cthdwsw2b1hp6"]
+[gd_scene load_steps=8 format=3 uid="uid://cthdwsw2b1hp6"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
-[ext_resource type="AudioStream" uid="uid://b0efel5c7odhb" path="res://Ressources/UI/Sci-Fi Sound Effects (mp3cut (mp3cut.net).mp3" id="3_41h6r"]
-[ext_resource type="Texture2D" uid="uid://2x54dyrtl6yq" path="res://Ressources/UI/UI-Elements/SmallEmptyButton.png" id="3_pga3l"]
-[ext_resource type="Texture2D" uid="uid://0iq52avqno4l" path="res://Ressources/UI/Fond.jpeg" id="4_0mpe5"]
+[ext_resource type="AudioStream" uid="uid://csf76jfs71xhc" path="res://Ressources/UI/Click.mp3" id="3_46j4r"]
 [ext_resource type="AudioStream" uid="uid://bisdnb3vq2dvx" path="res://Ressources/UI/Trap.mp3" id="4_7w28x"]
-[ext_resource type="Shortcut" uid="uid://bjmel41tvfycs" path="res://Ressources/UI/shortcat.tres" id="6_yjv84"]
+[ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="5_obcn5"]
+[ext_resource type="Texture2D" uid="uid://dgxynxnhxc4of" path="res://Ressources/UI/Button_CLicked.png" id="7_tekix"]
+[ext_resource type="Texture2D" uid="uid://bxkcfq3dhpm75" path="res://Ressources/UI/Button_Moused.png" id="8_gcfsc"]
 
-[sub_resource type="InputEventKey" id="InputEventKey_6sjdh"]
-keycode = 4194309
-
-[sub_resource type="Shortcut" id="Shortcut_v1fvj"]
-events = [SubResource("InputEventKey_6sjdh")]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_42bj2"]
+load_path = "res://.godot/imported/Fond1.jpeg-bca3c69e3ab3bf907eddae77f371710f.ctex"
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_mxrpx")
@@ -21,7 +18,7 @@ stream = ExtResource("4_7w28x")
 volume_db = -20.0
 
 [node name="MenuSwitch" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_41h6r")
+stream = ExtResource("3_46j4r")
 volume_db = -10.0
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -30,7 +27,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_0mpe5")
+texture = SubResource("CompressedTexture2D_42bj2")
 expand_mode = 1
 
 [node name="Main" type="Control" parent="."]
@@ -41,104 +38,136 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer4" type="MarginContainer" parent="Main"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.03125
-anchor_top = 0.416667
-anchor_right = 0.109375
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="Control" parent="Main/MarginContainer4"]
-layout_mode = 2
-
-[node name="Options" type="Button" parent="Main/MarginContainer4/VBoxContainer"]
+[node name="Play" type="TextureButton" parent="Main"]
 custom_minimum_size = Vector2(0, 50)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Options"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-metadata/_edit_use_anchors_ = true
-
-[node name="MarginContainer" type="MarginContainer" parent="Main"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.03125
-anchor_top = 0.5
-anchor_right = 0.109375
-anchor_bottom = 0.583333
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="Control" parent="Main/MarginContainer"]
-layout_mode = 2
-
-[node name="Credits" type="Button" parent="Main/MarginContainer/VBoxContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Credits"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer2" type="MarginContainer" parent="Main"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.03125
-anchor_top = 0.833333
-anchor_right = 0.135156
-anchor_bottom = 0.944444
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer2"]
-layout_mode = 2
-
-[node name="Quit" type="Button" parent="Main/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-text = "Quit"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer3" type="MarginContainer" parent="Main"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.03125
 anchor_top = 0.0555556
-anchor_right = 0.226563
-anchor_bottom = 0.263889
+anchor_right = 0.254687
+anchor_bottom = 0.208333
+grow_horizontal = 2
 grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer3"]
-layout_mode = 2
+[node name="Play" type="RichTextLabel" parent="Main/Play"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.6
+anchor_right = 1.0
+anchor_bottom = 0.990909
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 55
+bbcode_enabled = true
+text = "[center]
+Play"
+metadata/_edit_use_anchors_ = true
 
-[node name="Play" type="Button" parent="Main/MarginContainer3/VBoxContainer"]
+[node name="Quit" type="TextureButton" parent="Main"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.805469
+anchor_top = 0.823611
+anchor_right = 0.960938
+anchor_bottom = 0.930556
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Quit" type="RichTextLabel" parent="Main/Quit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00502512
+anchor_top = -0.506491
+anchor_right = 0.994973
+anchor_bottom = 0.999995
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]
+Quit"
+metadata/_edit_use_anchors_ = true
+
+[node name="Credits" type="TextureButton" parent="Main"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.03125
+anchor_top = 0.5125
+anchor_right = 0.155469
+anchor_bottom = 0.593056
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Credits" type="RichTextLabel" parent="Main/Credits"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0188679
+anchor_top = -0.103448
+anchor_right = 0.981132
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Credits"
+metadata/_edit_use_anchors_ = true
+
+[node name="Options" type="TextureButton" parent="Main"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 75
-shortcut = SubResource("Shortcut_v1fvj")
-text = "PLAY"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+anchor_left = 0.03125
+anchor_top = 0.416667
+anchor_right = 0.154687
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Options" type="RichTextLabel" parent="Main/Options"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Options"
+metadata/_edit_use_anchors_ = true
 
 [node name="Controls" type="Control" parent="."]
 visible = false
@@ -153,9 +182,9 @@ grow_vertical = 2
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.386719
-anchor_top = 0.0277778
+anchor_top = 0.0708333
 anchor_right = 0.613281
-anchor_bottom = 0.5
+anchor_bottom = 0.725
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
@@ -163,67 +192,105 @@ metadata/_edit_use_anchors_ = true
 [node name="VBoxContainer" type="Control" parent="Controls/MarginContainer"]
 layout_mode = 2
 
-[node name="Mouse Settings" type="Button" parent="Controls/MarginContainer/VBoxContainer"]
+[node name="Mouse Settings2" type="TextureButton" parent="Controls/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0689655
-anchor_top = 0.0588235
-anchor_right = 0.931035
-anchor_bottom = 0.5
+anchor_left = 0.083612
+anchor_top = 0.277539
+anchor_right = 0.916388
+anchor_bottom = 0.476395
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 22
-text = "Mouse Settings
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="Keyboard Settings" type="Button" parent="Controls/MarginContainer/VBoxContainer"]
+[node name="Mouse Settings" type="RichTextLabel" parent="Controls/MarginContainer/VBoxContainer/Mouse Settings2"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0689655
-anchor_top = 0.5
-anchor_right = 0.931035
-anchor_bottom = 0.941176
+anchor_left = 0.0041407
+anchor_top = -0.181506
+anchor_right = 0.993768
+anchor_bottom = 0.982266
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 22
-text = "Keyboard Settings"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]
+Graphics"
 metadata/_edit_use_anchors_ = true
 
-[node name="MarginContainer2" type="MarginContainer" parent="Controls"]
+[node name="Keyboard Settings2" type="TextureButton" parent="Controls/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.083612
+anchor_top = 0.519313
+anchor_right = 0.916388
+anchor_bottom = 0.718169
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Controls/MarginContainer2"]
-layout_mode = 2
+[node name="Keyboard Settings" type="RichTextLabel" parent="Controls/MarginContainer/VBoxContainer/Keyboard Settings2"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0041407
+anchor_top = -0.170829
+anchor_right = 0.993768
+anchor_bottom = 0.982266
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]
+Controls"
+metadata/_edit_use_anchors_ = true
 
-[node name="Exit" type="Button" parent="Controls/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
+[node name="Exit" type="TextureButton" parent="Controls"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Exit" type="RichTextLabel" parent="Controls/Exit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Credits" type="Control" parent="."]
 visible = false
@@ -275,32 +342,37 @@ layout_mode = 2
 text = "Luan Ray-Chagas
 "
 
-[node name="MarginContainer2" type="MarginContainer" parent="Credits"]
+[node name="Exit" type="TextureButton" parent="Credits"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Credits/MarginContainer2"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Credits/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Exit" type="RichTextLabel" parent="Credits/Exit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Graphics" type="Control" parent="."]
 visible = false
@@ -348,30 +420,37 @@ size_flags_vertical = 6
 step = 10.0
 value = 100.0
 
-[node name="MarginContainer2" type="MarginContainer" parent="Graphics"]
+[node name="Exit" type="TextureButton" parent="Graphics"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Graphics/MarginContainer2"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Graphics/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Exit" type="RichTextLabel" parent="Graphics/Exit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Sound" type="Control" parent="."]
 visible = false
@@ -440,30 +519,37 @@ alignment = 1
 icon_alignment = 1
 vertical_icon_alignment = 0
 
-[node name="MarginContainer4" type="MarginContainer" parent="Sound"]
+[node name="Exit" type="TextureButton" parent="Sound"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Sound/MarginContainer4"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Sound/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Exit" type="RichTextLabel" parent="Sound/Exit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Play" type="Control" parent="."]
 visible = false
@@ -473,81 +559,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="MarginContainer3" type="MarginContainer" parent="Play"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer3"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Play/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer4" type="MarginContainer" parent="Play"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.15625
-anchor_top = 0.0277778
-anchor_right = 0.351563
-anchor_bottom = 0.236111
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer4"]
-layout_mode = 2
-
-[node name="Online" type="Button" parent="Play/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 30
-text = "
-Online
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer5" type="MarginContainer" parent="Play"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.648438
-anchor_top = 0.0277778
-anchor_right = 0.84375
-anchor_bottom = 0.236111
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer5"]
-layout_mode = 2
-
-[node name="Custom" type="Button" parent="Play/MarginContainer5/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 30
-text = "
-Custom
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
 [node name="MarginContainer6" type="MarginContainer" parent="Play"]
 layout_mode = 1
@@ -567,6 +578,108 @@ layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Username"
 scroll_fit_content_height = true
+
+[node name="Exit" type="TextureButton" parent="Play"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="RichTextLabel" parent="Play/Exit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
+metadata/_edit_use_anchors_ = true
+
+[node name="Custom" type="TextureButton" parent="Play"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.664063
+anchor_top = 0.0694444
+anchor_right = 0.960938
+anchor_bottom = 0.270833
+grow_horizontal = 2
+grow_vertical = 2
+disabled = true
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Custom" type="RichTextLabel" parent="Play/Custom"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00276243
+anchor_top = 0.00735294
+anchor_right = 0.991713
+anchor_bottom = 0.985294
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]
+Custom"
+metadata/_edit_use_anchors_ = true
+
+[node name="Online" type="TextureButton" parent="Play"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0390625
+anchor_top = 0.0694444
+anchor_right = 0.335938
+anchor_bottom = 0.270833
+grow_horizontal = 2
+grow_vertical = 2
+disabled = true
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Online" type="RichTextLabel" parent="Play/Online"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00276243
+anchor_top = 0.00735294
+anchor_right = 0.991713
+anchor_bottom = 0.985294
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]
+Online"
+metadata/_edit_use_anchors_ = true
 
 [node name="MatchMaker" type="Control" parent="."]
 visible = false
@@ -596,63 +709,70 @@ size_flags_vertical = 3
 placeholder_text = "MatchMaker IP"
 scroll_fit_content_height = true
 
-[node name="MarginContainer2" type="MarginContainer" parent="MatchMaker"]
+[node name="Exit" type="TextureButton" parent="MatchMaker"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MatchMaker/MarginContainer2"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="MatchMaker/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer3" type="MarginContainer" parent="MatchMaker"]
+[node name="Exit" type="RichTextLabel" parent="MatchMaker/Exit"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.125
-anchor_bottom = 0.972222
-offset_left = 550.0
-offset_top = -270.0
-offset_right = 550.0
-offset_bottom = -270.0
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MatchMaker/MarginContainer3"]
-layout_mode = 2
+[node name="Ok" type="TextureButton" parent="MatchMaker"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.407031
+anchor_top = 0.491667
+anchor_right = 0.592188
+anchor_bottom = 0.590278
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-[node name="OK" type="Button" parent="MatchMaker/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-OK
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Ok" type="RichTextLabel" parent="MatchMaker/Ok"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.577465
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]
+OK"
+metadata/_edit_use_anchors_ = true
 
 [node name="Options" type="Control" parent="."]
 visible = false
@@ -674,92 +794,173 @@ metadata/_edit_use_anchors_ = true
 [node name="VBoxContainer" type="Control" parent="Options/MarginContainer3"]
 layout_mode = 2
 
-[node name="Sound" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-anchor_left = 0.0666667
-anchor_top = 0.0285714
-anchor_right = 0.933333
-anchor_bottom = 0.242857
+[node name="MatchMaker" type="TextureButton" parent="Options/MarginContainer3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.083612
+anchor_top = 0.761087
+anchor_right = 0.916388
+anchor_bottom = 0.962804
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 30
-text = "Sound"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="Graphics" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-anchor_left = 0.0666667
-anchor_top = 0.271429
-anchor_right = 0.933333
-anchor_bottom = 0.485714
-offset_top = -1.52588e-05
-theme_override_font_sizes/font_size = 30
-text = "Graphics"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-metadata/_edit_use_anchors_ = true
-
-[node name="Controls" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-anchor_left = 0.0666667
-anchor_top = 0.514286
-anchor_right = 0.933333
-anchor_bottom = 0.728571
-offset_top = -3.05176e-05
-offset_bottom = 3.05176e-05
-theme_override_font_sizes/font_size = 30
-text = "Binds"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-metadata/_edit_use_anchors_ = true
-
-[node name="MatchMaker" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
+[node name="MatchMaker" type="RichTextLabel" parent="Options/MarginContainer3/VBoxContainer/MatchMaker"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0666667
-anchor_top = 0.757143
-anchor_right = 0.933333
-anchor_bottom = 0.971429
-theme_override_font_sizes/font_size = 30
-text = "MatchMaker"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+anchor_left = 0.00401606
+anchor_top = 0.0496454
+anchor_right = 0.995984
+anchor_bottom = 0.829787
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]
+MatchMaker"
 metadata/_edit_use_anchors_ = true
 
-[node name="MarginContainer4" type="MarginContainer" parent="Options"]
+[node name="Sound" type="TextureButton" parent="Options/MarginContainer3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.083612
+anchor_top = 0.0343348
+anchor_right = 0.916388
+anchor_bottom = 0.234621
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Options/MarginContainer4"]
-layout_mode = 2
+[node name="Sound" type="RichTextLabel" parent="Options/MarginContainer3/VBoxContainer/Sound"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00401606
+anchor_top = 0.0285714
+anchor_right = 0.995984
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]
+Sound"
+metadata/_edit_use_anchors_ = true
 
-[node name="Exit" type="Button" parent="Options/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
+[node name="Graphics" type="TextureButton" parent="Options/MarginContainer3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.083612
+anchor_top = 0.277539
+anchor_right = 0.916388
+anchor_bottom = 0.476395
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Graphics" type="RichTextLabel" parent="Options/MarginContainer3/VBoxContainer/Graphics"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00401606
+anchor_top = 0.0431655
+anchor_right = 0.995984
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]
+Graphics"
+metadata/_edit_use_anchors_ = true
+
+[node name="Controls" type="TextureButton" parent="Options/MarginContainer3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.083612
+anchor_top = 0.519313
+anchor_right = 0.916388
+anchor_bottom = 0.718169
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Controls" type="RichTextLabel" parent="Options/MarginContainer3/VBoxContainer/Controls"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00401606
+anchor_top = 0.035461
+anchor_right = 0.995984
+anchor_bottom = 0.829787
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]
+Controls"
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="TextureButton" parent="Options"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="RichTextLabel" parent="Options/Exit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Online" type="Control" parent="."]
 visible = false
@@ -770,29 +971,37 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer3" type="MarginContainer" parent="Online"]
+[node name="Exit" type="TextureButton" parent="Online"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.016
-anchor_top = 0.861
-anchor_right = 0.984
-anchor_bottom = 0.972
-offset_left = -0.480001
-offset_top = 0.0799561
-offset_right = 0.47998
-offset_bottom = 0.159973
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Online/MarginContainer3"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Online/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
+[node name="Exit" type="RichTextLabel" parent="Online/Exit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Custom" type="Control" parent="."]
 visible = false
@@ -802,31 +1011,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="MarginContainer3" type="MarginContainer" parent="Custom"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer3"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
 [node name="MarginContainer4" type="MarginContainer" parent="Custom"]
 layout_mode = 1
@@ -871,56 +1055,94 @@ text = "7308"
 placeholder_text = "Target Port : "
 scroll_fit_content_height = true
 
-[node name="MarginContainer6" type="MarginContainer" parent="Custom"]
+[node name="Exit" type="TextureButton" parent="Custom"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.402344
-anchor_top = 0.347222
-anchor_right = 0.597656
-anchor_bottom = 0.555556
-offset_top = 1.52588e-05
-offset_bottom = -3.05176e-05
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer6"]
-layout_mode = 2
+[node name="Exit" type="RichTextLabel" parent="Custom/Exit"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.218182
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]
+Exit"
+metadata/_edit_use_anchors_ = true
 
-[node name="Join" type="Button" parent="Custom/MarginContainer6/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 30
-text = "
-Join
+[node name="Join" type="TextureButton" parent="Custom"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.407031
+anchor_top = 0.358333
+anchor_right = 0.592188
+anchor_bottom = 0.544444
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Join" type="RichTextLabel" parent="Custom/Join"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.0746269
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]
+Join"
+metadata/_edit_use_anchors_ = true
 
 [connection signal="finished" from="SonFond" to="." method="_on_son_fond_finished"]
-[connection signal="pressed" from="Main/MarginContainer4/VBoxContainer/Options" to="." method="_on_options_pressed"]
-[connection signal="pressed" from="Main/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
-[connection signal="pressed" from="Main/MarginContainer2/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="Main/MarginContainer3/VBoxContainer/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="Controls/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_controls"]
-[connection signal="pressed" from="Credits/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_credits"]
-[connection signal="pressed" from="Graphics/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_graphics"]
+[connection signal="pressed" from="Main/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Main/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="Main/Credits" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="Main/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="Controls/Exit" to="." method="_on_exit_pressed_controls"]
+[connection signal="pressed" from="Credits/Exit" to="." method="_on_exit_pressed_credits"]
+[connection signal="pressed" from="Graphics/Exit" to="." method="_on_exit_pressed_graphics"]
 [connection signal="value_changed" from="Sound/MarginContainer5/VBoxContainer/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="pressed" from="Sound/MarginContainer3/VBoxContainer/CheckButton" to="." method="_on_check_button_pressed"]
-[connection signal="pressed" from="Sound/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
-[connection signal="pressed" from="Play/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_play"]
-[connection signal="pressed" from="Play/MarginContainer4/VBoxContainer/Online" to="." method="_on_online_pressed"]
-[connection signal="pressed" from="Play/MarginContainer5/VBoxContainer/Custom" to="." method="_on_custom_pressed"]
+[connection signal="pressed" from="Sound/Exit" to="." method="_on_exit_pressed"]
 [connection signal="text_changed" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_changed"]
+[connection signal="pressed" from="Play/Exit" to="." method="_on_exit_pressed_play"]
+[connection signal="pressed" from="Play/Custom" to="." method="_on_online_pressed"]
+[connection signal="pressed" from="Play/Online" to="." method="_on_online_pressed"]
 [connection signal="text_changed" from="MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP" to="." method="_on_match_maker_ip_text_changed"]
-[connection signal="pressed" from="MatchMaker/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_mm"]
-[connection signal="pressed" from="MatchMaker/MarginContainer3/VBoxContainer/OK" to="." method="_on_ok_pressed"]
+[connection signal="pressed" from="MatchMaker/Exit" to="." method="_on_exit_pressed_mm"]
+[connection signal="pressed" from="MatchMaker/Ok" to="." method="_on_ok_pressed"]
+[connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/MatchMaker" to="." method="_on_match_maker_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
-[connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/MatchMaker" to="." method="_on_match_maker_pressed"]
-[connection signal="pressed" from="Options/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed_options"]
-[connection signal="pressed" from="Online/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_online"]
-[connection signal="pressed" from="Custom/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_custom"]
-[connection signal="pressed" from="Custom/MarginContainer6/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Options/Exit" to="." method="_on_exit_pressed_options"]
+[connection signal="pressed" from="Online/Exit" to="." method="_on_exit_pressed_online"]
+[connection signal="pressed" from="Custom/Exit" to="." method="_on_exit_pressed_custom"]
+[connection signal="pressed" from="Custom/Join" to="." method="_on_join_pressed"]
