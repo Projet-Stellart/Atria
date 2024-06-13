@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 public partial class UI_Script : CanvasLayer
@@ -13,6 +14,8 @@ public partial class UI_Script : CanvasLayer
 	public override void _Ready()
 	{
 		GetNode<AudioStreamPlayer>("SonFond").Play();
+		// SetFullScreenIndicator();
+		// SetResolutionIndicator();
 	}
 
 	private void _on_quit_pressed()
@@ -282,5 +285,71 @@ public partial class UI_Script : CanvasLayer
 		options.Visible = true;
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
+
+	[Export] private OptionButton ResolutionOptionButton;
+    [Export] private OptionButton FullscreenOptionButton;
+
+	string[] Resolutions = new string[]
+	{
+		"1920x1080", "1280x720", "800x600"
+	};
+
+	private int resolutionIndex;
+
+	private void _on_option_button_item_selected(int ind)
+	{
+		resolutionIndex = ind;
+	}
+
+	Window.ModeEnum[] Modes = new Window.ModeEnum[]
+	{
+		Window.ModeEnum.ExclusiveFullscreen, Window.ModeEnum.Fullscreen, Window.ModeEnum.Windowed
+	};
+
+	private int index;
+
+    private void _on_window_mode_item_selected(int ind)
+    {
+		index = ind;
+    }
+
+	private void _on_ok_pressed_graphics()
+	{
+		GetWindow().Mode = Modes[index];
+		string selectedResolution = Resolutions[resolutionIndex];
+    	string[] parts = selectedResolution.Split('x');
+		int.TryParse(parts[0], out int width);
+		int.TryParse(parts[1], out int height);
+		DisplayServer.WindowSetSize(new Vector2I(width, height));
+	}
+
+	// private void SetResolutionIndicator()
+	// {
+	// 	Vector2I currentResolution = DisplayServer.WindowGetSize();
+    //     string currentResolutionString = $"{currentResolution.X}x{currentResolution.Y}";
+    //     for (int i = 0; i < Resolutions.Length; i++)
+    //     {
+    //         if (Resolutions[i] == currentResolutionString)
+    //         {
+    //             resolutionIndex = i;
+    //             break;
+    //         }
+    //     }
+    //     ResolutionOptionButton.Selected = resolutionIndex;
+	// }
+
+	// private void SetFullScreenIndicator()
+	// {
+	// 	Window.ModeEnum currentMode = GetWindow().Mode;
+    //     for (int i = 0; i < Modes.Length; i++)
+    //     {
+    //         if (Modes[i] == currentMode)
+    //         {
+    //             index = i;
+    //             break;
+    //         }
+    //     }
+    //     FullscreenOptionButton.Selected = index;
+	// }
 
 }
