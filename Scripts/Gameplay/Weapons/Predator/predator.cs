@@ -72,6 +72,7 @@ public partial class predator : WeaponAmo
     {
         GetNode<MeshInstance3D>("Skeleton3D/BoneAttachment3D/Scope").Layers = layer;
         GetNode<MeshInstance3D>("Skeleton3D/scifi_gun").Layers = layer;
+        GetNode<GpuParticles3D>("Muzzle Flash/GPUParticles3D").Layers = layer;
     }
 
     public override void AltFire()

@@ -59,7 +59,7 @@ public abstract partial class WeaponAmo : Weapon
 				if (currentPenetration > 0) {
 					//Spawning Decal - Back
 					if ((collider is enemy Enemy2 && Enemy2.IsInGroup("Enemy")) || (collider is not player))
-						Player.SpawnDecal((Node3D)exit["collider"], (Vector3)exit["position"], (Vector3)exit["normal"]);
+                        Player.SpawnDecal((Node3D)exit["collider"], (Vector3)exit["position"], (Vector3)exit["normal"]);
 
 					//Adding to filters of the query
 					rids.Add((Rid)collide["rid"]);

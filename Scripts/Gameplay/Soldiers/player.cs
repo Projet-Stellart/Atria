@@ -61,7 +61,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 				energyBar = soldier.EnergyBar;
 			else
 				energyBar = value;
-            SyncEnergyServer();
+			if (Multiplayer.IsServer())
+				SyncEnergyServer();
         }
 	}
 
@@ -151,10 +152,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		//GetWeaponClient((Weapon)weaponTest.Instantiate()); //TO REMOVE IN FUTURE
 	}
 
-	protected virtual void InitSub()
-	{
-
-	}
+	protected virtual void InitSub() { throw new NotImplementedException(); }
 
     public override void InputProcess(double delta)
 	{
@@ -213,19 +211,28 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			//Inspect Event
 			if (Input.IsActionJustPressed("inspect") && FocusState == FocusState.Weapon &&hasWeapon) {
 				_inspect();
+				SendInspectWeapon();
 			}
 
 
 			//[MODULES]
 			if (moduleEnable) {
 				if (Input.IsActionJustPressed("low_module"))
-					_ActivateModule(FocusState.LowModule);
+				{
+                    _ActivateModule(FocusState.LowModule);
+                }
 				else if (Input.IsActionJustPressed("medium_module"))
-			    	_ActivateModule(FocusState.MediumModule);
+				{
+                    _ActivateModule(FocusState.MediumModule);
+                }
 				else if (Input.IsActionJustPressed("high_module"))
-				    _ActivateModule(FocusState.HighModule);
+				{
+                    _ActivateModule(FocusState.HighModule);
+                }
 				else if (Input.IsActionJustPressed("core_module"))
-					_ActivateModule(FocusState.CoreModule);
+				{
+                    _ActivateModule(FocusState.CoreModule);
+                }
 			}
 		
 		} else {
@@ -244,7 +251,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		//Crouching Event
 		if (Input.IsActionJustPressed("crouch")||Input.IsActionJustReleased("crouch")) {
 			_crouch();
-			SendCrouch(isCrouching);
+			SendCrouch(!isCrouching);
 		}
 
 
@@ -328,15 +335,21 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	////
 	////FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS
 	////
+	///
 	
+	public bool IsAbleToFire()
+	{
+        var anim_name = focusAnimator.CurrentAnimation;
+        return anim_name != "Fire" && anim_name != "Swap" && anim_name != "AimFire" && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true);
+    }
 
 	//Gun Fire - Melee Weapon Hit
 	public void _fire(KeyState key) {
 		if (hasWeapon) { //Avoid error
 			var anim_name = focusAnimator.CurrentAnimation;
-			if (key.JustPressed && anim_name != "Fire" && anim_name != "Swap" && anim_name != "AimFire" && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
-				FireLocal(); //Calling Fire Calculations + On other players
-				Weapon.Fire(); //Adjusting the stats of the weapons (eg. bullets)
+			if (key.JustPressed && IsAbleToFire()) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
+				FireLocal(!(!Weapon.canAimFire || !isAiming)); //Calling Fire Calculations + On other players
+				Weapon.Fire(); //Play anims
 				if (!Weapon.canAimFire || !isAiming) //Playing correct animation
 					ShowAnimation("Fire");
 				else
@@ -360,7 +373,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 				else {
 					focusAnimator.PlayBackwards("Aim");
 				}
-				isAiming = !isAiming; //SETTINGS: could change
+                SendAim(isAiming);
+                isAiming = !isAiming; //SETTINGS: could change
 			}
 		}
 	}
@@ -389,7 +403,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	//Death
 	public void _death(DeathCause cause) {
 		GameManager.singleton.PlayerDeath(this, cause);
-		GD.Print($"dead by {cause}");
 	}
 
 	//Toggle Crouch Function
@@ -419,26 +432,39 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	}
 
 	//Decal - Will have to switch for a weapon dependant decal
-	public void SpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal) {
-		////Bullet Hole
-		var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
-		collider.AddChild(b); //Add child to collider
-		b.GlobalPosition = rayPosition; //Putting the bullet hole where we hit on the collider
-		var value = rayNormal.Dot(Vector3.Up);
-		if (value != 1) {
-			if (value != -1) {
-				var dir = rayPosition + rayNormal; //Calculating the direction
-				b.LookAt(dir, Vector3.Up);
-			} else {
-				b.RotationDegrees = new Vector3(-90,0,0);
-			}
-		} else {
-			b.RotationDegrees = new Vector3(90,0,0);
-		}
+	public void SpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal) 
+	{
+		if (Multiplayer.IsServer())
+			SpawnDecalServer(collider, rayPosition, rayNormal);
+        ActualSpawnDecal(collider, rayPosition, rayNormal);
+    }
 
-	}
+	public void ActualSpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal)
+	{
+        ////Bullet Hole
+        var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
+        collider.AddChild(b); //Add child to collider
+        b.GlobalPosition = rayPosition; //Putting the bullet hole where we hit on the collider
+        var value = rayNormal.Dot(Vector3.Up);
+        if (value != 1)
+        {
+            if (value != -1)
+            {
+                var dir = rayPosition + rayNormal; //Calculating the direction
+                b.LookAt(dir, Vector3.Up);
+            }
+            else
+            {
+                b.RotationDegrees = new Vector3(-90, 0, 0);
+            }
+        }
+        else
+        {
+            b.RotationDegrees = new Vector3(90, 0, 0);
+        }
+    }
 
-	//Camera
+    //Camera
     public override void InputLocalEvent(InputEvent @event)
     {
         if (@event is InputEventMouseMotion mouseEvent&&Input.MouseMode == Input.MouseModeEnum.Captured) {
@@ -517,6 +543,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		}
 		focusAnimator.Play("Swap");
 		Weapon.Swap();
+		if (IsLocalPlayer)
+			SendSwapWeapon((int)weaponClass);
 	}
 
 	public override void GetWeaponClient(Weapon weapon) {
@@ -648,6 +676,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public virtual void _UpdateModule(KeyState send, KeyState fire, KeyState altfire, KeyState rotate) {throw new NotImplementedException();}
 	//Module Cancel
 	public virtual void _CancelModule() {throw new NotImplementedException();}
+
+	public virtual void _UseModule(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
 }
 
 

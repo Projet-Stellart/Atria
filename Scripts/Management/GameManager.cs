@@ -337,6 +337,7 @@ public partial class GameManager : Node
 
         Debug.Print($"{playerInfo[player.uid].Username} died by {cause.ToString()}");
 
+        player.SyncDeathServer(true);
         player.SyncVisibility(false);
 
         delayedActions.Add((Time.GetTicksMsec() + 5000, () =>
@@ -350,10 +351,15 @@ public partial class GameManager : Node
     {
         Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
         if (player is player playerScript)
+        {
             playerScript.Health = 100;
+            player.SyncHealth(playerScript.Health);
+            playerScript.EnergyBar = 0;
+            player.SyncEnergyServer();
+        }
         player.SendServerPosVelo(npos, Vector3.Zero);
         player.SyncVisibility(true);
-        player.SyncRespawnServer();
+        player.SyncDeathServer(false);
     }
 
     private void StartMatch()
