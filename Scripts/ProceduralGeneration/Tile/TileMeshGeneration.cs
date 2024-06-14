@@ -99,7 +99,13 @@ public partial class TileMeshGeneration : Node3D
 
         isGenerating = true;
 
-        spawnsPos = new Vector2I[] { new Vector2I(-1, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10)), new Vector2I(sizex, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10)) };
+        Vector2I spawn1 = new Vector2I(-1, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10));
+        Vector2I spawn2 = new Vector2I(sizex, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10));
+
+        spawnsPos = new Vector2I[] {
+            spawn1,
+            spawn2
+        };
 
         Task<int[,,]> generating = Task.Run(() =>
         {

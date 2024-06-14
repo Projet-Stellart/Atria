@@ -120,9 +120,9 @@ public static class DataManager
         {
             tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorLow.tscn"),
             modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/ModelMultiVentLvlXCorridorLow.tscn"),
-            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorLowMap.png",
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLowMap.png",
             name = "MultiXVentLowCorridor",
-            weight = 50,
+            weight = 20,
             transition = 1,
             conjugate = 8,
             north = "corridor",
@@ -135,9 +135,9 @@ public static class DataManager
         {
             tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorHigh.tscn"),
             modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/ModelMultiVentLvlXCorridorHigh.tscn"),
-            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorHighMap.png",
+            mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHighMap.png",
             name = "MultiXVentHighCorridor",
-            weight = 50,
+            weight = 20,
             transition = -1,
             conjugate = 7,
             north = "space",
