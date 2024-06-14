@@ -219,12 +219,12 @@ public partial class MultiplayerManager : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void StartMapSync(Variant h, Variant x, Variant y, Variant ss, Variant rs)
+    private void StartMapSync(Variant h, Variant x, Variant y, Variant ts, Variant rs)
     {
         GameManager.singleton.tileMapGenerator.GetData();
         tempGrid = new int[h.As<int>(), x.As<int>(), y.As<int>()];
         tempRooms = new (int, Vector3I)[rs.AsInt32()];
-        tempSpawns = new Vector2I[ss.AsInt32()];
+        tempSpawns = new Vector2I[ts.AsInt32()];
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]

@@ -7,7 +7,7 @@ public abstract class Gamemode
 {
     public static Dictionary<string, Gamemode> Gamemodes = new Dictionary<string, Gamemode>()
     {
-        { "ResourceCollection", new ResourceCollection(500) }
+        { "ResourceCollection", new ResourceCollection(1) }
     };
 
     public Gamemode() {}

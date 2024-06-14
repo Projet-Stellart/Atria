@@ -22,6 +22,8 @@ public partial class GameManager : Node
 
     private string[] startingArgs;
 
+    private int seed;
+
     public static Dictionary<ServerStatus, string> statusText = new Dictionary<ServerStatus, string>
     {
         { ServerStatus.Paused, "Paused" },
@@ -149,11 +151,10 @@ public partial class GameManager : Node
 
         startingArgs = args;
 
-        int seed = (int)(Time.GetTicksMsec() % int.MaxValue);
+        //seed = (int)(Time.GetTicksMsec() % int.MaxValue);
+        seed = 816;
 
         random = new Random(seed);
-
-        Debug.Print("Match seed: " + seed);
 
         delayedActions = new List<(ulong, Action)>();
 
@@ -294,6 +295,7 @@ public partial class GameManager : Node
         playerInfo = new Dictionary<long, PlayerData>();
         if (args.Contains("--server"))
         {
+            Debug.Print("Match seed: " + seed);
             multiplayerManager.InitServer((int)GameData.port, (int)GameData.nbPlayer);
             serverStatus = ServerStatus.Generating;
             if (GameData.GameMode == null || GameData.GameMode == "")
@@ -321,7 +323,7 @@ public partial class GameManager : Node
 
     private void InitMap()
     {
-        tileMapGenerator.OnMapGenerated += () =>
+        tileMapGenerator.OnMapGenerated = () =>
         {
             multiplayerManager.MapGenerated();
             serverStatus = ServerStatus.Waiting;

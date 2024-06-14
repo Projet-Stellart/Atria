@@ -80,10 +80,14 @@ public partial class TileMeshGeneration : Node3D
 
     public void ClearMap()
     {
+        int deleted = 0;
         foreach (var child in GetChildren())
         {
+            RemoveChild(child);
             child.QueueFree();
+            deleted++;
         }
+        Debug.Print("deleted: " + deleted + " remaining nodes: " + GetChildCount());
         tileMap = null;
         spawnsPos = null;
         spawns = null;
@@ -91,7 +95,7 @@ public partial class TileMeshGeneration : Node3D
         southBorderType = null;
         eastBorderType = null;
         westBorderType = null;
-        Debug.Print("Ok");
+        
     }
 
     //Debug only
