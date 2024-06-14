@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://d2k0myu1vxkjs"
+path="res://.godot/imported/DepositDoor.obj-25ccb8c1198e20d44f4b7f23929d95e8.mesh"
+
+[deps]
+
+files=["res://.godot/imported/DepositDoor.obj-25ccb8c1198e20d44f4b7f23929d95e8.mesh"]
+
+source_file="res://Ressources/ProceduralGeneration/Objects/DepositDoor/DepositDoor.obj"
+dest_files=["res://.godot/imported/DepositDoor.obj-25ccb8c1198e20d44f4b7f23929d95e8.mesh", "res://.godot/imported/DepositDoor.obj-25ccb8c1198e20d44f4b7f23929d95e8.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

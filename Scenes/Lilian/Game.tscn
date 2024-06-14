@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Scripts/Management/GameManager.cs" id="1_tuo0n"]
 [ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_73q1c"]
 [ext_resource type="Script" path="res://Scripts/UI/HudManager.cs" id="3_emm8j"]
-[ext_resource type="PackedScene" uid="uid://dqxls3fq7a0h2" path="res://Scenes/Guillaume/HealthBar.tscn" id="4_e5e70"]
+[ext_resource type="PackedScene" uid="uid://dqxls3fq7a0h2" path="res://Scenes/Guillaume/GameUI.tscn" id="4_e5e70"]
 [ext_resource type="Script" path="res://Scripts/Multiplayer/MultiplayerManager.cs" id="4_r3f7e"]
 
 [sub_resource type="Environment" id="Environment_mntmn"]

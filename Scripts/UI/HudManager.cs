@@ -5,9 +5,12 @@ public partial class HudManager : CanvasLayer
 {
     public MapManager miniMap;
 
-    public HealthBar healthBar { get => GetNode<HealthBar>("Data_OSD"); }
-
     public Control deathHud { get => GetNode<Control>("DeathScreen"); }
+
+    public HealthBar healthHud { get => GetNode<HealthBar>("Data_OSD/Health"); }
+    public Bullets bulletsHud { get => GetNode<Bullets>("Data_OSD/Bullets"); }
+    public EnergyBar energyHud { get => GetNode<EnergyBar>("Data_OSD/Energy"); }
+    public Info infoHud { get => GetNode<Info>("Data_OSD/Info"); }
 
     public override void _Ready()
     {

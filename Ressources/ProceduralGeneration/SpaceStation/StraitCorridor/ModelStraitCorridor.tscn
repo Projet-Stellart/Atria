@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bv7m2jjfqg154"]
+
+[ext_resource type="ArrayMesh" uid="uid://yklh58apqveq" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridor.obj" id="1_g7g7a"]
+
+[node name="ModelStraitCorridor" type="Node3D"]
+
+[node name="StraitCorridor" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_g7g7a")

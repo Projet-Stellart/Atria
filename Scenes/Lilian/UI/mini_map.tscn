@@ -1,8 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://4ia8ae3lyb7i"]
+[gd_scene load_steps=3 format=3 uid="uid://4ia8ae3lyb7i"]
 
 [ext_resource type="Script" path="res://Scripts/UI/Map/MapManager.cs" id="1_mfrcu"]
-[ext_resource type="PackedScene" uid="uid://csm33w1x8n0ia" path="res://Scenes/Lilian/Template-Tiles/UI/ImageTemplate.tscn" id="2_bwvex"]
-[ext_resource type="PackedScene" uid="uid://cncg737tdq7we" path="res://Scenes/Lilian/Template-Tiles/UI/GridTemplate.tscn" id="3_ocj5e"]
 [ext_resource type="Texture2D" uid="uid://dycx7tkdsk7nk" path="res://Ressources/UI/Map/PlayerPoint.png" id="4_83dbf"]
 
 [node name="MiniMap" type="Control"]
@@ -14,8 +12,6 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(960, 540)
 script = ExtResource("1_mfrcu")
-metadata/ImageTemplate = ExtResource("2_bwvex")
-metadata/GridTemplate = ExtResource("3_ocj5e")
 
 [node name="Grids" type="Control" parent="."]
 layout_mode = 1

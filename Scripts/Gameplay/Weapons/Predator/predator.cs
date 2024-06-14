@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 public partial class predator : WeaponAmo
@@ -13,19 +14,30 @@ public partial class predator : WeaponAmo
     public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Primary, WeaponType.Normal, "Predator", "None", null);
 
     [Export]
-    public override int bullets {get; protected set;} = 16;
+    public override int bullets {get; set;} = 16;
     public override double fallOff { get; protected set;} = 80;
    	public override float penetration {get; protected set;} = 3;
     [Export]
     public override int bulletPerMag {get; protected set;} = 4;
 
     [Export]
-    public override int damage {get; protected set;} = 300;
+    public override int damage {get; protected set;} = 20;
 
     public override bool canAimFire {get;} = false;
 
+    Camera3D camera;
+    Node3D position;
+
     public override void _Ready()
     {
+        camera = GetNode<Camera3D>("Skeleton3D/BoneAttachment3D2/SubViewport/Camera3D");
+        position = GetNode<Node3D>("Skeleton3D/BoneAttachment3D2/Position");
+
+        GetNode<MeshInstance3D>("Skeleton3D/BoneAttachment3D/Scope").SetSurfaceOverrideMaterial(0, new StandardMaterial3D(){
+            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            AlbedoTexture = GetNode<SubViewport>("Skeleton3D/BoneAttachment3D2/SubViewport").GetTexture()
+        });
+
         animations = (AnimationLibrary)GD.Load("res://Ressources/GamePlay/Animation/predator_normal.tres");
         stream1 = GetNode<AudioStreamPlayer3D>("GunSound1");
         reloadStream = GetNode<AudioStreamPlayer3D>("ReloadSound");
@@ -37,13 +49,30 @@ public partial class predator : WeaponAmo
         currBullets = bulletPerMag;
     }
 
-    public override void Fire() {
+    public override void _Process(double delta)
+    {
+        camera.GlobalTransform = position.GlobalTransform;
+    }
+
+    public override void FireMeca()
+    {
         //Variables
         currBullets--;
+    }
+
+    public override void Fire() 
+    {
         //Sound
         PlaySound();
         //Effects
         Effects();
+    }
+
+    public override void SetRenderLayer(uint layer)
+    {
+        GetNode<MeshInstance3D>("Skeleton3D/BoneAttachment3D/Scope").Layers = layer;
+        GetNode<MeshInstance3D>("Skeleton3D/scifi_gun").Layers = layer;
+        GetNode<GpuParticles3D>("Muzzle Flash/GPUParticles3D").Layers = layer;
     }
 
     public override void AltFire()
@@ -61,8 +90,12 @@ public partial class predator : WeaponAmo
     }
 
     public override void onReload() {
-        bullets -= bulletPerMag - currBullets;
-        currBullets = bulletPerMag;
+        if (Multiplayer.IsServer())
+        {
+            bullets -= bulletPerMag - currBullets;
+            currBullets = bulletPerMag;
+            Player.SyncBulletsServer();
+        }
     }
 
     public override void Effects() {

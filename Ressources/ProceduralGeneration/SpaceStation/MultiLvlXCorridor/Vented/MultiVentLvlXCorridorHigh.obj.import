@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bkxrq4hisk218"
+path="res://.godot/imported/MultiVentLvlXCorridorHigh.obj-b29dab4f97b43e5fb74038efeb88073d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/MultiVentLvlXCorridorHigh.obj-b29dab4f97b43e5fb74038efeb88073d.mesh"]
+
+source_file="res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHigh.obj"
+dest_files=["res://.godot/imported/MultiVentLvlXCorridorHigh.obj-b29dab4f97b43e5fb74038efeb88073d.mesh", "res://.godot/imported/MultiVentLvlXCorridorHigh.obj-b29dab4f97b43e5fb74038efeb88073d.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
