@@ -390,7 +390,7 @@ public partial class AIDebug : Node
         //Vector3I start = new Vector3I(3,4,1);
         //Vector3I end = new Vector3I(5,0,1);
         var start = (Vector3I)grid.GetRandSpawnPoint(thegoodgrid, rand,0);
-        var end = (Vector3I)grid.GetRandSpawnPoint(thegoodgrid, rand,0);
+        var end = (Vector3I)grid.GetRandSpawnPoint(thegoodgrid, rand,1);
 
         Debug.Print($"Path from: {start.ToString()} to: {end.ToString()}");
 
@@ -408,4 +408,5 @@ public partial class AIDebug : Node
     public override void _Process(double delta)
     {
     }
+
 }

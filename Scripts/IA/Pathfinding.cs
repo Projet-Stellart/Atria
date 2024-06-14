@@ -28,6 +28,7 @@ public static class Pathfinding
         public int FCost => GCost + HCost;
 
         public CustomNode? Parent;
+        public int Transition;
 
         public CustomNode(int x, int y, int z, TilePrefa data)
         {
@@ -41,6 +42,7 @@ public static class Pathfinding
             GCost = int.MaxValue;
             HCost = 0;
             Parent = null;
+            Transition = data.transition;
         }
 
 
@@ -77,7 +79,8 @@ public static class Pathfinding
     {
         int dx = (a.X - b.X);
         int dy = (a.Y - b.Y);
-        return ((int)Math.Round(Math.Sqrt((dx * dx) + (dy * dy))));
+        int dz = (a.Z -  b.Z);
+        return ((int)Math.Round(Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz))));
     }
 
     private static List<Vector3I> BuildPath(CustomNode node)
@@ -140,18 +143,18 @@ public static class Pathfinding
 
             toProcess.Remove(current);
 
-            Debug.Print($"On : ({current.X},{current.Y},{current.Z})");
+            //Debug.Print($"On : ({current.X},{current.Y},{current.Z})");
 
             for (int i = 0; i < 4; i++)
             {
                 int x = current.X + (i % 2) * (i == 3 ? -1 : 1);
                 int y = current.Y + ((i + 1) % 2) * (i == 2 ? -1 : 1);
-                int z = current.Z;
-                Debug.Print((new Vector3I(x, y, z)).ToString());
+                int z = current.Z + current.Transition;
+                //Debug.Print((new Vector3I(x, y, z)).ToString());
 
                 if (x < 0 || y < 0 || x >= grid.GetLength(0) || y >= grid.GetLength(1))
                 {
-                    Debug.Print("out");
+                    //Debug.Print("out");
                     continue;
                 }
 
@@ -160,6 +163,8 @@ public static class Pathfinding
                     Debug.Print("Found");
                     return BuildPath(current);
                 }
+                if (current.Transition == 0)
+                {
 
                 if (i== 0)
                 {
@@ -190,6 +195,8 @@ public static class Pathfinding
                     }
                 }
 
+                }
+
                 int tent = current.GCost + 1;
 
                 if (tent < grid[x, y, z].GCost)
@@ -205,12 +212,12 @@ public static class Pathfinding
                     if (!toProcess.Contains(grid[x, y, z]))
                     {
                         toProcess.Add(grid[x, y, z]);
-                        Debug.Print($"added : ({x},{y},{z})");
+                        //Debug.Print($"added : ({x},{y},{z})");
                     }
                 }
-                Debug.Print("loop");
+                //Debug.Print("loop");
             }
-            Debug.Print("end loop");
+            //Debug.Print("end loop");
         }
 
         return new List<Vector3I>();
