@@ -13,11 +13,14 @@ public partial class AmmoCrate : Interactible
 
     public override void OnClickBegin(player player)
     {
-        Debug.Print("Get ammo");
+        if (!(player.Weapon is WeaponAmo wa))
+            return;
         SendAnim();
         GetNode<AnimationPlayer>("AnimationPlayer").AnimationFinished += (StringName animName) =>
         {
             Rpc("DestroyCrate");
+            wa.bullets += 10;
+            player.SyncBulletsServer();
         };
     }
 

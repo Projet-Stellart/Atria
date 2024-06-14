@@ -1,6 +1,9 @@
 using System;
 using System.Diagnostics;
+using Atria.Scripts.ProceduralGeneration.Objects;
 using Godot;
+using Godot.Collections;
+using Microsoft.VisualBasic;
 
 public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDisable
 {
@@ -32,9 +35,10 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public float accel;
 	public const float JUMP_VELOCITY = 5.0f;
 
+    Interactible interaction;
 
-	//Vectors
-	Vector3 inputVect = new Vector3(); //Velocity Given by Input Events (user walking, robot walking, etc)
+    //Vectors
+    Vector3 inputVect = new Vector3(); //Velocity Given by Input Events (user walking, robot walking, etc)
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes
 	public Vector3 gravity = new(0,-ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle(),0);
@@ -287,9 +291,53 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			}
 		}
 
-		// Add the gravity.
-		//Vector3 gravityVect = Velocity - inputVect; //Since inputVect is known, i extract gravity from velocity 
-		Velocity += gravity * (float)delta;
+        if (Input.IsActionJustPressed("interact"))
+        {
+            PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(camera.GlobalPosition, camera.GlobalPosition + (camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+            Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+            if (hit.ContainsKey("collider"))
+            {
+                Node obj = (Node)hit["collider"];
+                if (obj is Interactible inter)
+                {
+                    SendInteractionStart(inter);
+                    interaction = inter;
+                }
+            }
+        }
+        else if (Input.IsActionPressed("interact"))
+        {
+            if (interaction != null)
+            {
+                PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(camera.GlobalPosition, camera.GlobalPosition + (camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+                Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+                if (hit.ContainsKey("collider"))
+                {
+                    if ((Node)hit["collider"] != interaction)
+                    {
+                        SendInteractionEnd();
+                        interaction = null;
+                    }
+                }
+                else
+                {
+                    SendInteractionEnd();
+                    interaction = null;
+                }
+            }
+        }
+        else
+        {
+            if (interaction != null)
+            {
+                SendInteractionEnd();
+                interaction = null;
+            }
+        }
+
+        // Add the gravity.
+        //Vector3 gravityVect = Velocity - inputVect; //Since inputVect is known, i extract gravity from velocity 
+        Velocity += gravity * (float)delta;
 		
 		//Damping gravity on axis with no actual gravity
 		/*if (gravity.X==0)

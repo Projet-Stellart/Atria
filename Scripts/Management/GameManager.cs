@@ -620,6 +620,12 @@ public struct GameData
     /// Port the server will listen
     /// </summary>
     public uint port {  get; set; }
+
+    public bool publicServer { get; set; }
+
+    public string publicAddress { get; set; }
+
+    public string matchMaker { get; set; }
 }
 
 public struct PlayerData

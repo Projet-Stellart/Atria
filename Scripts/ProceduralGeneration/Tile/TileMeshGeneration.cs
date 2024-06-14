@@ -23,8 +23,6 @@ public partial class TileMeshGeneration : Node3D
     /// </summary>
     public TilePrefa[] tileTemplates;
 
-    private PackedScene playerTemplate = GD.Load<PackedScene>("res://Scenes/Nelson/player.tscn");
-
     public string[] roomRes = new string[]
     {
         "res://Ressources/ProceduralGeneration/Rooms/Tiles/Wall.png",
@@ -448,8 +446,6 @@ public partial class TileMeshGeneration : Node3D
 
     public Vector3I GetRandTile(int[,,] tGrid, Random rand)
     {
-        player = playerTemplate.Instantiate<Node3D>();
-        AddChild(player);
         (int px, int py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
         TilePrefa tile = tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] < 1 ? null : tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
         while (tile == null || !(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)

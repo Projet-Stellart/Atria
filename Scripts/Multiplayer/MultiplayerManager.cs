@@ -2,7 +2,10 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -15,6 +18,9 @@ public partial class MultiplayerManager : Node
     private (int, Vector3I)[] tempRooms;
     private Vector2I[] tempSpawns;
 
+    private TcpClient matchMakerClient = null;
+    private int serverId = 0;
+
     /// <summary>
     /// Init a server connection
     /// </summary>
@@ -26,6 +32,29 @@ public partial class MultiplayerManager : Node
         ENetMultiplayerPeer peer = new ENetMultiplayerPeer();
         peer.CreateServer(port, gamePlayer);
         Multiplayer.MultiplayerPeer = peer;
+
+        if (GameManager.singleton.GameData.publicServer)
+        {
+            matchMakerClient = new TcpClient();
+
+            try
+            {
+                matchMakerClient.Connect(GameManager.singleton.GameData.matchMaker.Split(':')[0], int.Parse(GameManager.singleton.GameData.matchMaker.Split(':')[1]));
+            }catch (SocketException)
+            {
+                matchMakerClient = null;
+            }
+
+            if (matchMakerClient != null) 
+            {
+                int? _servId = PostPublicServer( GameManager.singleton.GameData.publicAddress + ":" + GameManager.singleton.GameData.port, (int)GameManager.singleton.GameData.nbPlayer);
+
+                if (_servId != null)
+                {
+                    serverId = _servId.Value;
+                }
+            }
+        }
 
         SetupMultiplayerHooks();
     }
@@ -74,6 +103,8 @@ public partial class MultiplayerManager : Node
             }
             GameManager.singleton.ManageNewClient(id);
             //InstantiateNewPlayer(id);
+            if (serverId > 0)
+                UpdatePublicServerData(serverId, Multiplayer.GetPeers().Length);
         }
         else
         {
@@ -103,6 +134,8 @@ public partial class MultiplayerManager : Node
             //Server OnClientDisconnect
             GameManager.singleton.ManageDisconnectedClient(id);
             Debug.Print("Client disconnected");
+            if (serverId > 0)
+                UpdatePublicServerData(serverId, Multiplayer.GetPeers().Length);
         }
         else
         {
@@ -468,4 +501,103 @@ public partial class MultiplayerManager : Node
         return args[i+1];
     }
 
+    //MatchMaking Connectivity
+
+    public static string? GetPublicServer(string matchMakerAdress, int port)
+    {
+        TcpClient client = new TcpClient();
+
+        try
+        {
+            client.Connect(matchMakerAdress, port);
+        }
+        catch (Exception e)
+        {
+            Debug.Print("Unable to connect to match maker: " + e.Message);
+            return null;
+        }
+
+        WriteToStream(client.GetStream(), "client request");
+
+        while (true)
+        {
+            string msg = WaitForMessage(client.GetStream());
+
+            string[] parts = msg.Split(' ');
+
+            if (parts.Length == 3)
+            {
+                if (parts[0] == "client" && parts[1] == "request")
+                {
+                    if (parts[2].Split(':').Length == 2)
+                    {
+                        return parts[2];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
+    private int? PostPublicServer(string serverInfo, int maxPl)
+    {
+        WriteToStream(matchMakerClient.GetStream(), "server create " + serverInfo + " " + maxPl);
+
+        while (true)
+        {
+            string msg = WaitForMessage(matchMakerClient.GetStream());
+
+            string[] parts = msg.Split(' ');
+
+            if (parts.Length == 3)
+            {
+                if (parts[0] == "server" && parts[1] == "created")
+                {
+                    if (int.TryParse(parts[2], out int servId))
+                    {
+                        return servId;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
+    private void UpdatePublicServerData(int servId, int nbPlayer)
+    {
+        WriteToStream(matchMakerClient.GetStream(), "server update " + servId + " " + nbPlayer);
+    }
+
+    private void DeletePublicServer(int servId)
+    {
+        WriteToStream(matchMakerClient.GetStream(), "server delete " + servId);
+    }
+
+    private static void WriteToStream(NetworkStream stream, string msg)
+    {
+        StreamWriter writer = new StreamWriter(stream);
+        writer.Write(msg);
+        writer.Flush();
+    }
+
+    private static string WaitForMessage(NetworkStream stream)
+    {
+        string message = "";
+
+        while (message == "")
+        {
+            while (stream.DataAvailable)
+            {
+                message += (char)stream.ReadByte();
+            }
+        }
+
+        return message;
+    }
 }
