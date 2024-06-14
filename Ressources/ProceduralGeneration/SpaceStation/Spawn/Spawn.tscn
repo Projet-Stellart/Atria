@@ -1,6 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://u1h3h5gnmnba"]
 
 [ext_resource type="ArrayMesh" uid="uid://l12sfbrtpmrm" path="res://Ressources/ProceduralGeneration/SpaceStation/Spawn/Spawn.obj" id="1_cjr18"]
+
 [ext_resource type="PackedScene" uid="uid://b8yvaig7xh3gm" path="res://Scenes/Lilian/Objects/Deposit.tscn" id="2_4a2jy"]
 [ext_resource type="PackedScene" uid="uid://kws44y8mpopl" path="res://Scenes/Lilian/Objects/AmmoCrate.tscn" id="3_n1kx7"]
 

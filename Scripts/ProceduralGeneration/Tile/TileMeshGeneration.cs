@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -117,7 +118,13 @@ public partial class TileMeshGeneration : Node3D
 
         isGenerating = true;
 
-        spawnsPos = new Vector2I[] { new Vector2I(-1, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10)), new Vector2I(sizex, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10)) };
+        Vector2I spawn1 = new Vector2I(-1, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10));
+        Vector2I spawn2 = new Vector2I(sizex, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10));
+
+        spawnsPos = new Vector2I[] {
+            spawn1,
+            spawn2
+        };
 
         Task<int[,,]> generating = Task.Run(() =>
         {
@@ -544,7 +551,7 @@ public partial class TileMeshGeneration : Node3D
         while (GetNbUndefinedTiles(tGrid, layer) > 0)
         {
             (int, int) wTilePos = GetMostRestrictedTile(tGrid, layer);
-            int[] posibility = GetGridPossiblity(wTilePos.Item1, wTilePos.Item2, layer, tGrid);
+            int[] posibility = GetGridPossiblity(wTilePos.Item1, wTilePos.Item2, layer, tGrid, true, true);
             int totalWeight = 0;
             foreach (int i in posibility)
             {
@@ -608,7 +615,7 @@ public partial class TileMeshGeneration : Node3D
         {
             for (int y = 0; y < grid.GetLength(2); y++)
             {
-                int val = GetGridPossiblity(x, y, height, grid).Length;
+                int val = GetGridPossiblity(x, y, height, grid, true, true).Length;
                 if (grid[height, x, y] == 0 && val < pos)
                 {
                     res = (x, y);
@@ -650,7 +657,7 @@ public partial class TileMeshGeneration : Node3D
     /// <param name="grid"></param>
     /// <returns>a list of possible tile template's id</returns>
     
-    private int[] GetGridPossiblity(int x, int y, int height, int[,,] grid)
+    private int[] GetGridPossiblity(int x, int y, int height, int[,,] grid, bool antiBack, bool checkTrans)
     {
         /*if (x == 5 && y == 4)
         {
@@ -722,10 +729,25 @@ public partial class TileMeshGeneration : Node3D
         for (int i = 0; i < tileTemplates.Length; i++)
         {
             TilePrefa templ = tileTemplates[i];
-            if (templ.transition != 0)
+            //Rule: stairs point to the correct next layer
+            if (templ.transition * (height - GameManager.singleton.GameData.mapParam.startHeight) < 0 && antiBack)
+            {
+                continue;
+            }
+            //Rule: stairs do not go out of bound
+            if (height + templ.transition < 0 || height + templ.transition >= grid.GetLength(0))
+            {
+                continue;
+            }
+            if (templ.transition != 0 && checkTrans)
             {
                 TilePrefa conju = tileTemplates[templ.conjugate];
-                if (conju.south != "space" && y + 1 >= grid.GetLength(2))
+                int[] poss = GetGridPossiblity(x, y, height + templ.transition, grid, false, false);
+                if (!poss.Contains(templ.conjugate+1))
+                    continue;
+                    
+                    
+                /*if (conju.south != "space" && y + 1 >= grid.GetLength(2))
                 {
                     continue;
                 }
@@ -740,7 +762,7 @@ public partial class TileMeshGeneration : Node3D
                 if (conju.west != "space" && x - 1 <= 0)
                 {
                     continue;
-                }
+                }*/
             }
             if (n != "" && templ.north != n)
             {
@@ -755,16 +777,6 @@ public partial class TileMeshGeneration : Node3D
                 continue;
             }
             if (w != "" && templ.west != w)
-            {
-                continue;
-            }
-            //Rule: stairs point to the correct next layer
-            if (templ.transition * (height - GameManager.singleton.GameData.mapParam.startHeight) < 0)
-            {
-                continue;
-            }
-            //Rule: stairs do not go out of bound
-            if (height + templ.transition < 0 || height + templ.transition >= grid.GetLength(0))
             {
                 continue;
             }

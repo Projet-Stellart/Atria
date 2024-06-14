@@ -93,11 +93,12 @@ public partial class MapManager : Control
         for (int i = 0; i < TM.tileMap.GetLength(0); i++)
         {
             Control tGrid = GridTemplate.Instantiate<Control>();
+            tGrid.Name = $"GridLayer{i}";
             Container.AddChild(tGrid);
             tGrid.LayoutMode = 1;
             tGrid.SetAnchorsPreset(LayoutPreset.FullRect);
             LoadMapLayerMap(i);
-            (tGrid).Hide();
+            tGrid.Hide();
         }
     }
 
@@ -106,16 +107,17 @@ public partial class MapManager : Control
         TileMeshGeneration TM = GameManager.singleton.tileMapGenerator;
 
         Control Container = (Control)GetChild(0);
-        GridContainer Grid = (GridContainer)Container.GetChild(height);
+        Control Grid = Container.GetChild<Control>(height);
 
         foreach (var item in Grid.GetChildren())
         {
             item.QueueFree();
         }
 
-        Grid.Columns = TM.tileMap.GetLength(1);
+        //Grid.Columns = TM.tileMap.GetLength(1);
 
-        Vector2 piv = Grid.Size / (new Vector2(GameManager.singleton.GameData.mapParam.sizeX, GameManager.singleton.GameData.mapParam.sizeY) * 2f);
+        Vector2 childSize = Grid.Size / new Vector2(GameManager.singleton.GameData.mapParam.sizeX, GameManager.singleton.GameData.mapParam.sizeY);
+        Vector2 piv = childSize / 2f;
 
         for (int y = 0; y < TM.tileMap.GetLength(2); y++)
         {
@@ -123,21 +125,29 @@ public partial class MapManager : Control
             {
             
                 Control tNode = ImageTemplate.Instantiate<Control>();
+                
                 Grid.AddChild(tNode);
+
+                tNode.Size = childSize;
+                tNode.Position = new Vector2(x * childSize.X, y * childSize.Y);
+
                 TextureRect displayer = (TextureRect)tNode.GetChild(0);
                 Texture2D texture;
+                string name = "";
                 if (TM.tileMap[height, x, y] < 0)
                 {
                     texture = GD.Load<Texture2D>(TM.roomRes[(Math.Abs(TM.tileMap[height, x, y]) - 1)/4]);
+                    name = "room";
                 }
                 else
                 {
                     texture = GD.Load<Texture2D>(TM.tileTemplates[TM.tileMap[height, x, y] - 1].mapRes);
+                    name = TM.tileTemplates[TM.tileMap[height, x, y] - 1].name;
                 }
+                tNode.Name = $"Tile_{name}|{x};{y}";
                 displayer.Texture = texture;
                 displayer.PivotOffset = piv;
                 displayer.RotationDegrees = -TM.tileTemplates[Math.Abs(TM.tileMap[height, x, y]) - 1].rotation;
-                
             }
         }
     }
