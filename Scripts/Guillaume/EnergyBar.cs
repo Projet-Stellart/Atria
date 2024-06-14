@@ -21,11 +21,6 @@ public partial class EnergyBar : Control
 
     	energyRect.Position = new Vector2(energyRect.Position.X, energyRect.Size.Y - newHeight);
 
-		// if (energyRect != null && d > 0)
-		// {
-		// 	energyRect.Position = new Vector2(energyRect.Position.X, energyRect.Position.Y - (int)d);
-		// }
-
 	}
 
 	public override void _Ready()
@@ -38,11 +33,6 @@ public partial class EnergyBar : Control
 	{
         
 	 	var energyRect = GetNode<ColorRect>("HB_BG/ColorRect/HB/ColorRect");
-		if (energyRect != null)
-		{
-			SetEnergy(energy);
-            if (Input.IsKeyPressed(Key.Space)) energy -= 0.005f;
-		}
         timer += (float)delta;
 		if (e == 1)
 		{

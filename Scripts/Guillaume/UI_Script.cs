@@ -19,9 +19,17 @@ public partial class UI_Script : CanvasLayer
 	public override void _Ready()
 	{
 		GetNode<AudioStreamPlayer>("SonFond").Play();
-        // SetFullScreenIndicator();
-        // SetResolutionIndicator();
+        SetFullScreenIndicator();
+        SetResolutionIndicator();
         GetGitHubDataAsync();
+		LoadSettings();
+	}
+
+	private void LoadSettings()
+	{
+		var data = SaveManager.LoadSettings();
+		GetNode<CheckButton>("Sound/MarginContainer3/VBoxContainer/CheckButton").ButtonPressed = !data.mute;
+		GetNode<HSlider>("Sound/MarginContainer5/VBoxContainer/HSlider").Value = data.soundLevel;
 	}
 
 	public override void _Process(double delta)
@@ -341,9 +349,9 @@ public partial class UI_Script : CanvasLayer
 		resolutionIndex = ind;
 	}
 
-	Window.ModeEnum[] Modes = new Window.ModeEnum[]
-	{
-		Window.ModeEnum.ExclusiveFullscreen, Window.ModeEnum.Fullscreen, Window.ModeEnum.Windowed
+	int[] Modes = new int[]
+    {
+        4, 3, 0
 	};
 
 	private int index;
@@ -355,7 +363,7 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_ok_pressed_graphics()
 	{
-		GetWindow().Mode = Modes[index];
+		GetWindow().Mode = (Window.ModeEnum)Modes[index];
 		string selectedResolution = Resolutions[resolutionIndex];
     	string[] parts = selectedResolution.Split('x');
 		int.TryParse(parts[0], out int width);
@@ -363,34 +371,34 @@ public partial class UI_Script : CanvasLayer
 		DisplayServer.WindowSetSize(new Vector2I(width, height));
 	}
 
-	// private void SetResolutionIndicator()
-	// {
-	// 	Vector2I currentResolution = DisplayServer.WindowGetSize();
-    //     string currentResolutionString = $"{currentResolution.X}x{currentResolution.Y}";
-    //     for (int i = 0; i < Resolutions.Length; i++)
-    //     {
-    //         if (Resolutions[i] == currentResolutionString)
-    //         {
-    //             resolutionIndex = i;
-    //             break;
-    //         }
-    //     }
-    //     ResolutionOptionButton.Selected = resolutionIndex;
-	// }
+	private void SetResolutionIndicator()
+	{
+		Vector2I currentResolution = DisplayServer.WindowGetSize();
+        string currentResolutionString = $"{currentResolution.X}x{currentResolution.Y}";
+        for (int i = 0; i < Resolutions.Length; i++)
+        {
+            if (Resolutions[i] == currentResolutionString)
+            {
+                resolutionIndex = i;
+                break;
+            }
+        }
+        ResolutionOptionButton.Select(resolutionIndex);
+	}
 
-	// private void SetFullScreenIndicator()
-	// {
-	// 	Window.ModeEnum currentMode = GetWindow().Mode;
-    //     for (int i = 0; i < Modes.Length; i++)
-    //     {
-    //         if (Modes[i] == currentMode)
-    //         {
-    //             index = i;
-    //             break;
-    //         }
-    //     }
-    //     FullscreenOptionButton.Selected = index;
-	// }
+	private void SetFullScreenIndicator()
+	{
+		int currentMode = (int)GetWindow().Mode;
+        for (int i = 0; i < Modes.Length; i++)
+        {
+            if (Modes[i] == currentMode)
+            {
+                index = i;
+                break;
+            }
+        }
+        FullscreenOptionButton.Select(index);
+	}
 
 	static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
 

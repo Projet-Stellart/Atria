@@ -35,14 +35,4 @@ public partial class HealthBar : Control
 		var healthRect = GetNode<Control>("HB_BG/ColorRect/HB/ColorRect");
 		healthRect.Position = new Vector2(0, 0);
 	}
-
-	public override void _Process(double delta)
-	{
-	 	var healthRect = GetNode<Control>("HB_BG/ColorRect/HB/ColorRect");
-		if (healthRect != null && Input.IsKeyPressed(Key.Space))
-		{
-			health -= 0.005f;
-			SetHealth(health);
-		}
-	}
 }
