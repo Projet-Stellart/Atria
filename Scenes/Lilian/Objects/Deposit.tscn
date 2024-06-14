@@ -1,20 +1,94 @@
-[gd_scene load_steps=5 format=3 uid="uid://b8yvaig7xh3gm"]
+[gd_scene load_steps=9 format=3 uid="uid://b8yvaig7xh3gm"]
 
 [ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Objects/Deposit.cs" id="1_lxr86"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rte7m"]
-albedo_color = Color(0.192157, 0.423529, 1, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_qox61"]
-material = SubResource("StandardMaterial3D_rte7m")
+[ext_resource type="ArrayMesh" uid="uid://83fta1v17quk" path="res://Ressources/ProceduralGeneration/Objects/DepositTrack/DepositTrack.obj" id="2_lhay7"]
+[ext_resource type="ArrayMesh" uid="uid://hmv5pxvrg62a" path="res://Ressources/ProceduralGeneration/Objects/ResourcePack/ResourcePack.obj" id="3_qsid3"]
+[ext_resource type="ArrayMesh" uid="uid://d2k0myu1vxkjs" path="res://Ressources/ProceduralGeneration/Objects/DepositDoor/DepositDoor.obj" id="4_6bvwm"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bu7sy"]
+size = Vector3(1, 1.239, 3.008)
+
+[sub_resource type="Animation" id="Animation_e7v45"]
+resource_name = "Deposit"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ResourcePack:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.5, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.0151299, -0.439731, 0.615949), Vector3(0.0151299, -0.439731, -1.10282)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DepositDoor:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 2.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -0.442, -0.399), Vector3(0, -1.372, -0.399), Vector3(0, -1.372, -0.399), Vector3(0, -0.442, -0.399)]
+}
+
+[sub_resource type="Animation" id="Animation_p8k6m"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ResourcePack:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.0151299, -0.439731, 0.615949)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DepositDoor:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -0.441606, -0.49877)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_o31s5"]
+_data = {
+"Deposit": SubResource("Animation_e7v45"),
+"RESET": SubResource("Animation_p8k6m")
+}
 
 [node name="Deposit" type="StaticBody3D"]
 script = ExtResource("1_lxr86")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_qox61")
+[node name="DepositTrack" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, -0.492884, 0)
+mesh = ExtResource("2_lhay7")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.131242, 0)
 shape = SubResource("BoxShape3D_bu7sy")
+
+[node name="ResourcePack" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.0151299, -0.439731, 0.615949)
+mesh = ExtResource("3_qsid3")
+
+[node name="DepositDoor" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, -0.441606, -0.49877)
+mesh = ExtResource("4_6bvwm")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_o31s5")
+}

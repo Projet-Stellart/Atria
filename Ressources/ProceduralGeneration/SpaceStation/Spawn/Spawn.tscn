@@ -58,25 +58,39 @@ light_specular = 1.0
 omni_range = 7.0
 omni_attenuation = 0.153893
 
-[node name="OmniLight3D4" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95896, 4.54482, -0.588873)
+[node name="OmniLight3D6" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.88962, -0.5)
 light_color = Color(0.690196, 0.85098, 1, 1)
 light_specular = 1.0
 omni_range = 7.0
 omni_attenuation = 0.153893
 
 [node name="OmniLight3D5" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.02341, 4.54482, -0.588873)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.77895, 4.12234, 2.88618)
 light_color = Color(0.690196, 0.85098, 1, 1)
 light_specular = 1.0
-omni_range = 7.0
+omni_range = 8.0
 omni_attenuation = 0.153893
 
-[node name="OmniLight3D6" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.88962, -0.5)
+[node name="OmniLight3D7" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.77895, 4.12234, -4.11281)
 light_color = Color(0.690196, 0.85098, 1, 1)
 light_specular = 1.0
-omni_range = 7.0
+omni_range = 8.0
+omni_attenuation = 0.153893
+
+[node name="OmniLight3D8" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.95866, 4.12234, 2.88618)
+light_color = Color(0.690196, 0.85098, 1, 1)
+light_specular = 1.0
+omni_range = 8.0
+omni_attenuation = 0.153893
+
+[node name="OmniLight3D9" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.95866, 4.12234, -4.11281)
+light_color = Color(0.690196, 0.85098, 1, 1)
+light_specular = 1.0
+omni_range = 8.0
 omni_attenuation = 0.153893
 
 [node name="Door" type="Node3D" parent="."]
@@ -91,4 +105,4 @@ mesh = SubResource("BoxMesh_usrwd")
 shape = SubResource("BoxShape3D_n34dg")
 
 [node name="Deposit" parent="." instance=ExtResource("2_4a2jy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.21941, -13.0211)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.21941, -12.7222)

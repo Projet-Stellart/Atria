@@ -31,6 +31,8 @@ public partial class Generator : Node3D
             collectingAction = rc.CollectResources;
         GetNode<GeneratorScreen>("GeneratorMonitor/GeneratorScreen/Screen").Init(this);
         GetNode<GeneratorScreen>("GeneratorMonitor2/GeneratorScreen/Screen").Init(this);
+        GetNode<AnimationPlayer>("AnimationPlayer").Play("Generate");
+        GetNode<AnimationPlayer>("AnimationPlayer").Stop();
     }
 
     public override void _Process(double delta)
@@ -41,13 +43,10 @@ public partial class Generator : Node3D
             collectTime -= (float)delta;
             if (collectTime <= 0)
             {
-                CollectPlayer(collectingPlayer);
+                GeneratePack();
                 CollectEnd();
-                foreach (Action<Generator> action in OnRefreshRes)
-                {
-                    action.Invoke(this);
-                }
                 RefreshRes();
+                SyncResServer();
             }
         }
     }
@@ -86,10 +85,17 @@ public partial class Generator : Node3D
         collectingPlayer = null;
     }
 
-    public void CollectPlayer(player player)
+    public void GeneratePack()
     {
-        if (collectingAction != null)
-            collectingAction.Invoke(player, Collect());
+        GeneratorResourcePack pack = GetNode<GeneratorResourcePack>("GeneratorResourcePack");
+        pack.Init(Collect() + pack.Resources, collectingAction, OnPackCollected);
+        StartAnim();
+    }
+
+    public void OnPackCollected()
+    {
+        GetNode<GeneratorResourcePack>("GeneratorResourcePack").Init(0, null, null);
+        StopAnim();
     }
 
     public int Collect()
@@ -120,5 +126,28 @@ public partial class Generator : Node3D
         Resources = (float)res;
 
         RefreshRes();
+    }
+
+    public void StartAnim()
+    {
+        Rpc("StartAnimClient");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void StartAnimClient()
+    {
+        GetNode<AnimationPlayer>("AnimationPlayer").Play("Generate");
+    }
+
+    public void StopAnim()
+    {
+        Rpc("StopAnimClient");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void StopAnimClient()
+    {
+        GetNode<AnimationPlayer>("AnimationPlayer").Play("Generate");
+        GetNode<AnimationPlayer>("AnimationPlayer").Stop();
     }
 }

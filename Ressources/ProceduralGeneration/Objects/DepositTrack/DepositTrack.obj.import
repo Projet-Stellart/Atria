@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://83fta1v17quk"
+path="res://.godot/imported/DepositTrack.obj-73a2ae50f66e6b6c9b078f68dc97e9c2.mesh"
+
+[deps]
+
+files=["res://.godot/imported/DepositTrack.obj-73a2ae50f66e6b6c9b078f68dc97e9c2.mesh"]
+
+source_file="res://Ressources/ProceduralGeneration/Objects/DepositTrack/DepositTrack.obj"
+dest_files=["res://.godot/imported/DepositTrack.obj-73a2ae50f66e6b6c9b078f68dc97e9c2.mesh", "res://.godot/imported/DepositTrack.obj-73a2ae50f66e6b6c9b078f68dc97e9c2.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
