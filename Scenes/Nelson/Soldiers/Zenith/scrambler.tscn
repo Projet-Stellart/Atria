@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://b0mdgvqsbj8cc"]
+
+[ext_resource type="Script" path="res://Scripts/Gameplay/Soldiers/Zenith/scrambler.cs" id="1_4mjcp"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_em8yy"]
+size = Vector3(1, 0.375, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qqmij"]
+height = 0.25
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hqvb0"]
+top_radius = 0.3
+bottom_radius = 0.25
+height = 0.125
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h2ev2"]
+size = Vector3(3, 2, 3)
+
+[node name="Scrambler" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("1_4mjcp")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.188, 0)
+shape = SubResource("BoxShape3D_em8yy")
+
+[node name="MeshTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = SubResource("CylinderMesh_qqmij")
+
+[node name="MeshBottom" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.063, 0)
+mesh = SubResource("CylinderMesh_hqvb0")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_h2ev2")
+
+[connection signal="body_entered" from="Area3D" to="." method="FoundTarget"]

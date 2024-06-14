@@ -1,8 +1,11 @@
 using Atria.Scripts.ProceduralGeneration.Objects;
 using Godot;
+using System.Diagnostics;
 
 public partial class GeneratorScreen : Interactible
 {
+
+    private Generator gen;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -13,9 +16,10 @@ public partial class GeneratorScreen : Interactible
 		};
 	}
 
-    public void Init(Generator gen)
+    public void Init(Generator _gen)
     {
-        gen.OnWork.Add(UpdateMainScreen);
+        gen = _gen;
+        gen.OnRefreshRes.Add(UpdateMainScreen);
     }
 
     public void UpdateMainScreen(Generator gen)
@@ -23,23 +27,21 @@ public partial class GeneratorScreen : Interactible
         GetNode<RichTextLabel>("ScreenMenu/Control/VBoxContainer/VBoxContainer/Res").Text = $"{Mathf.FloorToInt(gen.Resources)}/{gen.Capacity}";
     }
 
-    public override void OnClickBegin()
+    public override void OnClickBegin(player player)
     {
-        throw new System.NotImplementedException();
+        gen.CollectStart(player);
     }
 
-    public override void OnClickEnd()
+    public override void OnClickEnd(player player)
     {
-        throw new System.NotImplementedException();
+        gen.CollectEnd();
     }
 
-    public override void OnCursorIn()
+    public override void OnCursorIn(player player)
     {
-        throw new System.NotImplementedException();
     }
 
-    public override void OnCursorOut()
+    public override void OnCursorOut(player player)
     {
-        throw new System.NotImplementedException();
     }
 }

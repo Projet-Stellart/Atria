@@ -1,3 +1,4 @@
+using Atria.Scripts.Management.GameMode;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,16 @@ public partial class GameManager : Node
     public TileMeshGeneration tileMapGenerator;
     public HudManager hudManager;
 
+    public const string playerTemplate = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn";
+    public Gamemode gamemode;
+
     public Random random;
 
     private float previousAdvencmentChecked;
 
     private string[] startingArgs;
+
+    private int seed;
 
     public static Dictionary<ServerStatus, string> statusText = new Dictionary<ServerStatus, string>
     {
@@ -43,9 +49,8 @@ public partial class GameManager : Node
         multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)_serverStatus, adv });
     }
 
-    public const string playerTemplate = "res://Scenes/Nelson/player.tscn";
+    public const string lobbyTemplate = "res://Scenes/Guillaume/Lobby.tscn";
 
-    private const string lobbyTemplate = "res://Scenes/Guillaume/Lobby.tscn";
     public Node lobby;
 
     //Match management
@@ -91,7 +96,11 @@ public partial class GameManager : Node
         nbPlayer = 10,
         spawnDelay = 5,
         beginDelay = 30,
-        port = 7308
+        emptyReloadDelay = 10,
+        port = 7308,
+        publicServer = false,
+        publicAddress = "",
+        matchMaker = "127.0.0.1:12345"
     };
 
     public GameData GameData { get => _gameData; private set => _gameData = value; }
@@ -134,8 +143,6 @@ public partial class GameManager : Node
                 action.Item2.Invoke();
             }
         }
-
-        
     }
 
     public void Init(string[] args)
@@ -146,11 +153,10 @@ public partial class GameManager : Node
 
         startingArgs = args;
 
-        int seed = (int)(Time.GetTicksMsec() % int.MaxValue);
+        //seed = (int)(Time.GetTicksMsec() % int.MaxValue);
+        seed = 816;
 
         random = new Random(seed);
-
-        Debug.Print("Match seed: " + seed);
 
         delayedActions = new List<(ulong, Action)>();
 
@@ -291,8 +297,18 @@ public partial class GameManager : Node
         playerInfo = new Dictionary<long, PlayerData>();
         if (args.Contains("--server"))
         {
+            Debug.Print("Match seed: " + seed);
             multiplayerManager.InitServer((int)GameData.port, (int)GameData.nbPlayer);
             serverStatus = ServerStatus.Generating;
+            if (GameData.GameMode == null || GameData.GameMode == "")
+            {
+                gamemode = Gamemode.Gamemodes["ResourceCollection"].Copy();
+            }
+            else
+            {
+                gamemode = Gamemode.Gamemodes[GameData.GameMode].Copy();
+            }
+            gamemode.Init(teams.Length, (int)GameData.maxScore, RoundWon, MatchWon);
             InitMap();
         }
         else
@@ -304,11 +320,12 @@ public partial class GameManager : Node
             }
             multiplayerManager.InitClient(adr, (int)GameData.port);
         }
+
     }
 
     private void InitMap()
     {
-        tileMapGenerator.OnMapGenerated += () =>
+        tileMapGenerator.OnMapGenerated = () =>
         {
             multiplayerManager.MapGenerated();
             serverStatus = ServerStatus.Waiting;
@@ -439,6 +456,7 @@ public partial class GameManager : Node
 
         Debug.Print($"{playerInfo[player.uid].Username} died by {cause.ToString()}");
 
+        player.SyncDeathServer(true);
         player.SyncVisibility(false);
 
         delayedActions.Add((Time.GetTicksMsec() + 5000, () =>
@@ -453,10 +471,37 @@ public partial class GameManager : Node
         Vector3 npos = tileMapGenerator.GetRandPlayerSpawn(FindPlayerTeam(player.uid), random);
         //Vector3 npos = tileMapGenerator.GetRandPoint(tileMapGenerator.tileMap, new Random());
         if (player is player playerScript)
+        {
             playerScript.Health = 100;
+            player.SyncHealth(playerScript.Health);
+            playerScript.EnergyBar = 0;
+            player.SyncEnergyServer();
+        }
         player.SendServerPosVelo(npos, Vector3.Zero);
         player.SyncVisibility(true);
-        player.SyncRespawnServer();
+        player.SyncDeathServer(false);
+    }
+
+    public void ResetRound()
+    {
+        multiplayerManager.Rpc("ResetRoundClient");
+
+        foreach (var pl in multiplayerManager.playersControler)
+        {
+            if (pl.Value.dead)
+            {
+                RespawnPlayer(pl.Value);
+            }
+            else
+            {
+                pl.Value.SendServerPosVelo(tileMapGenerator.GetRandPlayerSpawn(FindPlayerTeam(pl.Key), random), Vector3.Zero);
+            }
+        }
+    }
+
+    public void RoundStart()
+    {
+        multiplayerManager.Rpc("StartMatchClient");
     }
 
     private void StartMatch()
@@ -465,7 +510,55 @@ public partial class GameManager : Node
 
         multiplayerManager.Rpc("StartMatchClient");
 
+        gamemode.BeginMatch();
+
         Debug.Print("Match started!");
+    }
+
+    public void RoundWon(int team)
+    {
+        Debug.Print("Round won by team " + (team + 1));
+        ResetRound();
+    }
+
+    public void MatchWon(int team)
+    {
+        Debug.Print("Match won by team " + (team + 1));
+
+        delayedActions.Add((Time.GetTicksMsec() + GameData.finishReloadDelay * 1000, () =>
+        {
+            MatchFinish();
+        }
+        ));
+    }
+
+    private void MatchFinish()
+    {
+        foreach (var pl in multiplayerManager.playersControler)
+        {
+            multiplayerManager.DeletePlayer(pl.Key);
+        }
+        multiplayerManager.Rpc("HideHUD");
+        multiplayerManager.Rpc("DisplayLobby");
+        multiplayerManager.Rpc("ClearMap");
+        ResetServer();
+        multiplayerManager.LobbySync();
+    }
+
+    private void ResetServer()
+    {
+        serverStatus = ServerStatus.Generating;
+        matchStatus = -2;
+        if (GameData.GameMode == null || GameData.GameMode == "")
+        {
+            gamemode = Gamemode.Gamemodes["ResourceCollection"].Copy();
+        }
+        else
+        {
+            gamemode = Gamemode.Gamemodes[GameData.GameMode].Copy();
+        }
+        gamemode.Init(teams.Length, (int)GameData.maxScore, RoundWon, MatchWon);
+        InitMap();
     }
 
     public int FindPlayerTeam(long id)
@@ -490,26 +583,61 @@ public struct GameData
     /// Map parameters for the server
     /// </summary>
     public MapParam mapParam {  get; set; }
+
+    /// <summary>
+    /// Selected gamemode
+    /// </summary>
+    public string GameMode {  get; set; }
+
+    /// <summary>
+    /// Number of rounds won by a team before match won
+    /// </summary>
+    public uint maxScore {  get; set; }
+
     /// <summary>
     /// Number of player for a match
     /// </summary>
     public uint nbPlayer {  get; set; }
+
     /// <summary>
     /// Delay betwin match full and spawn of player in seconds
     /// </summary>
     public uint spawnDelay { get; set; }
+
     /// <summary>
     /// Delay betwin spawn of player and match start in seconds
     /// </summary>
     public uint beginDelay { get; set; }
+
+    /// <summary>
+    /// Delay before match restart after game end
+    /// </summary>
+    public uint finishReloadDelay { get; set; }
+
     /// <summary>
     /// Delay starting when all players disconnect and reloading the server
     /// </summary>
     public uint emptyReloadDelay { get; set; }
+
     /// <summary>
     /// Port the server will listen
     /// </summary>
     public uint port {  get; set; }
+
+    /// <summary>
+    /// Is created server public
+    /// </summary>
+    public bool publicServer { get; set; }
+
+    /// <summary>
+    /// The address of the server
+    /// </summary>
+    public string publicAddress { get; set; }
+
+    /// <summary>
+    /// Address of the match maker
+    /// </summary>
+    public string matchMaker { get; set; }
 }
 
 public struct PlayerData

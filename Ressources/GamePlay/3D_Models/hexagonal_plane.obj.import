@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ca26d00wtulgo"
+path="res://.godot/imported/hexagonal_plane.obj-58426a292a315c16a9287abb47f8b604.mesh"
+
+[deps]
+
+files=["res://.godot/imported/hexagonal_plane.obj-58426a292a315c16a9287abb47f8b604.mesh"]
+
+source_file="res://Ressources/GamePlay/3D_Models/hexagonal_plane.obj"
+dest_files=["res://.godot/imported/hexagonal_plane.obj-58426a292a315c16a9287abb47f8b604.mesh", "res://.godot/imported/hexagonal_plane.obj-58426a292a315c16a9287abb47f8b604.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
