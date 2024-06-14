@@ -327,7 +327,7 @@ public partial class GameManager : Node
 
         foreach(int id in Multiplayer.GetPeers())
         {
-            Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
+            Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random(), GameData.mapParam.startHeight);
             multiplayerManager.InstantiateNewPlayer(id, npos);
         }
 
@@ -354,7 +354,7 @@ public partial class GameManager : Node
 
     public void RespawnPlayer(LocalEntity player)
     {
-        Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random());
+        Vector3 npos = tileMapGenerator.GetRandSpawnPoint(tileMapGenerator.tileMap, new Random(), GameData.mapParam.startHeight);
         if (player is player playerScript)
             playerScript.Health = 100;
         player.SendServerPosVelo(npos, Vector3.Zero);

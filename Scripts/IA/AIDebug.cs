@@ -2,6 +2,8 @@ using Godot;
 using System;
 using System.Diagnostics;
 
+using Atria.Scripts.IA;
+
 public partial class AIDebug : Node
 {
     // Called when the node enters the scene tree for the first time.
@@ -229,8 +231,8 @@ public partial class AIDebug : Node
                     39,
                     39,
                     39,
-                    5,
-                    27,
+                    39,
+                    39,
                     39,
                 },
                 {
@@ -241,7 +243,7 @@ public partial class AIDebug : Node
                     37,
                     39,
                     39,
-                    24,
+                    39,
                     39,
                     40,
                 },
@@ -382,8 +384,13 @@ public partial class AIDebug : Node
             },
         };
 
-        var start = (Vector3I)grid.GetRandSpawnPoint(thegoodgrid, rand);
-        var end = (Vector3I)grid.GetRandSpawnPoint(thegoodgrid, rand);
+        MapDebug.PrintMap(thegoodgrid);
+
+
+        //Vector3I start = new Vector3I(3,4,1);
+        //Vector3I end = new Vector3I(5,0,1);
+        var start = (Vector3I)grid.GetRandSpawnPoint(thegoodgrid, rand,0);
+        var end = (Vector3I)grid.GetRandSpawnPoint(thegoodgrid, rand,0);
 
         Debug.Print($"Path from: {start.ToString()} to: {end.ToString()}");
 

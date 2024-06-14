@@ -41,7 +41,6 @@ public static class Pathfinding
             GCost = int.MaxValue;
             HCost = 0;
             Parent = null;
-
         }
 
 
@@ -83,6 +82,7 @@ public static class Pathfinding
 
     private static List<Vector3I> BuildPath(CustomNode node)
     {
+        Debug.Print("try build");
         if (node == null)
             return new List<Vector3I>();
 
@@ -92,7 +92,7 @@ public static class Pathfinding
 
         while (processing != null)
         {
-            path.Add(new Vector3I(node.X,node.Y,node.Z));
+            path.Add(new Vector3I(processing.X, processing.Y, processing.Z));
             processing = processing.Parent;
         }
 
@@ -134,20 +134,31 @@ public static class Pathfinding
 
             if (current.Same(goal))
             {
+                Debug.Print("same");
                 return BuildPath(current);
             }
 
             toProcess.Remove(current);
 
+            Debug.Print($"On : ({current.X},{current.Y},{current.Z})");
+
             for (int i = 0; i < 4; i++)
             {
                 int x = current.X + (i % 2) * (i == 3 ? -1 : 1);
                 int y = current.Y + ((i + 1) % 2) * (i == 2 ? -1 : 1);
-                int z = 0;
+                int z = current.Z;
+                Debug.Print((new Vector3I(x, y, z)).ToString());
 
                 if (x < 0 || y < 0 || x >= grid.GetLength(0) || y >= grid.GetLength(1))
                 {
+                    Debug.Print("out");
                     continue;
+                }
+
+                if (grid[x, y, z].Same(goal))
+                {
+                    Debug.Print("Found");
+                    return BuildPath(current);
                 }
 
                 if (i== 0)
@@ -194,10 +205,12 @@ public static class Pathfinding
                     if (!toProcess.Contains(grid[x, y, z]))
                     {
                         toProcess.Add(grid[x, y, z]);
-                        Debug.Print("+");
+                        Debug.Print($"added : ({x},{y},{z})");
                     }
                 }
+                Debug.Print("loop");
             }
+            Debug.Print("end loop");
         }
 
         return new List<Vector3I>();

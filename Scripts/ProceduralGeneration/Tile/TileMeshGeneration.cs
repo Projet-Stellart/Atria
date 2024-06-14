@@ -147,16 +147,16 @@ public partial class TileMeshGeneration : Node3D
         return tGrid;
     }
 
-    public Vector3 GetRandSpawnPoint(int[,,] tGrid, Random rand)
+    public Vector3 GetRandSpawnPoint(int[,,] tGrid, Random rand, int height)
     {
         (int px, int py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
-        TilePrefa tile = tileTemplates[tGrid[sH, px, py] - 1];
+        TilePrefa tile = tileTemplates[tGrid[height, px, py] - 1];
         while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)
         {
             (px, py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
-            tile = tileTemplates[tGrid[sH, px, py] - 1];
+            tile = tileTemplates[tGrid[height, px, py] - 1];
         }
-        return new Vector3(px, py, sH);
+        return new Vector3(px, py, height);
     }
 
     /// <summary>
