@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://buuoskrd5ijdx"]
+
+[ext_resource type="ArrayMesh" uid="uid://l12sfbrtpmrm" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/Spawn/Spawn.obj" id="1_118g5"]
+
+[node name="ModelSpawn" type="Node3D"]
+
+[node name="Spawn" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.2, -6.4)
+mesh = ExtResource("1_118g5")

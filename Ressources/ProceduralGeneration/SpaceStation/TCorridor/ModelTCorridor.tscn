@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccdhprli1842k"]
+
+[ext_resource type="ArrayMesh" uid="uid://yqhqrjce0klj" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/TCorridor/TCorridor.obj" id="1_43sjl"]
+
+[node name="ModelTCorridor" type="Node3D"]
+
+[node name="TCorridor" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_43sjl")

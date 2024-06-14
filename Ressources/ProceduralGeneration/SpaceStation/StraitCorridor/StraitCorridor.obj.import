@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://yklh58apqveq"
+path="res://.godot/imported/StraitCorridor.obj-7dbcea2cda635e8117cff2547ff3c09d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/StraitCorridor.obj-7dbcea2cda635e8117cff2547ff3c09d.mesh"]
+
+source_file="res://Ressources/ProceduralGeneration/SpaceStation/StraitCorridor/StraitCorridor.obj"
+dest_files=["res://.godot/imported/StraitCorridor.obj-7dbcea2cda635e8117cff2547ff3c09d.mesh", "res://.godot/imported/StraitCorridor.obj-7dbcea2cda635e8117cff2547ff3c09d.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

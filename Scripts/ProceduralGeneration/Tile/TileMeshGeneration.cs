@@ -1,10 +1,16 @@
+using Atria.Scripts.Management;
 using Godot;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Transactions;
+using static Godot.Projection;
 using static System.Formats.Asn1.AsnWriter;
+using static TilePrefa;
 
 public partial class TileMeshGeneration : Node3D
 {
@@ -17,26 +23,49 @@ public partial class TileMeshGeneration : Node3D
     /// </summary>
     public TilePrefa[] tileTemplates;
 
-    private PackedScene playerTemplate;
+    private PackedScene playerTemplate = GD.Load<PackedScene>("res://Scenes/Nelson/player.tscn");
+
+    public string[] roomRes = new string[]
+    {
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Wall.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/CorridorSouthCorner.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/CorridorSouth.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Corner.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png",
+        "res://Ressources/ProceduralGeneration/Rooms/Tiles/Filled.png"
+    };
+
+    public List<(int, Vector3I)> tempRoom;
+    public Node3D[] rooms;
 
     //TempVariable
     Node3D player;
 
     //Dependant on the map generation Task
-    private float gridGenerationAdvencement;
+    public float gridGenerationAdvencement { get; private set; }
     public bool isGenerating { get; private set; }
 
     public int[,,] tileMap;
+    public Vector2I[] spawnsPos;
+    public Node3D[] spawns;
 
     /// <summary>
     /// The type that is used when accessing a tile outside the grid.
     /// </summary>
     private string borderType = "space";
+    private string[] northBorderType;
+    private string[] southBorderType;
+    private string[] eastBorderType;
+    private string[] westBorderType;
 
     /// <summary>
     /// Size of one dimension of a cubicle tile.
     /// </summary>
-    private float tileSize = 6.4f;
+    public float tileSize = 6.4f;
 
     /*public override void _Ready()
 	{
@@ -44,9 +73,29 @@ public partial class TileMeshGeneration : Node3D
         Init();
     }*/
 
-    public void Init(int sizeX, int sizeY)
+    public void Init(int sizeX, int sizeY, Random rand)
     {
-        Task generating = GenerateMapAsync(sizeX, sizeY);
+        Task generation = GenerateMapAsync(sizeX, sizeY, rand);
+    }
+
+    public void ClearMap()
+    {
+        int deleted = 0;
+        foreach (var child in GetChildren())
+        {
+            RemoveChild(child);
+            child.QueueFree();
+            deleted++;
+        }
+        Debug.Print("deleted: " + deleted + " remaining nodes: " + GetChildCount());
+        tileMap = null;
+        spawnsPos = null;
+        spawns = null;
+        northBorderType = null;
+        southBorderType = null;
+        eastBorderType = null;
+        westBorderType = null;
+        
     }
 
     //Debug only
@@ -64,20 +113,20 @@ public partial class TileMeshGeneration : Node3D
     /// <param name="sizex"></param>
     /// <param name="sizey"></param>
     /// <returns>The asynchronous task to generate the grid</returns>
-    public Task GenerateMapAsync(int sizex, int sizey)
+    public Task GenerateMapAsync(int sizex, int sizey, Random rand)
     {
         GetData();
 
-        Random rand = new Random();
-
         isGenerating = true;
+
+        spawnsPos = new Vector2I[] { new Vector2I(-1, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10)), new Vector2I(sizex, GameManager.singleton.GameData.mapParam.sizeY / 2 + rand.Next(-GameManager.singleton.GameData.mapParam.sizeY / 10, GameManager.singleton.GameData.mapParam.sizeY / 10)) };
 
         Task<int[,,]> generating = Task.Run(() =>
         {
-            return GenerateGrid(sizex, sizey, rand);
+            return GenerateGrid(sizex, sizey, spawnsPos, rand);
         });
 
-        PostGenerationProcess(generating, rand);
+        PostGenerationProcess(generating, spawnsPos, rand);
 
         return generating;
     }
@@ -90,7 +139,7 @@ public partial class TileMeshGeneration : Node3D
     /// </remarks>
     /// <param name="generation"></param>
     /// <param name="rand"></param>
-    private async void PostGenerationProcess(Task<int[,,]> generation, Random rand)
+    private async void PostGenerationProcess(Task<int[,,]> generation, Vector2I[] spawns, Random rand)
     {
         await generation;
 
@@ -100,10 +149,51 @@ public partial class TileMeshGeneration : Node3D
 
         InstantiateGrid(tGrid);
 
+        InstantiateRooms(tempRoom.ToArray());
+
+        SpawnSpawns(spawns, tempRoom.ToArray(), tGrid, tGrid.GetLength(1));
+
         generation.Dispose();
 
         OnMapGenerated.Invoke();
+
         Debug.Print("Map ready!");
+    }
+
+    public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, (int, Vector3I)[] rooms, Node3D Parent, Material mat)
+    {
+        Node3D node = new Node3D();
+
+        Parent.AddChild(node);
+
+        InstantiateModel(grid, node, mat);
+
+        InstantiateRoomsModel(node, rooms, mat);
+
+        SpawnSpawnsModel(spawns, grid.GetLength(1), node, mat);
+
+        return node;
+    }
+
+    public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, (int, Vector3I)[] rooms, Node3D Parent, Material mat, Vector3I pos, string resPath)
+    {
+        Node3D node = new Node3D();
+
+        Parent.AddChild(node);
+
+        InstantiateModel(grid, node, mat);
+
+        InstantiateRoomsModel(node, rooms, mat);
+
+        SpawnSpawnsModel(spawns, grid.GetLength(1), node, mat);
+
+        Node3D obj = GD.Load<PackedScene>(resPath).Instantiate<Node3D>();
+
+        node.AddChild(obj);
+
+        obj.Position = new Vector3(pos.X * tileSize, pos.Y * tileSize, pos.Z * tileSize);
+
+        return node;
     }
 
     //Switch from public to private
@@ -114,12 +204,13 @@ public partial class TileMeshGeneration : Node3D
     /// <param name="sizey"></param>
     /// <param name="rand"></param>
     /// <returns>The generated grid matrix</returns>
-    public int[,,] GenerateGrid(int sizex, int sizey, Random rand)
+    public int[,,] GenerateGrid(int sizex, int sizey, Vector2I[] spawns, Random rand)
     {
-        //tileGrid = new Node3D[gameParam.mapHeight, sizex, sizey];
         int[,,] tGrid = new int[GameManager.singleton.GameData.mapParam.mapHeight, sizex, sizey];
 
-        Debug.Print(GameManager.singleton.GameData.mapParam.mapHeight.ToString());
+        ProcessSpawns(sizex, sizey, spawns);
+
+        tGrid = SetRooms(tGrid, GameManager.singleton.GameData.mapParam.startHeight, rand.Next(GameManager.singleton.GameData.mapParam.minRoom, GameManager.singleton.GameData.mapParam.maxRoom + 1), tGrid.GetLength(1)/4, tGrid.GetLength(2)/4, rand);
 
         for (int i = 0; i < GameManager.singleton.GameData.mapParam.mapHeight; i++)
         {
@@ -129,18 +220,256 @@ public partial class TileMeshGeneration : Node3D
         return tGrid;
     }
 
-    public Vector3 GetRandSpawnPoint(int[,,] tGrid, Random rand)
+    private void ProcessSpawns(int sizex, int sizey, Vector2I[] spawns)
+    {
+        northBorderType = new string[sizex];
+        for (int i = 0; i < northBorderType.Length; i++)
+        {
+            northBorderType[i] = "space";
+        }
+        foreach (Vector2I v in spawns)
+        {
+            if (v.Y == -1)
+            {
+                northBorderType[v.X] = "corridor";
+            }
+        }
+
+        southBorderType = new string[sizex];
+        for (int i = 0; i < southBorderType.Length; i++)
+        {
+            southBorderType[i] = "space";
+        }
+        foreach (Vector2I v in spawns)
+        {
+            if (v.Y == sizey)
+            {
+                southBorderType[v.X] = "corridor";
+            }
+        }
+
+        westBorderType = new string[sizey];
+        for (int i = 0; i < westBorderType.Length; i++)
+        {
+            westBorderType[i] = "space";
+        }
+        foreach (Vector2I v in spawns)
+        {
+            if (v.X == -1)
+            {
+                westBorderType[v.Y] = "corridor";
+            }
+        }
+
+        eastBorderType = new string[sizey];
+        for (int i = 0; i < eastBorderType.Length; i++)
+        {
+            eastBorderType[i] = "space";
+        }
+        foreach (Vector2I v in spawns)
+        {
+            if (v.X == sizex)
+            {
+                eastBorderType[v.Y] = "corridor";
+            }
+        }
+    }
+
+    public void SpawnSpawns(Vector2I[] _spawns, (int, Vector3I)[] _rooms, int[,,] grid, int sizeX)
+    {
+        spawns = new Node3D[_spawns.Length];
+        for (int i = 0; i < _spawns.Length; i++)
+        {
+            Vector2I v = _spawns[i];
+            Node3D spawn = DataManager.spawnTemplate.Instantiate<Node3D>();
+            AddChild(spawn);
+            spawns[i] = spawn;
+            spawn.Position = new Vector3(v.X * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize, v.Y * tileSize);
+            if (v.X < 0)
+            {
+                spawn.Rotation = new Vector3(0, Mathf.Pi / 2f, 0);
+            }
+            else if (v.X >= sizeX)
+            {
+                spawn.Rotation = new Vector3(0, -Mathf.Pi / 2f, 0);
+            }
+            else if (v.Y < 0)
+            {
+                spawn.Rotation = new Vector3(0, 0, 0);
+            }
+            else
+            {
+                spawn.Rotation = new Vector3(0, Mathf.Pi, 0);
+            }
+            Node3D mapModelContainer = spawn.GetNode<Node3D>("MapModel");
+            Node3D model = GenerateMapModel(grid, _spawns, _rooms, mapModelContainer, new StandardMaterial3D()
+            {
+                Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                AlbedoColor = new Color(0, 0.63f, 0.63f, 0.5f),
+                EmissionEnabled = true,
+                Emission = new Color(0, 0.63f, 0.63f)
+            },
+            new Vector3I(v.X, GameManager.singleton.GameData.mapParam.startHeight, v.Y),
+            "res://Scenes/Lilian/Objects/YouAreHere.tscn");
+            mapModelContainer.Scale = new Vector3(0.2f, 0.2f, 0.2f) / Math.Max(grid.GetLength(1), grid.GetLength(2));
+            Vector3 offset = new Vector3((grid.GetLength(1) / 2f) * tileSize, 0f, (grid.GetLength(2) / 2f) * tileSize);
+            model.Position -= offset;
+        }
+    }
+
+    public void SpawnSpawnsModel(Vector2I[] _spawns, int sizeX, Node3D Parent, Material mat)
+    {
+        for (int i = 0; i < _spawns.Length; i++)
+        {
+            Vector2I v = _spawns[i];
+            Node3D spawn = DataManager.spawnModelTemplate.Instantiate<Node3D>();
+            Parent.AddChild(spawn);
+            spawn.Position = new Vector3(v.X * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize, v.Y * tileSize);
+            if (mat != null)
+                spawn.GetChild<MeshInstance3D>(0).MaterialOverride = mat;
+            if (v.X < 0)
+            {
+                spawn.Rotation = new Vector3(0, Mathf.Pi / 2f, 0);
+            }
+            else if (v.X >= sizeX)
+            {
+                spawn.Rotation = new Vector3(0, -Mathf.Pi / 2f, 0);
+            }
+            else if (v.Y < 0)
+            {
+                spawn.Rotation = new Vector3(0, 0, 0);
+            }
+            else
+            {
+                spawn.Rotation = new Vector3(0, Mathf.Pi, 0);
+            }
+        }
+    }
+
+    public void InstantiateRooms((int, Vector3I)[] _rooms)
+    {
+        rooms = new Node3D[_rooms.Length];
+        for (int i = 0; i < _rooms.Length; i++)
+        {
+            rooms[i] = DataManager.roomPrefas[_rooms[i].Item1].room.Instantiate<Node3D>();
+            AddChild(rooms[i]);
+            rooms[i].Position = ((Vector3)_rooms[i].Item2) * tileSize;
+        }
+    }
+
+    private void InstantiateRoomsModel(Node3D Parent, (int, Vector3I)[] rooms, Material mat)
+    {
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            Node3D node = DataManager.roomPrefas[rooms[i].Item1].model.Instantiate<Node3D>();
+
+            Parent.AddChild(node);
+            node.Position = (Vector3)rooms[i].Item2 * tileSize;
+            node.GetChild<MeshInstance3D>(0).MaterialOverride = mat;
+        }
+    }
+
+    private int[,,] SetRooms(int[,,] tGrid, int spawnHeight, int nbRooms, int xMargin, int yMargin, Random rand)
+    {
+        tempRoom = new List<(int, Vector3I)>();
+        for (int r = 0; r < nbRooms; r++)
+        {
+            int id = rand.Next(0, DataManager.roomPrefas.Length);
+            RoomPrefa type = DataManager.roomPrefas[id];
+            bool valid = false;
+            int n = 0;
+            while (!valid)
+            {
+                if (n > 10)
+                    break;
+
+                Vector2I roomPos = new Vector2I(rand.Next(xMargin, tGrid.GetLength(1) - xMargin - type.tileTypes.GetLength(0)), rand.Next(yMargin, tGrid.GetLength(2) - yMargin - type.tileTypes.GetLength(1)));
+
+                valid = true;
+
+                for (int i = 0; i < type.tileTypes.GetLength(0); i++)
+                {
+                    for (int j = 0; j < type.tileTypes.GetLength(1); j++)
+                    {
+                        if (tGrid[spawnHeight, roomPos.X + i, roomPos.Y + j] != 0)
+                        {
+                            valid = false;
+                            n++;
+                            break;
+                        }
+                    }
+                }
+
+                if (!valid)
+                    continue;
+
+                tempRoom.Add((id, new Vector3I(roomPos.X, spawnHeight, roomPos.Y)));
+
+                for (int i = 0; i < type.tileTypes.GetLength(0); i++)
+                {
+                    for (int j = 0; j < type.tileTypes.GetLength(1); j++)
+                    {
+                        tGrid[spawnHeight, roomPos.X + i, roomPos.Y + j] = type.tileTypes[i, j];
+                    }
+                }
+            }
+        }
+
+        return tGrid;
+    }
+
+    public string SerializeMap(int[,,] grid)
+    {
+        string val = "";
+        val += "{\n";
+        for (int h = 0; h < grid.GetLength(0); h++)
+        {
+            val += "\t{\n";
+            for (int x = 0; x < grid.GetLength(1); x++)
+            {
+                val += "\t\t{\n";
+                for (int y = 0; y < grid.GetLength(2); y++)
+                {
+                    val += "\t\t\t" + grid[h, x, y] + ",\n";
+                }
+                val += "\t\t},\n";
+            }
+            val += "\t},\n";
+        }
+        val += "}\n";
+
+        return val;
+    }
+
+    public Vector3 GetRandPoint(int[,,] tGrid, Random rand)
+    {
+        return new Vector3(tileSize, tileSize - 1, tileSize) * GetRandTile(tGrid, rand);
+    }
+
+    public Vector3I GetRandTile(int[,,] tGrid, Random rand)
     {
         player = playerTemplate.Instantiate<Node3D>();
         AddChild(player);
         (int px, int py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
-        TilePrefa tile = tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
-        while (!(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)
+        TilePrefa tile = tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] < 1 ? null : tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
+        while (tile == null || !(tile.north == "corridor" || tile.south == "corridor" || tile.west == "corridor" || tile.est == "corridor") || tile.transition != 0)
         {
             (px, py) = (rand.Next(tGrid.GetLength(1)), rand.Next(tGrid.GetLength(2)));
-            tile = tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
+            tile = tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] < 1 ? null : tileTemplates[tGrid[GameManager.singleton.GameData.mapParam.startHeight, px, py] - 1];
         }
-        return new Vector3(px * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize-1, py * tileSize);
+        return new Vector3I(px, GameManager.singleton.GameData.mapParam.startHeight, py);
+    }
+
+    public Vector3 GetRandPlayerSpawn(int team, Random rand)
+    {
+        Node3D node = GetTeamSpawnPointList(team);
+
+        return node.GetChild<Node3D>(rand.Next(node.GetChildCount())).GlobalPosition;
+    }
+
+    public Node3D GetTeamSpawnPointList(int team)
+    {
+        return spawns[team].GetNode<Node3D>("SpawnPoints");
     }
 
     /// <summary>
@@ -162,13 +491,43 @@ public partial class TileMeshGeneration : Node3D
             {
                 for (int y = 0; y < sizey; y++)
                 {
+                    if (tGrid[height, x, y] < 0)
+                        continue;
                     TilePrefa template = tileTemplates[tGrid[height, x, y] - 1];
                     Node3D tmpTile = template.tile.Instantiate<Node3D>();
                     //tileGrid[height, x, y] = template.tile.Instantiate<Node3D>();
                     tmpTile.Name = template.name + "|id:" + (x+y*sizex+height*sizex*sizey);
                     AddChild(tmpTile);
                     tmpTile.Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
-                    tmpTile.GlobalPosition = new Vector3(x * tileSize, height * tileSize, y * tileSize);
+                    tmpTile.Position = new Vector3(x * tileSize, height * tileSize, y * tileSize);
+                }
+            }
+        }
+    }
+
+    public void InstantiateModel(int[,,] tGrid, Node3D Parent, Material mat)
+    {
+        tileMap = tGrid;
+
+        int sizex = tGrid.GetLength(1);
+        int sizey = tGrid.GetLength(2);
+
+        for (int height = 0; height < tGrid.GetLength(0); height++)
+        {
+            for (int x = 0; x < sizex; x++)
+            {
+                for (int y = 0; y < sizey; y++)
+                {
+                    if (tGrid[height, x, y] < 0)
+                        continue;
+                    TilePrefa template = tileTemplates[tGrid[height, x, y] - 1];
+                    Node3D tmpTile = template.modelTile.Instantiate<Node3D>();
+                    tmpTile.Name = template.name + "|id:" + (x + y * sizex + height * sizex * sizey);
+                    Parent.AddChild(tmpTile);
+                    tmpTile.Rotation = new Vector3(0f, Mathf.DegToRad(template.rotation), 0f);
+                    tmpTile.Position = new Vector3(x * tileSize, height * tileSize, y * tileSize);
+                    if (mat != null && tmpTile.GetChildCount() > 0 && tmpTile.GetChild(0) is MeshInstance3D mesh)
+                        mesh.MaterialOverride = mat;
                 }
             }
         }
@@ -303,29 +662,63 @@ public partial class TileMeshGeneration : Node3D
         }*/
         //Getting adjacent ids
         //Verify x limit and get value
-        string n = borderType;
-        string s = borderType;
-        string e = borderType;
-        string w = borderType;
+        string n;
+        string s;
+        string e;
+        string w;
+        if (y == 0 && GameManager.singleton.GameData.mapParam.startHeight == height)
+        {
+            n = northBorderType[x];
+        }
+        else
+        {
+            n = borderType;
+        }
+        if (y == grid.GetLength(2)-1 && GameManager.singleton.GameData.mapParam.startHeight == height)
+        {
+            s = southBorderType[x];
+        }
+        else
+        {
+            s = borderType;
+        }
+
+        if (x == 0 && GameManager.singleton.GameData.mapParam.startHeight == height)
+        {
+            w = westBorderType[y];
+        }
+        else
+        {
+            w = borderType;
+        }
+        if (x == grid.GetLength(1)-1 && GameManager.singleton.GameData.mapParam.startHeight == height)
+        {
+            e = eastBorderType[y];
+        }
+        else
+        {
+            e = borderType;
+        }
+
         if (x != 0)
         {
-            int idW = grid[height, x - 1, y];
+            int idW = Math.Abs(grid[height, x - 1, y]);
             w = idW == 0 ? "" : tileTemplates[idW - 1].est;
         }
         if (x != grid.GetLength(1) - 1)
         {
-            int idE = grid[height, x + 1, y];
+            int idE = Math.Abs(grid[height, x + 1, y]);
             e = idE == 0 ? "" : tileTemplates[idE - 1].west;
         }
         //Verify y limit and get value
         if (y != 0)
         {
-            int idN = grid[height, x, y - 1];
+            int idN = Math.Abs(grid[height, x, y - 1]);
             n = idN == 0 ? "" : tileTemplates[idN - 1].south;
         }
         if (y != grid.GetLength(2) - 1)
         {
-            int idS = grid[height, x, y + 1];
+            int idS = Math.Abs(grid[height, x, y + 1]);
             s = idS == 0 ? "" : tileTemplates[idS - 1].north;
         }
         //Getting tile's restrictions
@@ -402,24 +795,18 @@ public partial class TileMeshGeneration : Node3D
     /// </summary>
     public void GetData()
 	{
-        //Get metadata
-        playerTemplate = (PackedScene)GetMeta("PlayerTemplate");
-
-        Godot.Collections.Array<PackedScene> tiles = GetMeta("TileTemplate").AsGodotArray<PackedScene>();
-        Godot.Collections.Array<Resource> mpRes = GetMeta("TileImage").AsGodotArray<Resource>();
-		Godot.Collections.Array<string> tilesParams = GetMeta("TileParams").AsGodotArray<string>();
-
         //Create array: inputed tiles + 3 other rotated tile
-        tileTemplates = new TilePrefa[tiles.Count*4];
+        tileTemplates = new TilePrefa[DataManager.prefas.Length*4];
 
-        for (int i = 0; i < tiles.Count; i++)
+        for (int i = 0; i < DataManager.prefas.Length; i++)
 		{
             //Original tile
-			string[] par = tilesParams[i].Split(';');
-            tileTemplates[i * 4] = new TilePrefa(tiles[i], mpRes[i].ResourcePath, par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);
-            tileTemplates[i * 4].rotation = 0;
-            tileTemplates[i * 4].transition = int.Parse(par[2]);
-            int conjugateRef = int.Parse(par[3]);
+            tileTemplates[i * 4] = DataManager.prefas[i];
+            /*string[] par = tilesParams[i].Split(';');
+            tileTemplates[i * 4] = new TilePrefa(tiles[i], mpRes[i].ResourcePath, par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);*/
+            /*if (tileTemplates[i * 4].est == "corridor" && tileTemplates[i * 4].west == "corridor" && tileTemplates[i * 4].north == "corridor" && tileTemplates[i * 4].south == "corridor")
+                Debug.Print("X is at pos: " + (i * 4));*/
+            int conjugateRef = tileTemplates[i * 4].conjugate;
             if (conjugateRef * 4 + 2 < i * 4)
             {
                 tileTemplates[conjugateRef * 4 + 2].conjugate = i * 4;
@@ -449,11 +836,11 @@ public partial class TileMeshGeneration : Node3D
         }
 
         //Debug print to visualize data
-        /*for (int i = 0; i < tileTemplates.Length; i++) 
-        {
-            TilePrefa tile = tileTemplates[i];
-            Debug.Print(i + ":\n" + tile.ToString());
-        }*/
+            /*for (int i = 0; i < tileTemplates.Length; i++) 
+            {
+                TilePrefa tile = tileTemplates[i];
+                Debug.Print(i + ":\n" + tile.ToString());
+            }*/
     }
 
     /// <summary>
@@ -494,6 +881,8 @@ public class MapParam
     public int startHeight { get; set; }
     public int sizeX { get; set; }
     public int sizeY { get; set; }
+    public int minRoom { get; set; }
+    public int maxRoom { get; set; }
 }
 
 /// <summary>
@@ -502,6 +891,7 @@ public class MapParam
 public class TilePrefa
 {
 	public PackedScene tile;
+    public PackedScene modelTile;
     public string mapRes;
     public int weight;
     public string name;
@@ -546,6 +936,7 @@ public class TilePrefa
     public TilePrefa(TilePrefa copy)
     {
         this.tile = copy.tile;
+        this.modelTile = copy.modelTile;
         this.mapRes = copy.mapRes;
         this.weight = copy.weight;
         this.name = copy.name;
@@ -579,8 +970,48 @@ public class TilePrefa
         this.west = w;
     }
 
+    
+
     public override string ToString()
     {
         return $"Tile {name}:\n    weight: {weight}\n    rotation: {rotation}\n    transition: {transition}\n    north: {north}\n    south: {south}\n    est: {est}\n    west: {west}\n    Ref to: {conjugate}";
+    }
+
+    public enum RoomType
+    {
+        Inert,
+        Placing
+    }
+}
+
+public class RoomPrefa
+{
+    public RoomType type;
+    public int[,] tileTypes;
+    public PackedScene room;
+    public PackedScene model;
+
+    public RoomPrefa(RoomType _type, int[,] _tileTypes, PackedScene scene, PackedScene _model)
+    {
+        type = _type;
+        tileTypes = _tileTypes;
+        room = scene;
+        model = _model;
+
+    }
+
+    public override string ToString()
+    {
+        string b = "";
+        for (int i = 0; i < tileTypes.GetLength(0); i++)
+        {
+            for (int j = 0; j < tileTypes.GetLength(1); j++)
+            {
+                b += tileTypes[i, j] + ",";
+            }
+            b += '\n';
+        }
+
+        return "Room of type " + type.ToString() + "\n" + b;
     }
 }

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://bolv27at7q66"]
+
+[ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Objects/ResourcePack.cs" id="1_j86a8"]
+[ext_resource type="ArrayMesh" uid="uid://hmv5pxvrg62a" path="res://Ressources/ProceduralGeneration/Objects/ResourcePack/ResourcePack.obj" id="1_riw2x"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wc6ai"]
+size = Vector3(0.6, 0.6, 0.6)
+
+[node name="ResourcePack" type="RigidBody3D"]
+script = ExtResource("1_j86a8")
+
+[node name="ResourcePack" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+mesh = ExtResource("1_riw2x")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+shape = SubResource("BoxShape3D_wc6ai")
