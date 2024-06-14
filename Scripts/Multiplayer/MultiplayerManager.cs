@@ -345,7 +345,7 @@ public partial class MultiplayerManager : Node
         foreach (var sp in GameManager.singleton.tileMapGenerator.spawns)
         {
             Node3D spD = sp.GetNode<Node3D>("Door");
-            spD.Position = new Vector3(spD.Position.X, GameManager.singleton.tileMapGenerator.tileSize * GameManager.singleton.GameData.mapParam.startHeight, spD.Position.Z);
+            spD.Position = new Vector3(0, 0, 1.6f);
         }
     }
 

@@ -885,6 +885,7 @@ public partial class TileMeshGeneration : Node3D
 /// </summary>
 public class MapParam
 {
+    public string seed {  get; set; }
     public int mapHeight {  get; set; }
     public int startHeight { get; set; }
     public int sizeX { get; set; }

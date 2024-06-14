@@ -86,6 +86,7 @@ public partial class GameManager : Node
     {
         mapParam = new MapParam()
         {
+            seed = "",
             mapHeight = 3,
             startHeight = 1,
             sizeX = 10,
@@ -93,6 +94,9 @@ public partial class GameManager : Node
             minRoom = 1,
             maxRoom = 2,
         },
+        GameMode = "",
+        maxScore = 3,
+        totalScore = false,
         nbPlayer = 10,
         spawnDelay = 5,
         beginDelay = 30,
@@ -153,11 +157,6 @@ public partial class GameManager : Node
 
         startingArgs = args;
 
-        //seed = (int)(Time.GetTicksMsec() % int.MaxValue);
-        seed = 816;
-
-        random = new Random(seed);
-
         delayedActions = new List<(ulong, Action)>();
 
         LoadData(args);
@@ -176,10 +175,21 @@ public partial class GameManager : Node
                 catch (JsonException)
                 {
                     File.Delete(paramPath);
-                    Debug.Print("Server parameters file is corrupted. The file as been removed");
+                    Debug.Print("Server parameters file is corrupted. The file has been removed");
                 }
             }
         }
+
+        if (int.TryParse(_gameData.mapParam.seed, out int _seed))
+        {
+            seed = _seed;
+        }
+        else
+        {
+            seed = (int)(Time.GetTicksMsec() % int.MaxValue);
+        }
+
+        random = new Random(seed);
 
         InitMultiplayer(args);
 
@@ -302,7 +312,7 @@ public partial class GameManager : Node
             serverStatus = ServerStatus.Generating;
             if (GameData.GameMode == null || GameData.GameMode == "")
             {
-                gamemode = Gamemode.Gamemodes["ResourceCollection"].Copy();
+                gamemode = Gamemode.Gamemodes[Gamemode.DefaultGamemode].Copy();
             }
             else
             {
@@ -482,6 +492,11 @@ public partial class GameManager : Node
         player.SyncDeathServer(false);
     }
 
+    public void EndRound()
+    {
+
+    }
+
     public void ResetRound()
     {
         multiplayerManager.Rpc("ResetRoundClient");
@@ -502,6 +517,7 @@ public partial class GameManager : Node
     public void RoundStart()
     {
         multiplayerManager.Rpc("StartMatchClient");
+        gamemode.BeginRound();
     }
 
     private void StartMatch()
@@ -518,7 +534,17 @@ public partial class GameManager : Node
     public void RoundWon(int team)
     {
         Debug.Print("Round won by team " + (team + 1));
-        ResetRound();
+        EndRound();
+        delayedActions.Add((Time.GetTicksMsec() + GameData.roundReloadDelay * 1000, () =>
+        {
+            ResetRound();
+        }
+        ));
+        delayedActions.Add((Time.GetTicksMsec() + (GameData.roundReloadDelay + GameData.beginDelay) * 1000, () =>
+        {
+            RoundStart();
+        }
+        ));
     }
 
     public void MatchWon(int team)
@@ -551,7 +577,7 @@ public partial class GameManager : Node
         matchStatus = -2;
         if (GameData.GameMode == null || GameData.GameMode == "")
         {
-            gamemode = Gamemode.Gamemodes["ResourceCollection"].Copy();
+            gamemode = Gamemode.Gamemodes[Gamemode.DefaultGamemode].Copy();
         }
         else
         {
@@ -595,6 +621,11 @@ public struct GameData
     public uint maxScore {  get; set; }
 
     /// <summary>
+    /// Check maxScore with total score of all teams or with individual scores
+    /// </summary>
+    public bool totalScore { get; set; }
+
+    /// <summary>
     /// Number of player for a match
     /// </summary>
     public uint nbPlayer {  get; set; }
@@ -608,6 +639,12 @@ public struct GameData
     /// Delay betwin spawn of player and match start in seconds
     /// </summary>
     public uint beginDelay { get; set; }
+
+    /// <summary>
+    /// Delay before round restart after round end
+    /// </summary>
+
+    public uint roundReloadDelay { get; set; }
 
     /// <summary>
     /// Delay before match restart after game end

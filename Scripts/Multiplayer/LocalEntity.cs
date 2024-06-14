@@ -57,7 +57,10 @@ public abstract partial class LocalEntity : CharacterBody3D
             }
 
             if (Input.IsActionPressed("map"))
+            { 
                 GameManager.singleton.hudManager.miniMap.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
+                GameManager.singleton.hudManager.miniMap.SelectLayer((int)((Position.Y + 3.2f) / 6.4f));
+            }
         }
 
         MoveAndSlide();

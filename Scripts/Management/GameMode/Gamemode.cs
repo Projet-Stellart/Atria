@@ -7,8 +7,12 @@ public abstract class Gamemode
 {
     public static Dictionary<string, Gamemode> Gamemodes = new Dictionary<string, Gamemode>()
     {
-        { "ResourceCollection", new ResourceCollection(1) }
+        { "ResourceCollection500", new ResourceCollection(1) },
+        { "ResourceCollection750", new ResourceCollection(750) },
+        { "ResourceCollection1000", new ResourceCollection(1000) }
     };
+
+    public const string DefaultGamemode = "ResourceCollection500";
 
     public Gamemode() {}
 
@@ -20,6 +24,8 @@ public abstract class Gamemode
     public abstract void Init(int nbTeam, int maxScore, Action<int> roundWon, Action<int> matchWon);
 
     public abstract void BeginMatch();
+
+    public abstract void BeginRound();
 
     public abstract void PlayerDeath(LocalEntity player, LocalEntity other, DeathCause cause);
 

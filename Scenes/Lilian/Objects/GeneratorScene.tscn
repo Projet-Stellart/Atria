@@ -71,12 +71,25 @@ layout_mode = 2
 
 [node name="RichTextLabel2" type="RichTextLabel" parent="Screen/ScreenMenu/Control/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/normal_font_size = 25
 bbcode_enabled = true
 text = "[center]Resources stored:[center]"
 fit_content = true
 
 [node name="Res" type="RichTextLabel" parent="Screen/ScreenMenu/Control/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/normal_font_size = 40
 bbcode_enabled = true
 text = "[center]0/100[center]"
+fit_content = true
+
+[node name="ProgressBar" type="ProgressBar" parent="Screen/ScreenMenu/Control/VBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+max_value = 1.0
+
+[node name="Click" type="RichTextLabel" parent="Screen/ScreenMenu/Control/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Maintain click here to extract resources[center]"
 fit_content = true

@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Scripts/Management/GameManager.cs" id="1_tuo0n"]
 [ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_73q1c"]
 [ext_resource type="Script" path="res://Scripts/UI/HudManager.cs" id="3_emm8j"]
-[ext_resource type="PackedScene" uid="uid://dqxls3fq7a0h2" path="res://Scenes/Guillaume/GameUI.tscn" id="4_e5e70"]
+[ext_resource type="PackedScene" path="res://Scenes/Guillaume/GameUI.tscn" id="4_1cnfb"]
 [ext_resource type="Script" path="res://Scripts/Multiplayer/MultiplayerManager.cs" id="4_r3f7e"]
 
 [sub_resource type="Environment" id="Environment_mntmn"]
@@ -23,7 +23,7 @@ script = ExtResource("1_tuo0n")
 visible = false
 script = ExtResource("3_emm8j")
 
-[node name="Data_OSD" parent="HUD" instance=ExtResource("4_e5e70")]
+[node name="Data_OSD" parent="HUD" instance=ExtResource("4_1cnfb")]
 
 [node name="MiniMap" type="MarginContainer" parent="HUD"]
 anchors_preset = -1

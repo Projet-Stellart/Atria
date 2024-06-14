@@ -26,7 +26,7 @@ public partial class Generator : Node3D
     {
         OnRefreshRes = new List<Action<Generator>>();
         OnResCollected = new List<Action<Generator>>();
-        Init(75, 0.5f);
+        Init(200, 2f);
         if (GameManager.singleton.gamemode is ResourceCollection rc)
             collectingAction = rc.CollectResources;
         GetNode<GeneratorScreen>("GeneratorMonitor/GeneratorScreen/Screen").Init(this);
@@ -56,6 +56,17 @@ public partial class Generator : Node3D
         Resources = 0f;
         WorkSpeed = workspeed;
         Capacity = capacity;
+        if (GameManager.singleton.gamemode is ResourceCollection wa)
+        {
+            wa.Generators.Add(this);
+        }
+    }
+
+    public void Reset()
+    {
+        Resources = 0f;
+        RefreshRes();
+        SyncResServer();
     }
 
     public void Work(float delta)

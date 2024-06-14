@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atria.Scripts.ProceduralGeneration.Objects;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -6,6 +7,8 @@ namespace Atria.Scripts.Management.GameMode;
 
 public class ResourceCollection : Gamemode
 {
+    public List<Generator> Generators;
+
     public int[] teamsRes;
     public int MaxRes { get; }
     public int MaxScore { get; private set; }
@@ -22,6 +25,7 @@ public class ResourceCollection : Gamemode
 
     public override void Init(int nbTeam, int maxScore, Action<int> roundWon, Action<int> matchWon)
     {
+        Generators = new List<Generator>();
         teamsRes = new int[nbTeam];
         teamScore = new int[nbTeam];
         MaxScore = maxScore;
@@ -44,6 +48,13 @@ public class ResourceCollection : Gamemode
         {
             playerRes.Add(peer, 0);
         }
+        ResetGen();
+    }
+
+    public override void BeginRound()
+    {
+        MatchStarted = true;
+        ResetGen();
     }
 
     public override void PlayerDeath(LocalEntity player, LocalEntity other, DeathCause cause)
@@ -81,8 +92,21 @@ public class ResourceCollection : Gamemode
         if (!MatchStarted)
             return;
         teamScore[winner]++;
+
+        int tScore = 0;
+        if (GameManager.singleton.GameData.totalScore)
+        {
+            foreach (var teamS in teamScore)
+            {
+                tScore += teamS;
+            }
+        }
+        else
+        {
+            tScore = teamScore[winner];
+        }
         
-        if (teamScore[winner] >= MaxScore)
+        if (tScore >= MaxScore)
         {
             Debug.Print($"[GameMode]: Match won by team {winner}");
             MatchWon.Invoke(winner);
@@ -91,6 +115,29 @@ public class ResourceCollection : Gamemode
         {
             Debug.Print($"[GameMode]: Round won by team {winner}");
             RoundWon.Invoke(winner);
+            ResetGen();
+            ResetRes();
+        }
+    }
+
+    private void ResetRes()
+    {
+        for(int i = 0; i < teamsRes.Length; i++)
+        {
+            teamsRes[i] = 0;
+        }
+
+        foreach (long pUid in playerRes.Keys)
+        {
+            playerRes[pUid] = 0;
+        }
+    }
+
+    private void ResetGen()
+    {
+        foreach (Generator gen in Generators)
+        {
+            gen.Reset();
         }
     }
 }
