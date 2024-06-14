@@ -76,5 +76,6 @@ public partial class Lobby_Script : CanvasLayer
 		else progress.Text = "";
 	}
 
+	
 
 }
