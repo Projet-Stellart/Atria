@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 public partial class UI_Script : CanvasLayer
@@ -21,6 +22,23 @@ public partial class UI_Script : CanvasLayer
         // SetFullScreenIndicator();
         // SetResolutionIndicator();
         GetGitHubDataAsync();
+	}
+
+	public override void _Process(double delta)
+	{
+		if (Input.IsActionJustPressed("exit"))
+        {
+			if (GetNode<Control>("Play").IsVisibleInTree()) _on_exit_pressed_play();
+			if (GetNode<Control>("Credits").IsVisibleInTree()) _on_exit_pressed_credits();
+			if (GetNode<Control>("Options").IsVisibleInTree()) _on_exit_pressed_options();
+			if (GetNode<Control>("Controls").IsVisibleInTree()) _on_exit_pressed_controls();
+			if (GetNode<Control>("Sound").IsVisibleInTree()) _on_exit_pressed_sound();
+			if (GetNode<Control>("Graphics").IsVisibleInTree()) _on_exit_pressed_graphics();
+			if (GetNode<Control>("Custom").IsVisibleInTree()) _on_exit_pressed_custom();
+			if (GetNode<Control>("Online").IsVisibleInTree()) _on_exit_pressed_online();
+			if (GetNode<Control>("MatchMaker").IsVisibleInTree()) _on_exit_pressed_mm();
+			if (GetNode<Control>("Keybinding").IsVisibleInTree()) _on_exit_pressed_kb();
+        }
 	}
 
 	private void _on_quit_pressed()
@@ -75,6 +93,15 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
+	private void _on_exit_pressed_kb()
+	{
+		var kb = GetNode<Control>("Keybinding");
+		var controls = GetNode<Control>("Controls");
+		kb.Visible = false;
+		controls.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+	}
+
 	private void _on_exit_pressed_graphics()
 	{
 		var graphics = GetNode<Control>("Graphics");
@@ -84,7 +111,7 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
-	private void _on_exit_pressed()
+	private void _on_exit_pressed_sound()
 	{
 		var sound = GetNode<Control>("Sound");
 		var options = GetNode<Control>("Options");
@@ -204,12 +231,11 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_match_maker_ip_text_changed()
 	{
-		var ok = GetNode<Button>("MatchMaker/MarginContainer3/VBoxContainer/OK");
+		var ok = GetNode<TextureButton>("MatchMaker/Ok");
 		ok.Disabled = false;
 		string ip = GetNode<TextEdit>("MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP").Text;
 		foreach (char c in ip)
 		{
-		
 			if (!is_authorized_char(c))
 			{
 				ok.Disabled = true;
@@ -278,7 +304,7 @@ public partial class UI_Script : CanvasLayer
 		mm.Visible = true;
 		options.Visible = false;
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
-		var ok = GetNode<Button>("MatchMaker/MarginContainer3/VBoxContainer/OK");
+		var ok = GetNode<TextureButton>("MatchMaker/Ok");
 		ok.Disabled = true;
 	}
 
@@ -291,12 +317,21 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
+	private void _on_keyboard_settings_2_pressed()
+	{
+		var control = GetNode<Control>("Controls");
+		var kb = GetNode<Control>("Keybinding");
+		control.Visible = false;
+		kb.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+	}
+
 	[Export] private OptionButton ResolutionOptionButton;
     [Export] private OptionButton FullscreenOptionButton;
 
 	string[] Resolutions = new string[]
 	{
-		"1920x1080", "1280x720", "800x600"
+		"1920x1080", "1280x720",
 	};
 
 	private int resolutionIndex;
@@ -368,7 +403,8 @@ public partial class UI_Script : CanvasLayer
 			response.EnsureSuccessStatusCode();
 			string responseBody = await response.Content.ReadAsStringAsync();
 			Release release = JsonSerializer.Deserialize<Release>(responseBody);
-			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel").Text = "[center]Release:\n\n\n\n\n" + release.name;			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel2").Text = "[center]Description:\n\n\n\n\n" + release.body;
+			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel").Text = "[center]Release Name:\n\n\n" + release.name;			
+			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel2").Text = "[center]Description:\n\n\n" + release.body;
 		}
 		catch (HttpRequestException e)
 		{

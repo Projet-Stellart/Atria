@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cthdwsw2b1hp6"]
+[gd_scene load_steps=10 format=3 uid="uid://cthdwsw2b1hp6"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
 [ext_resource type="AudioStream" uid="uid://csf76jfs71xhc" path="res://Ressources/UI/Click.mp3" id="3_46j4r"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="5_obcn5"]
 [ext_resource type="Texture2D" uid="uid://dgxynxnhxc4of" path="res://Ressources/UI/Button_CLicked.png" id="7_tekix"]
 [ext_resource type="Texture2D" uid="uid://bxkcfq3dhpm75" path="res://Ressources/UI/Button_Moused.png" id="8_gcfsc"]
+[ext_resource type="PackedScene" uid="uid://d4eh271trcsje" path="res://Scenes/Guillaume/Keybindings.tscn" id="8_yv05f"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_42bj2"]
 load_path = "res://.godot/imported/Fond1.jpeg-bca3c69e3ab3bf907eddae77f371710f.ctex"
@@ -31,7 +32,17 @@ grow_vertical = 2
 texture = SubResource("CompressedTexture2D_42bj2")
 expand_mode = 1
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Main" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect2" type="ColorRect" parent="Main"]
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.0195313
 anchor_top = 0.756944
@@ -39,7 +50,7 @@ anchor_right = 0.136719
 anchor_bottom = 0.965278
 metadata/_edit_use_anchors_ = true
 
-[node name="ColorRect" type="TextureRect" parent="ColorRect"]
+[node name="ColorRect" type="TextureRect" parent="Main/ColorRect2"]
 layout_mode = 0
 anchor_left = 0.0666667
 anchor_top = 0.0666667
@@ -48,14 +59,6 @@ anchor_bottom = 0.933333
 texture = ExtResource("4_plkpr")
 expand_mode = 2
 metadata/_edit_use_anchors_ = true
-
-[node name="Main" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="Play" type="TextureButton" parent="Main"]
 custom_minimum_size = Vector2(0, 50)
@@ -182,31 +185,40 @@ bbcode_enabled = true
 text = "[center]Options"
 metadata/_edit_use_anchors_ = true
 
-[node name="ColorRect" type="ColorRect" parent="Main"]
+[node name="ColorRect" type="TextureRect" parent="Main"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.679688
 anchor_top = 0.0694444
 anchor_right = 0.960938
 anchor_bottom = 0.736111
-color = Color(1, 1, 1, 0.784314)
+texture = ExtResource("5_obcn5")
+expand_mode = 5
+stretch_mode = 6
+flip_v = true
 metadata/_edit_use_anchors_ = true
 
 [node name="MarginContainer" type="MarginContainer" parent="Main/ColorRect"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.138889
-anchor_top = 0.104167
+anchor_top = 0.1875
 anchor_right = 0.861111
-anchor_bottom = 0.895833
+anchor_bottom = 0.854167
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/ColorRect/MarginContainer"]
 layout_mode = 2
+alignment = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
@@ -240,6 +252,7 @@ metadata/_edit_use_anchors_ = true
 layout_mode = 2
 
 [node name="Mouse Settings2" type="TextureButton" parent="Controls/MarginContainer/VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
@@ -461,13 +474,12 @@ text = "Resolution: "
 [node name="Resolution" type="OptionButton" parent="Graphics/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-item_count = 3
+item_count = 2
+selected = 0
 popup/item_0/text = "1920x1080"
 popup/item_0/id = 0
 popup/item_1/text = "1280x720"
 popup/item_1/id = 1
-popup/item_2/text = "800x600"
-popup/item_2/id = 2
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Graphics/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -481,6 +493,7 @@ text = "Window Mode: "
 layout_mode = 2
 size_flags_horizontal = 3
 item_count = 3
+selected = 0
 popup/item_0/text = "Exclusive Fullscreen"
 popup/item_0/id = 4
 popup/item_1/text = "Borderless Fullscreen"
@@ -1199,11 +1212,68 @@ bbcode_enabled = true
 text = "[center]Join"
 metadata/_edit_use_anchors_ = true
 
+[node name="Keybinding" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Exit" type="TextureButton" parent="Keybinding"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="RichTextLabel" parent="Keybinding/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Keybinding"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.078125
+anchor_top = 0.138889
+anchor_right = 0.921875
+anchor_bottom = 0.861111
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" parent="Keybinding/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="Keybinding/VBoxContainer"]
+layout_mode = 2
+
 [connection signal="finished" from="SonFond" to="." method="_on_son_fond_finished"]
 [connection signal="pressed" from="Main/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="Main/Quit" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="Main/Credits" to="." method="_on_credits_pressed"]
 [connection signal="pressed" from="Main/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="Controls/MarginContainer/VBoxContainer/Keyboard Settings2" to="." method="_on_keyboard_settings_2_pressed"]
 [connection signal="pressed" from="Controls/Exit" to="." method="_on_exit_pressed_controls"]
 [connection signal="pressed" from="Credits/Exit" to="." method="_on_exit_pressed_credits"]
 [connection signal="item_selected" from="Graphics/MarginContainer/VBoxContainer/HBoxContainer/Resolution" to="." method="_on_option_button_item_selected"]
@@ -1212,7 +1282,7 @@ metadata/_edit_use_anchors_ = true
 [connection signal="pressed" from="Graphics/Ok" to="." method="_on_ok_pressed_graphics"]
 [connection signal="value_changed" from="Sound/MarginContainer5/VBoxContainer/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="pressed" from="Sound/MarginContainer3/VBoxContainer/CheckButton" to="." method="_on_check_button_pressed"]
-[connection signal="pressed" from="Sound/Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="Sound/Exit" to="." method="_on_exit_pressed_sound"]
 [connection signal="text_changed" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_changed"]
 [connection signal="pressed" from="Play/Exit" to="." method="_on_exit_pressed_play"]
 [connection signal="pressed" from="Play/Custom" to="." method="_on_online_pressed"]
@@ -1228,3 +1298,4 @@ metadata/_edit_use_anchors_ = true
 [connection signal="pressed" from="Online/Exit" to="." method="_on_exit_pressed_online"]
 [connection signal="pressed" from="Custom/Exit" to="." method="_on_exit_pressed_custom"]
 [connection signal="pressed" from="Custom/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Keybinding/Exit" to="." method="_on_exit_pressed_kb"]
