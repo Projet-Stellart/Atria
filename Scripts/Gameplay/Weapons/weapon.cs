@@ -4,7 +4,7 @@ using Godot;
 public abstract partial class Weapon : Node3D
 {   
     public abstract WeaponInfo info {get; protected set;}
-    public AnimationLibrary animations {get; protected set;}
+    public AnimationPlayer animator {get; protected set;}
     public abstract bool canAimFire {get;}
     public abstract bool drop {get; set;}
     public abstract int damage {get; protected set;}
@@ -18,6 +18,7 @@ public abstract partial class Weapon : Node3D
     public abstract void Inspect();
     public abstract void StopAnimations();
     public abstract void CalculateFire(player Player);
+    public abstract NodePath[] GetHandsPlacements();
 }
 
 public enum WeaponClass {

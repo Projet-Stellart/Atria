@@ -90,6 +90,7 @@ public partial class vortex : player
         //Properties
         forceField.Parent = this;
         base.InitPlayer();
+        atria = true;
     }
 
     public override bool canUpdateModule(KeyState fire, KeyState altfire, KeyState rotate, KeyState module)

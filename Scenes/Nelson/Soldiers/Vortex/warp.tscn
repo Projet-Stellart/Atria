@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Gameplay/Soldiers/Vortex/warp.cs" id="1_m3a4e"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_gdykd"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_jmrat"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ya6tb"]
 transparency = 3
@@ -76,11 +76,12 @@ _data = {
 }
 
 [node name="Warp" type="Area3D"]
+collision_mask = 4
 script = ExtResource("1_m3a4e")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
-shape = SubResource("SphereShape3D_gdykd")
+shape = SubResource("SphereShape3D_jmrat")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)

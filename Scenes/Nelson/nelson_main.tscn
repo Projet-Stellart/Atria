@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://d1uylk5l0echa" path="res://Scenes/Nelson/Testing/enemy.tscn" id="3_svfx5"]
 [ext_resource type="PackedScene" uid="uid://8robqvb6ylgx" path="res://Scenes/Nelson/Testing/block.tscn" id="4_3r4oh"]
 [ext_resource type="Texture2D" uid="uid://dtblxc1u6ps60" path="res://Ressources/GamePlay/Textures/quadrillage.png" id="4_7tast"]
-[ext_resource type="PackedScene" uid="uid://ca6nfi0ihyd2b" path="res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" id="5_k3467"]
+[ext_resource type="PackedScene" uid="uid://di6enmgq6dgk1" path="res://Scenes/Nelson/Soldiers/Zenith/zenith.tscn" id="5_st3mc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_us7bf"]
 
@@ -161,8 +161,8 @@ shape = SubResource("BoxShape3D_a8hbi")
 transform = Transform3D(1, 0, 2.98023e-08, -3.72529e-09, 1, 0, -1.49012e-08, 2.98023e-08, 1, 0, 0, 0)
 mesh = SubResource("BoxMesh_7f0v6")
 
-[node name="Vortex" parent="." instance=ExtResource("5_k3467")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.93936, 0)
+[node name="Zenith" parent="." instance=ExtResource("5_st3mc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.16914, 0)
 
 [connection signal="body_entered" from="Death Region" to="." method="_on_death_region_body_entered"]
 

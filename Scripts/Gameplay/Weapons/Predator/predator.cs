@@ -26,19 +26,34 @@ public partial class predator : WeaponAmo
     public override bool canAimFire {get;} = false;
 
     Camera3D camera;
-    Node3D position;
+    Node3D savePosition;
+    Node3D[] HandsPlacement;
 
     public override void _Ready()
     {
-        camera = GetNode<Camera3D>("Skeleton3D/BoneAttachment3D2/SubViewport/Camera3D");
-        position = GetNode<Node3D>("Skeleton3D/BoneAttachment3D2/Position");
+        camera = GetNode<Camera3D>("Skeleton3D/MainGripAttachment/SubViewport/Camera3D");
+        savePosition = GetNode<Node3D>("Skeleton3D/MainGripAttachment/SaveCameraPos");
+        animator = GetNode<AnimationPlayer>("Animations");
+        HandsPlacement = new Node3D[] {
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/FirstHand"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/FirstHand/Finger0"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/FirstHand/Finger1"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/FirstHand/Finger2"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/FirstHand/Finger3"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/FirstHand/Finger4"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/SecondHand"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/SecondHand/Finger0"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/SecondHand/Finger1"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/SecondHand/Finger2"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/SecondHand/Finger3"),
+            GetNode<Node3D>("Skeleton3D/MainGripAttachment/SecondHand/Finger4")
+        };
 
-        GetNode<MeshInstance3D>("Skeleton3D/BoneAttachment3D/Scope").SetSurfaceOverrideMaterial(0, new StandardMaterial3D(){
+        GetNode<MeshInstance3D>("Skeleton3D/ScopeAttachment/Scope").SetSurfaceOverrideMaterial(0, new StandardMaterial3D(){
             ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
-            AlbedoTexture = GetNode<SubViewport>("Skeleton3D/BoneAttachment3D2/SubViewport").GetTexture()
+            AlbedoTexture = GetNode<SubViewport>("Skeleton3D/MainGripAttachment/SubViewport").GetTexture()
         });
 
-        animations = (AnimationLibrary)GD.Load("res://Ressources/GamePlay/Animation/predator_normal.tres");
         stream1 = GetNode<AudioStreamPlayer3D>("GunSound1");
         reloadStream = GetNode<AudioStreamPlayer3D>("ReloadSound");
         inspectStream = GetNode<AudioStreamPlayer>("InspectSound");
@@ -51,7 +66,7 @@ public partial class predator : WeaponAmo
 
     public override void _Process(double delta)
     {
-        camera.GlobalTransform = position.GlobalTransform;
+        camera.GlobalTransform = savePosition.GlobalTransform;
     }
 
     public override void Fire() {
@@ -103,5 +118,13 @@ public partial class predator : WeaponAmo
     public override void StopAnimations()
     {
         
+    }
+
+    public override NodePath[] GetHandsPlacements() {
+        var res = new NodePath[12];
+        for (int i = 0; i < 12 ;i++) {
+            res[i] = HandsPlacement[i].GetPath();
+        }
+        return res;
     }
 }

@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://d665uokxdhaj"]
+
+[ext_resource type="ArrayMesh" uid="uid://bqoiebjvlf14v" path="res://Scenes/Nelson/Weapons/Predator/predator_drop.mesh" id="1_b3nvi"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tsijp"]
+size = Vector3(0.2, 0.415, 1.855)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wq548"]
+size = Vector3(0.2, 0.53, 0.91)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3s2qg"]
+size = Vector3(0.225, 0.4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_f3050"]
+size = Vector3(0.2, 0.745, 1.94)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1ubjh"]
+size = Vector3(0.2, 0.53, 0.91)
+
+[node name="Predator" type="RigidBody3D"]
+
+[node name="scifi_gun" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, -8.74228e-09, -0.2, 0, 0.2, -8.74228e-09, 0, 0, 0)
+mesh = ExtResource("1_b3nvi")
+skeleton = NodePath("")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0409129, 0.869338, -0.968956)
+shape = SubResource("BoxShape3D_tsijp")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0533503, 0.403768, 0.703039)
+shape = SubResource("BoxShape3D_wq548")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0533503, 1.21638, 0.239026)
+shape = SubResource("BoxShape3D_3s2qg")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0533503, 0.778653, 0.694612)
+shape = SubResource("BoxShape3D_f3050")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0533503, 0.656726, -0.199418)
+shape = SubResource("BoxShape3D_1ubjh")

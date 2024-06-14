@@ -215,6 +215,7 @@ _data = {
 }
 
 [node name="pulsar_projectile" type="RigidBody3D"]
+collision_layer = 4
 input_ray_pickable = false
 physics_material_override = SubResource("PhysicsMaterial_r036k")
 continuous_cd = true
@@ -232,6 +233,7 @@ mesh = SubResource("CapsuleMesh_wxd04")
 
 [node name="pulse" type="Area3D" parent="."]
 visible = false
+collision_mask = 4
 
 [node name="damage" type="CollisionShape3D" parent="pulse"]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)

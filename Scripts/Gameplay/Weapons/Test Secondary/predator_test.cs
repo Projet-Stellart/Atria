@@ -26,7 +26,6 @@ public partial class predator_test : WeaponAmo
 
     public override void _Ready()
     {
-        animations = (AnimationLibrary)GD.Load("res://Ressources/GamePlay/Animation/predator_secondary.tres");
         stream1 = GetNode<AudioStreamPlayer3D>("GunSound1");
         reloadStream = GetNode<AudioStreamPlayer3D>("ReloadSound");
         inspectStream = GetNode<AudioStreamPlayer>("InspectSound");
@@ -86,5 +85,9 @@ public partial class predator_test : WeaponAmo
     public override void StopAnimations()
     {
         
+    }
+
+    public override NodePath[] GetHandsPlacements() {
+        return new NodePath[]{};
     }
 }

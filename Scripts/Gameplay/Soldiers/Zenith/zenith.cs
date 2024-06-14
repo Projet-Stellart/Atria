@@ -67,7 +67,7 @@ public partial class zenith : player
 	public override void _ActivateModule(FocusState module) {
         EnergyBar = 400;
         if (module == FocusState.MediumModule) {
-            if (EnergyBar >= soldier.HighModule.EnergyRequired)
+            if (EnergyBar >= soldier.MediumModule.EnergyRequired)
                 FocusState = FocusState.MediumModule;
         } else if (module == FocusState.HighModule) {
             if (EnergyBar >= soldier.HighModule.EnergyRequired)
