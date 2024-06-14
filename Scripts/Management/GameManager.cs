@@ -97,7 +97,10 @@ public partial class GameManager : Node
         spawnDelay = 5,
         beginDelay = 30,
         emptyReloadDelay = 10,
-        port = 7308
+        port = 7308,
+        publicServer = false,
+        publicAddress = "",
+        matchMaker = "127.0.0.1:12345"
     };
 
     public GameData GameData { get => _gameData; private set => _gameData = value; }
@@ -621,10 +624,19 @@ public struct GameData
     /// </summary>
     public uint port {  get; set; }
 
+    /// <summary>
+    /// Is created server public
+    /// </summary>
     public bool publicServer { get; set; }
 
+    /// <summary>
+    /// The address of the server
+    /// </summary>
     public string publicAddress { get; set; }
 
+    /// <summary>
+    /// Address of the match maker
+    /// </summary>
     public string matchMaker { get; set; }
 }
 
