@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dqxls3fq7a0h2"]
+[gd_scene load_steps=7 format=3 uid="uid://dqxls3fq7a0h2"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/HealthBar.cs" id="1_6lp28"]
+[ext_resource type="Script" path="res://Scripts/Guillaume/HUD.cs" id="1_xuyj6"]
 [ext_resource type="Script" path="res://Scripts/Guillaume/Bullets.cs" id="2_6g4bk"]
 [ext_resource type="Script" path="res://Scripts/Guillaume/EnergyBar.cs" id="3_pk823"]
 [ext_resource type="Script" path="res://Scripts/Guillaume/Info.cs" id="4_nyepe"]
+[ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="6_6j3vc"]
 
 [node name="Data_OSD" type="Control"]
 layout_mode = 3
@@ -12,6 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_xuyj6")
 
 [node name="Health" type="Control" parent="."]
 layout_mode = 1
@@ -215,54 +218,53 @@ color = Color(0.247059, 0, 1, 1)
 
 [node name="Info" type="Control" parent="."]
 layout_mode = 1
-anchor_left = 0.484375
-anchor_top = 0.0555556
-anchor_right = 0.546875
-anchor_bottom = 0.111111
+anchor_left = 0.34375
+anchor_top = 0.0347222
+anchor_right = 0.65625
+anchor_bottom = 0.104167
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("4_nyepe")
 metadata/_edit_use_anchors_ = true
 
-[node name="ColorRect" type="ColorRect" parent="Info"]
+[node name="TextEdit" type="RichTextLabel" parent="Info"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="HB_BG" type="Control" parent="Info"]
-clip_contents = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = 5.0
-offset_right = -5.0
-offset_bottom = -5.0
-grow_horizontal = 2
-grow_vertical = 2
-metadata/_edit_use_anchors_ = true
-
-[node name="ColorRect" type="ColorRect" parent="Info/HB_BG"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.45098, 0.45098, 0.45098, 1)
-
-[node name="TextEdit" type="RichTextLabel" parent="Info/HB_BG/ColorRect"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/normal_font_size = 20
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/normal_font_size = 27
 bbcode_enabled = true
 text = "[center]Infos"
 metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -150.0
+offset_right = 400.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_6j3vc")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="TextureRect"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 70
+bbcode_enabled = true
+text = "[center]WON"

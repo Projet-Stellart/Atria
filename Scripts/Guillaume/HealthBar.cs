@@ -29,4 +29,10 @@ public partial class HealthBar : Control
 			healthRect.Color = new Color(255, 255, 0);
 		}
 	}
+
+	public override void _Ready()
+	{
+		var healthRect = GetNode<Control>("HB_BG/ColorRect/HB/ColorRect");
+		healthRect.Position = new Vector2(0, 0);
+	}
 }

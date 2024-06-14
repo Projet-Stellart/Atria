@@ -1,6 +1,12 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 public partial class UI_Script : CanvasLayer
 
@@ -13,6 +19,34 @@ public partial class UI_Script : CanvasLayer
 	public override void _Ready()
 	{
 		GetNode<AudioStreamPlayer>("SonFond").Play();
+        SetFullScreenIndicator();
+        SetResolutionIndicator();
+        GetGitHubDataAsync();
+		LoadSettings();
+	}
+
+	private void LoadSettings()
+	{
+		var data = SaveManager.LoadSettings();
+		GetNode<CheckButton>("Sound/MarginContainer3/VBoxContainer/CheckButton").ButtonPressed = !data.mute;
+		GetNode<HSlider>("Sound/MarginContainer5/VBoxContainer/HSlider").Value = data.soundLevel;
+	}
+
+	public override void _Process(double delta)
+	{
+		if (Input.IsActionJustPressed("exit"))
+        {
+			if (GetNode<Control>("Play").IsVisibleInTree()) _on_exit_pressed_play();
+			if (GetNode<Control>("Credits").IsVisibleInTree()) _on_exit_pressed_credits();
+			if (GetNode<Control>("Options").IsVisibleInTree()) _on_exit_pressed_options();
+			if (GetNode<Control>("Controls").IsVisibleInTree()) _on_exit_pressed_controls();
+			if (GetNode<Control>("Sound").IsVisibleInTree()) _on_exit_pressed_sound();
+			if (GetNode<Control>("Graphics").IsVisibleInTree()) _on_exit_pressed_graphics();
+			if (GetNode<Control>("Custom").IsVisibleInTree()) _on_exit_pressed_custom();
+			if (GetNode<Control>("Online").IsVisibleInTree()) _on_exit_pressed_online();
+			if (GetNode<Control>("MatchMaker").IsVisibleInTree()) _on_exit_pressed_mm();
+			if (GetNode<Control>("Keybinding").IsVisibleInTree()) _on_exit_pressed_kb();
+        }
 	}
 
 	private void _on_quit_pressed()
@@ -67,6 +101,15 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
+	private void _on_exit_pressed_kb()
+	{
+		var kb = GetNode<Control>("Keybinding");
+		var controls = GetNode<Control>("Controls");
+		kb.Visible = false;
+		controls.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+	}
+
 	private void _on_exit_pressed_graphics()
 	{
 		var graphics = GetNode<Control>("Graphics");
@@ -76,7 +119,7 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
-	private void _on_exit_pressed()
+	private void _on_exit_pressed_sound()
 	{
 		var sound = GetNode<Control>("Sound");
 		var options = GetNode<Control>("Options");
@@ -182,8 +225,8 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_username_input_text_changed()
 	{
-		var custom = GetNode<Button>("Play/MarginContainer5/VBoxContainer/Custom");
-		var online = GetNode<Button>("Play/MarginContainer4/VBoxContainer/Online");
+		var custom = GetNode<TextureButton>("Play/Custom");
+		var online = GetNode<TextureButton>("Play/Online");
 		custom.Disabled = false;
 		online.Disabled = false;
 		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
@@ -196,12 +239,11 @@ public partial class UI_Script : CanvasLayer
 
 	private void _on_match_maker_ip_text_changed()
 	{
-		var ok = GetNode<Button>("MatchMaker/MarginContainer3/VBoxContainer/OK");
+		var ok = GetNode<TextureButton>("MatchMaker/Ok");
 		ok.Disabled = false;
 		string ip = GetNode<TextEdit>("MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP").Text;
 		foreach (char c in ip)
 		{
-		
 			if (!is_authorized_char(c))
 			{
 				ok.Disabled = true;
@@ -270,7 +312,7 @@ public partial class UI_Script : CanvasLayer
 		mm.Visible = true;
 		options.Visible = false;
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
-		var ok = GetNode<Button>("MatchMaker/MarginContainer3/VBoxContainer/OK");
+		var ok = GetNode<TextureButton>("MatchMaker/Ok");
 		ok.Disabled = true;
 	}
 
@@ -283,4 +325,160 @@ public partial class UI_Script : CanvasLayer
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
+	private void _on_keyboard_settings_2_pressed()
+	{
+		var control = GetNode<Control>("Controls");
+		var kb = GetNode<Control>("Keybinding");
+		control.Visible = false;
+		kb.Visible = true;
+		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+	}
+
+	[Export] private OptionButton ResolutionOptionButton;
+    [Export] private OptionButton FullscreenOptionButton;
+
+	string[] Resolutions = new string[]
+	{
+		"1920x1080", "1280x720",
+	};
+
+	private int resolutionIndex;
+
+	private void _on_option_button_item_selected(int ind)
+	{
+		resolutionIndex = ind;
+	}
+
+	int[] Modes = new int[]
+    {
+        4, 3, 0
+	};
+
+	private int index;
+
+    private void _on_window_mode_item_selected(int ind)
+    {
+		index = ind;
+    }
+
+	private void _on_ok_pressed_graphics()
+	{
+		GetWindow().Mode = (Window.ModeEnum)Modes[index];
+		string selectedResolution = Resolutions[resolutionIndex];
+    	string[] parts = selectedResolution.Split('x');
+		int.TryParse(parts[0], out int width);
+		int.TryParse(parts[1], out int height);
+		DisplayServer.WindowSetSize(new Vector2I(width, height));
+	}
+
+	private void SetResolutionIndicator()
+	{
+		Vector2I currentResolution = DisplayServer.WindowGetSize();
+        string currentResolutionString = $"{currentResolution.X}x{currentResolution.Y}";
+        for (int i = 0; i < Resolutions.Length; i++)
+        {
+            if (Resolutions[i] == currentResolutionString)
+            {
+                resolutionIndex = i;
+                break;
+            }
+        }
+        ResolutionOptionButton.Select(resolutionIndex);
+	}
+
+	private void SetFullScreenIndicator()
+	{
+		int currentMode = (int)GetWindow().Mode;
+        for (int i = 0; i < Modes.Length; i++)
+        {
+            if (Modes[i] == currentMode)
+            {
+                index = i;
+                break;
+            }
+        }
+        FullscreenOptionButton.Select(index);
+	}
+
+	static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+
+	private async Task GetGitHubDataAsync()
+	{		
+		try
+		{
+			client.DefaultRequestHeaders.Add("User-Agent", "Atria News API");
+			using HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/Projet-Stellart/Atria/releases/latest");
+			response.EnsureSuccessStatusCode();
+			string responseBody = await response.Content.ReadAsStringAsync();
+			Release release = JsonSerializer.Deserialize<Release>(responseBody);
+			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel").Text = "[center]Release Name:\n\n\n" + release.name;			
+			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel2").Text = "[center]Description:\n\n\n" + release.body;
+		}
+		catch (HttpRequestException e)
+		{
+			Debug.Print(e.Message);
+		}
+	}
+
+}
+
+public class Release
+{
+	public string url { get; set; }
+	public string assets_url { get; set; }
+	public string upload_url { get; set; }
+	public string html_url { get; set; }
+	public long id { get; set; }
+	public author author { get; set; }
+	public string node_id { get; set; }
+	public string tag_name { get; set; }
+	public string target_commitish { get; set; }
+	public string name { get; set; }
+	public bool draft { get; set; }
+	public bool prerelease { get; set; }
+	public DateTime created_at { get; set; }
+	public DateTime published_at { get; set; }
+	public List<asset> assets { get; set; }
+	public string tarball_url { get; set; }
+	public string zipball_url { get; set; }
+	public string body { get; set; }
+}
+
+public class author
+{
+    public string login { get; set; }
+    public long id { get; set; }
+    public string node_id { get; set; }
+    public string avatar_url { get; set; }
+    public string gravatar_id { get; set; }
+    public string url { get; set; }
+    public string html_url { get; set; }
+    public string followers_url { get; set; }
+    public string following_url { get; set; }
+    public string gists_url { get; set; }
+    public string starred_url { get; set; }
+    public string subscriptions_url { get; set; }
+    public string organizations_url { get; set; }
+    public string repos_url { get; set; }
+    public string events_url { get; set; }
+    public string received_events_url { get; set; }
+    public string type { get; set; }
+    public bool site_admin { get; set; }
+}
+
+public class asset
+{
+    public string url { get; set; }
+    public long id { get; set; }
+    public string node_id { get; set; }
+    public string name { get; set; }
+    public string label { get; set; }
+    public author uploader { get; set; }
+    public string content_type { get; set; }
+    public string state { get; set; }
+    public long size { get; set; }
+    public int download_count { get; set; }
+    public DateTime created_at { get; set; }
+    public DateTime updated_at { get; set; }
+    public string browser_download_url { get; set; }
 }
