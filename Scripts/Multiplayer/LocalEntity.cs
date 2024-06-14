@@ -29,9 +29,10 @@ public abstract partial class LocalEntity : CharacterBody3D
             GameManager.singleton.hudManager.Visible = true;
             GameManager.singleton.hudManager.miniMap.HideMap();
             GameManager.singleton.hudManager.miniMap.LoadMap();
-            GameManager.singleton.hudManager.healthHud.SetHealth(1);
-            GameManager.singleton.hudManager.energyHud.SetEnergy(((player)this).EnergyBar / ((player)this).energyMax);
-            GameManager.singleton.hudManager.bulletsHud.SetBullets(0, 0);
+            GameManager.singleton.hudManager.subHud.SetHealth(1);
+            GameManager.singleton.hudManager.subHud.SetEnergy(((player)this).EnergyBar / ((player)this).energyMax);
+            GameManager.singleton.hudManager.subHud.SetBullets(0, 0);
+            GameManager.singleton.hudManager.subHud.SetBannerVisiblity(false);
         }
     }
 
@@ -153,6 +154,29 @@ public abstract partial class LocalEntity : CharacterBody3D
         ((player)this).interacting = false;
     }
 
+    public void SendBannerServer(string msg)
+    {
+        Rpc("SetBannerClient", new Variant[] { msg });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SetBannerClient(Variant data)
+    {
+        GameManager.singleton.hudManager.subHud.SetWinBanner(data.AsString());
+        GameManager.singleton.hudManager.subHud.SetBannerVisiblity(true);
+    }
+
+    public void HideBannerServer()
+    {
+        Rpc("HideBannerClient");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void HideBannerClient()
+    {
+        GameManager.singleton.hudManager.subHud.SetBannerVisiblity(false);
+    }
+
     public abstract void InitPlayer();
 
     public abstract void InputProcess(double delta);
@@ -231,7 +255,7 @@ public abstract partial class LocalEntity : CharacterBody3D
     [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void SyncDeathClient(Variant dead)
     {
-        GameManager.singleton.hudManager.deathHud.Visible = dead.AsBool();
+        GameManager.singleton.hudManager.subHud.Visible = dead.AsBool();
         dead = dead.AsBool();
     }
 
@@ -275,7 +299,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         {
             playerScript.Health = health.AsInt32();
             if (IsLocalPlayer)
-                GameManager.singleton.hudManager.healthHud.SetHealth((float)playerScript.Health / 100);
+                GameManager.singleton.hudManager.subHud.SetHealth((float)playerScript.Health / 100);
         }
     }
 
@@ -328,6 +352,11 @@ public abstract partial class LocalEntity : CharacterBody3D
         ShowAnimation(isAiming.AsBool() ? "AimFire" : "Fire");
     }
 
+    public void GetDirectWeapon(string weaponPath)
+    {
+        GetWeaponClient(GD.Load<PackedScene>(weaponPath).Instantiate<Weapon>());
+    }
+
     public void GetWeaponServer(string weaponPath)
     {
         Rpc("SyncWeapon", new Variant[]
@@ -344,11 +373,11 @@ public abstract partial class LocalEntity : CharacterBody3D
         {
             if (((player)this).Weapon is WeaponAmo wa)
             {
-                GameManager.singleton.hudManager.bulletsHud.SetBullets(wa.currBullets, wa.bullets);
+                GameManager.singleton.hudManager.subHud.SetBullets(wa.currBullets, wa.bullets);
             }
             else
             {
-                GameManager.singleton.hudManager.bulletsHud.SetBullets(0, 0);
+                GameManager.singleton.hudManager.subHud.SetBullets(0, 0);
             }
         }
     }
@@ -374,7 +403,7 @@ public abstract partial class LocalEntity : CharacterBody3D
             wa.bullets = totBull.AsInt32();
             if (IsLocalPlayer)
             {
-                GameManager.singleton.hudManager.bulletsHud.SetBullets(wa.currBullets, wa.bullets);
+                GameManager.singleton.hudManager.subHud.SetBullets(wa.currBullets, wa.bullets);
             }
         }
     }
@@ -423,7 +452,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         ((player)this).EnergyBar = energy.AsInt32();
         if (IsLocalPlayer)
         {
-            GameManager.singleton.hudManager.energyHud.SetEnergy((float)energy.AsInt32() / ((player)this).energyMax);
+            GameManager.singleton.hudManager.subHud.SetEnergy((float)energy.AsInt32() / ((player)this).energyMax);
         }
     }
 

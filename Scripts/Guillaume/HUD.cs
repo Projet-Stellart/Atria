@@ -24,7 +24,7 @@ public partial class HUD : Control
         GetNode<RichTextLabel>("TextureRect/RichTextLabel").Text = "[center]" + infos;
         
     }
-    public void SetVisiblity(bool visible)
+    public void SetBannerVisiblity(bool visible)
     {
         GetNode<Control>("TextureRect").Visible = visible;
     }

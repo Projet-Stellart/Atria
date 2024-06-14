@@ -229,7 +229,7 @@ public partial class GameManager : Node
     private void LoadData(string[] args)
     {
         tileMapGenerator = (TileMeshGeneration)GetChild(0);
-        hudManager = (HudManager)GetChild(2);
+        hudManager = GetNode<HudManager>("HUD");
         multiplayerManager = ((MultiplayerManager)GetChild(3));
         
         if (args.Contains("--nbPlayers"))
@@ -492,15 +492,10 @@ public partial class GameManager : Node
         player.SyncDeathServer(false);
     }
 
-    public void EndRound()
-    {
-
-    }
-
     public void ResetRound()
     {
         multiplayerManager.Rpc("ResetRoundClient");
-
+        HidePlayerBanner();
         foreach (var pl in multiplayerManager.playersControler)
         {
             if (pl.Value.dead)
@@ -534,7 +529,7 @@ public partial class GameManager : Node
     public void RoundWon(int team)
     {
         Debug.Print("Round won by team " + (team + 1));
-        EndRound();
+        DisplayRoundWin(team);
         delayedActions.Add((Time.GetTicksMsec() + GameData.roundReloadDelay * 1000, () =>
         {
             ResetRound();
@@ -547,15 +542,39 @@ public partial class GameManager : Node
         ));
     }
 
+    public void DisplayRoundWin(int team)
+    {
+        foreach (var player in multiplayerManager.playersControler)
+        {
+            player.Value.SendBannerServer("Team " + (team + 1) + " won the round!");
+        }
+    }
+
+    public void HidePlayerBanner()
+    {
+        foreach (var player in multiplayerManager.playersControler)
+        {
+            player.Value.HideBannerServer();
+        }
+    }
+
     public void MatchWon(int team)
     {
         Debug.Print("Match won by team " + (team + 1));
-
+        DisplayMatchWin(team);
         delayedActions.Add((Time.GetTicksMsec() + GameData.finishReloadDelay * 1000, () =>
         {
             MatchFinish();
         }
         ));
+    }
+
+    public void DisplayMatchWin(int team)
+    {
+        foreach (var player in multiplayerManager.playersControler)
+        {
+            player.Value.SendBannerServer("Team " + (team + 1) + " won the game!");
+        }
     }
 
     private void MatchFinish()

@@ -402,7 +402,7 @@ public partial class UI_Script : CanvasLayer
 
 	static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
 
-	private async Task GetGitHubDataAsync()
+	private async void GetGitHubDataAsync()
 	{		
 		try
 		{

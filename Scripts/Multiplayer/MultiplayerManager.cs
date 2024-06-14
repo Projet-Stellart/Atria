@@ -209,6 +209,7 @@ public partial class MultiplayerManager : Node
         player.camera.ClearCurrent(false);
         Rpc("InstantiatePlayer", new Variant[] { id, pos });
         player.GetWeaponServer(player.defaultWeapon);
+        player.GetDirectWeapon(player.defaultWeapon);
         player.SyncBulletsServer();
     }
 

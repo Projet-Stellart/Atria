@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="5_obcn5"]
 [ext_resource type="Texture2D" uid="uid://dgxynxnhxc4of" path="res://Ressources/UI/Button_CLicked.png" id="7_tekix"]
 [ext_resource type="Texture2D" uid="uid://bxkcfq3dhpm75" path="res://Ressources/UI/Button_Moused.png" id="8_gcfsc"]
-[ext_resource type="PackedScene" uid="uid://d4eh271trcsje" path="res://Scenes/Guillaume/Keybindings.tscn" id="8_yv05f"]
+[ext_resource type="PackedScene" path="res://Scenes/Guillaume/Keybindings.tscn" id="8_yv05f"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_42bj2"]
 load_path = "res://.godot/imported/Fond1.jpeg-bca3c69e3ab3bf907eddae77f371710f.ctex"
@@ -17,10 +17,12 @@ bg_color = Color(0.6, 0.6, 0.6, 0.392157)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hiq8t"]
 
-[node name="UI" type="CanvasLayer" node_paths=PackedStringArray("ResolutionOptionButton", "FullscreenOptionButton")]
+[node name="UI" type="CanvasLayer"]
 script = ExtResource("1_mxrpx")
-ResolutionOptionButton = NodePath("Graphics/MarginContainer/VBoxContainer/HBoxContainer/Resolution")
-FullscreenOptionButton = NodePath("Graphics/MarginContainer/VBoxContainer/HBoxContainer2/WindowMode")
+ResolutionOptionButton = Object(OptionButton,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"clip_children":0,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"clip_contents":false,"custom_minimum_size":Vector2(0, 0),"layout_direction":0,"layout_mode":2,"size_flags_horizontal":3,"size_flags_vertical":1,"size_flags_stretch_ratio":1.0,"auto_translate":true,"localize_numeral_system":true,"tooltip_text":"","focus_neighbor_left":NodePath(""),"focus_neighbor_top":NodePath(""),"focus_neighbor_right":NodePath(""),"focus_neighbor_bottom":NodePath(""),"focus_next":NodePath(""),"focus_previous":NodePath(""),"focus_mode":2,"mouse_filter":0,"mouse_force_pass_scroll_events":true,"mouse_default_cursor_shape":0,"shortcut_context":null,"theme":null,"theme_type_variation":&"","disabled":false,"toggle_mode":true,"button_pressed":false,"action_mode":0,"button_mask":1,"keep_pressed_outside":false,"button_group":null,"shortcut":null,"shortcut_feedback":true,"shortcut_in_tooltip":true,"flat":false,"alignment":0,"text_overrun_behavior":0,"clip_text":false,"icon_alignment":0,"vertical_icon_alignment":1,"expand_icon":false,"text_direction":0,"language":"","item_count":2,"selected":-1,"fit_to_longest_item":true,"allow_reselect":false,"popup/item_0/text":"1920x1080","popup/item_0/id":0,"popup/item_1/text":"1280x720","popup/item_1/id":1,"script":null)
+
+FullscreenOptionButton = Object(OptionButton,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"clip_children":0,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"clip_contents":false,"custom_minimum_size":Vector2(0, 0),"layout_direction":0,"layout_mode":2,"size_flags_horizontal":3,"size_flags_vertical":1,"size_flags_stretch_ratio":1.0,"auto_translate":true,"localize_numeral_system":true,"tooltip_text":"","focus_neighbor_left":NodePath(""),"focus_neighbor_top":NodePath(""),"focus_neighbor_right":NodePath(""),"focus_neighbor_bottom":NodePath(""),"focus_next":NodePath(""),"focus_previous":NodePath(""),"focus_mode":2,"mouse_filter":0,"mouse_force_pass_scroll_events":true,"mouse_default_cursor_shape":0,"shortcut_context":null,"theme":null,"theme_type_variation":&"","disabled":false,"toggle_mode":true,"button_pressed":false,"action_mode":0,"button_mask":1,"keep_pressed_outside":false,"button_group":null,"shortcut":null,"shortcut_feedback":true,"shortcut_in_tooltip":true,"flat":false,"alignment":0,"text_overrun_behavior":0,"clip_text":false,"icon_alignment":0,"vertical_icon_alignment":1,"expand_icon":false,"text_direction":0,"language":"","item_count":3,"selected":-1,"fit_to_longest_item":true,"allow_reselect":false,"popup/item_0/text":"Exclusive Fullscreen","popup/item_0/id":4,"popup/item_1/text":"Borderless Fullscreen","popup/item_1/id":3,"popup/item_2/text":"Windowed","popup/item_2/id":0,"script":null)
+
 
 [node name="SonFond" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_7w28x")
@@ -1375,7 +1377,7 @@ layout_mode = 2
 [connection signal="pressed" from="Sound/Exit" to="." method="_on_exit_pressed_sound"]
 [connection signal="text_changed" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_changed"]
 [connection signal="pressed" from="Play/Exit" to="." method="_on_exit_pressed_play"]
-[connection signal="pressed" from="Play/Custom" to="." method="_on_online_pressed"]
+[connection signal="pressed" from="Play/Custom" to="." method="_on_custom_pressed"]
 [connection signal="pressed" from="Play/Online" to="." method="_on_online_pressed"]
 [connection signal="text_changed" from="MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP" to="." method="_on_match_maker_ip_text_changed"]
 [connection signal="pressed" from="MatchMaker/Exit" to="." method="_on_exit_pressed_mm"]
