@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Scripts/Management/GameManager.cs" id="1_tuo0n"]
 [ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_73q1c"]
 [ext_resource type="Script" path="res://Scripts/UI/HudManager.cs" id="3_emm8j"]
-[ext_resource type="PackedScene" path="res://Scenes/Guillaume/GameUI.tscn" id="4_1cnfb"]
+[ext_resource type="PackedScene" uid="uid://dqxls3fq7a0h2" path="res://Scenes/Guillaume/GameUI.tscn" id="4_1cnfb"]
 [ext_resource type="Script" path="res://Scripts/Multiplayer/MultiplayerManager.cs" id="4_r3f7e"]
 
 [sub_resource type="Environment" id="Environment_mntmn"]
@@ -41,6 +41,28 @@ grow_vertical = 2
 layout_mode = 2
 
 [node name="MiniMap" parent="HUD/MiniMap/AspectRatioContainer" instance=ExtResource("2_73q1c")]
+layout_mode = 2
+
+[node name="GpsSelectionDisplay" type="Control" parent="HUD"]
+visible = false
+layout_mode = 3
+anchor_left = 0.25
+anchor_top = 0.1
+anchor_right = 0.75
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="HUD/GpsSelectionDisplay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="HUD/GpsSelectionDisplay/AspectRatioContainer"]
+clip_children = 1
 layout_mode = 2
 
 [node name="DeathScreen" type="Control" parent="HUD"]

@@ -13,6 +13,13 @@ public abstract partial class LocalEntity : CharacterBody3D
     public bool interacting;
     public Interactible interation;
 
+    public bool gps { get; private set; }
+    private GpsDisplayInfo[] gpsInfos;
+    private float dangle;
+    private const float defaultSize = 0f;
+    private const float selectedSize = 20f;
+    private int gpsSelected;
+
     public abstract string defaultWeapon { get; }
 
     public void SyncEntity()
@@ -41,6 +48,21 @@ public abstract partial class LocalEntity : CharacterBody3D
         if (IsLocalPlayer && !dead)
         {
             InputProcess(delta);
+
+            if (Input.IsActionJustPressed("gps"))
+            {
+                DisplayGpsSelection();
+                gps = true;
+            }
+            else if (Input.IsActionJustReleased("gps"))
+            {
+                HideGpsSelection();
+                gps = false;
+                if (gpsSelected >= 0)
+                {
+                    SendGps();
+                }
+            }
 
             //Minimap management
 
@@ -77,11 +99,89 @@ public abstract partial class LocalEntity : CharacterBody3D
         }
     }
 
+    public void DisplayGpsSelection()
+    {
+        gpsSelected = -1;
+        gpsInfos = new GpsDisplayInfo[2 + GameManager.singleton.tileMapGenerator.rooms.Length];
+
+        dangle = 2*(Mathf.Pi) / gpsInfos.Length;
+
+        float startAngle = -(Mathf.Pi)/2f;
+
+        gpsInfos[0] = new GpsDisplayInfo() {
+            name = "Ally Spawn",
+            color = new Color(0, 255, 0),
+            angle = startAngle,
+            minAngle = startAngle - (dangle / 2f),
+            maxAngle = startAngle + (dangle / 2f)
+        };
+        gpsInfos[1] = new GpsDisplayInfo() {
+            name = "Ennemy Spawn",
+            color = new Color(255, 0, 0),
+            angle = startAngle + dangle,
+            minAngle = startAngle + dangle - (dangle / 2f),
+            maxAngle = startAngle + dangle + (dangle / 2f)
+        };
+        for (int i = 0; i < GameManager.singleton.tileMapGenerator.rooms.Length; i++)
+        {
+            gpsInfos[2 + i] = new GpsDisplayInfo() {
+                name = "Room " + (i+1),
+                color = new Color(20, 20, 20),
+                angle = startAngle + dangle * (2 + i),
+                minAngle = (startAngle + dangle * (2 + i)) - (dangle / 2f),
+                maxAngle = (startAngle + dangle * (2 + i)) + (dangle / 2f)
+            };
+        }
+
+        GameManager.singleton.hudManager.DisplayGpsInfos(gpsInfos, dangle);
+    }
+
+    public void HideGpsSelection()
+    {
+        GameManager.singleton.hudManager.HideGps();
+    }
+
+    public void UpdateGpsSelection(Vector2 mouseDelta)
+    {
+        float angle = Mathf.Atan2(mouseDelta.Y, mouseDelta.X);
+
+        for (int i = 0; i < gpsInfos.Length; i++)
+        {
+            GpsDisplayInfo info = gpsInfos[i];
+            if (info.minAngle <= angle && info.maxAngle >= angle)
+            {
+                if (i != gpsSelected)
+                {
+                    gpsInfos[gpsSelected >= 0 ? gpsSelected : 0].dSize = defaultSize;
+                    gpsSelected = i;
+                    gpsInfos[gpsSelected].dSize = selectedSize;
+                    GameManager.singleton.hudManager.DisplayGpsInfos(gpsInfos, dangle);
+                }
+                break;
+            }
+        }
+    }
+
+    public void SendGps()
+    {
+        Debug.Print("Gps to: " + gpsInfos[gpsSelected].name);
+    }
+
     public override void _Input(InputEvent @event)
     {
-        if (IsLocalPlayer && !dead)
+        if (IsLocalPlayer && !dead && !gps)
         {
             InputLocalEvent(@event);
+        }
+        else
+        {
+            if (@event is InputEventMouseMotion mouseEvent && Input.MouseMode == Input.MouseModeEnum.Captured)
+            {
+                if (Input.IsActionPressed("gps") && gps)
+                {
+                    UpdateGpsSelection(mouseEvent.Relative);
+                }
+            }
         }
     }
 
