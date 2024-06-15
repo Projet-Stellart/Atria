@@ -7,7 +7,7 @@ using Godot;
 \°--------------------*/
 public abstract partial class WeaponAmo : Weapon
 {
-    public abstract int bullets {get; protected set;}
+    public abstract int bullets {get; set;}
     public abstract int bulletPerMag {get; protected set;}
 	public abstract double fallOff {get; protected set;}
 	public abstract float penetration {get; protected set;}
@@ -15,6 +15,8 @@ public abstract partial class WeaponAmo : Weapon
 
     public abstract void Reload();
     public abstract void onReload();
+
+	public abstract void FireMeca();
 
     public override void CalculateFire(player Player) {
         var spaceState = GetWorld3D().DirectSpaceState;
@@ -48,17 +50,20 @@ public abstract partial class WeaponAmo : Weapon
 			if ((Vector3)exit["position"] == (Vector3)collide["position"]) //Can't penetrate wall
 				currentPenetration = 0;
 			else {
-				//Spawning Decal - Back
-				if ((collider is enemy Enemy2 && Enemy2.IsInGroup("Enemy")) || (collider is not player))
-					Player.SpawnDecal((Node3D)exit["collider"], (Vector3)exit["position"], (Vector3)exit["normal"]);
-
 				//Calculating Distance and substracting
 				var point1 = (Vector3)collide["position"];
 				float distance = point1.DistanceTo((Vector3)exit["position"]);
-				currentPenetration -= distance;
+				var density = collider is IMaterialData materialData ? materialData.density : 1;
+				currentPenetration -= (float)(distance * density);
 
-				//Adding to filters of the query
-				rids.Add((Rid)collide["rid"]);
+				if (currentPenetration > 0) {
+					//Spawning Decal - Back
+					if ((collider is enemy Enemy2 && Enemy2.IsInGroup("Enemy")) || (collider is not player))
+                        Player.SpawnDecal((Node3D)exit["collider"], (Vector3)exit["position"], (Vector3)exit["normal"]);
+
+					//Adding to filters of the query
+					rids.Add((Rid)collide["rid"]);
+				}
 			}
 		}
     }

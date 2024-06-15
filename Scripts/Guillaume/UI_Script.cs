@@ -177,7 +177,7 @@ public partial class UI_Script : CanvasLayer
 	{
 		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
 		if (OnPlay != null) OnPlay.Invoke(username);
-		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+		//GetNode<AudioStreamPlayer>("MenuSwitch").Play();
 	}
 
 	private void _on_custom_pressed()
@@ -212,8 +212,8 @@ public partial class UI_Script : CanvasLayer
 		string IP = GetNode<TextEdit>("Custom/MarginContainer4/VBoxContainer/TextEdit").Text;
 		uint Port = uint.Parse(GetNode<TextEdit>("Custom/MarginContainer5/VBoxContainer/TextEdit").Text);
 		string username = GetNode<TextEdit>("Play/MarginContainer6/VBoxContainer/UsernameInput").Text;
-		if (OnCustomPlay != null) OnCustomPlay.Invoke(IP, (int)Port, username);
-		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+        GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+        if (OnCustomPlay != null) OnCustomPlay.Invoke(IP, (int)Port, username);
 	}
 
 	private void _on_exit_pressed_custom_joined()

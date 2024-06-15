@@ -9,6 +9,9 @@ public abstract partial class Weapon : Node3D
     public abstract bool drop {get; set;}
     public abstract int damage {get; protected set;}
 
+    public player Player;
+    
+
     public abstract void PlaySound();
     public abstract void Effects();
     public abstract void Finisher();
@@ -18,6 +21,7 @@ public abstract partial class Weapon : Node3D
     public abstract void Inspect();
     public abstract void StopAnimations();
     public abstract void CalculateFire(player Player);
+    public abstract void SetRenderLayer(uint layer);
 }
 
 public enum WeaponClass {

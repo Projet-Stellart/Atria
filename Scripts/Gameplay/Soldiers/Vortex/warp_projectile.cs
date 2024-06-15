@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Godot;
 
-public partial class warp_projectile : RigidBody3D, IDamagable
+public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
 {
     /*------------------°\
 	|	   Variables     |
@@ -14,6 +14,7 @@ public partial class warp_projectile : RigidBody3D, IDamagable
     public float Speed = 20;
     bool attached = false;
     public player Parent;
+    bool customGravity = false;
 
     //Projectile References
     Timer Inactive;
@@ -112,5 +113,22 @@ public partial class warp_projectile : RigidBody3D, IDamagable
     public bool Damaged(int damage) {
         ImpactNotFound();
         return true;
+    }
+
+    public void ChangeGravity(Vector3 vector) {
+        GravityScale = 0;
+        if (!customGravity)
+            AddConstantForce(vector);
+        else {
+            ConstantForce = new Vector3(Mathf.Clamp(ConstantForce.X + vector.X, Mathf.Min(ConstantForce.X, vector.X), Mathf.Max(ConstantForce.X, vector.X)),
+				Mathf.Clamp(ConstantForce.Y + vector.Y, Mathf.Min(ConstantForce.Y, vector.Y), Mathf.Max(ConstantForce.Y, vector.Y)),
+				Mathf.Clamp(ConstantForce.Z + vector.Z, Mathf.Min(ConstantForce.Z, vector.Z), Mathf.Max(ConstantForce.Z, vector.Z)));
+        }
+        customGravity = true;
+    }
+	public void ResetGravity() {
+        ConstantForce = new Vector3(0,0,0);
+        GravityScale = 1;
+        customGravity = false;
     }
 }

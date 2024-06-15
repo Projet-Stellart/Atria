@@ -1,8 +1,11 @@
 using System;
 using System.Diagnostics;
+using Atria.Scripts.ProceduralGeneration.Objects;
 using Godot;
+using Godot.Collections;
+using Microsoft.VisualBasic;
 
-public partial class player : LocalEntity, IDamagable, IPhysicsModifier
+public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDisable
 {
 	/*----------------------°\
 	|		References	     |
@@ -32,12 +35,14 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	public float accel;
 	public const float JUMP_VELOCITY = 5.0f;
 
+    Interactible interaction;
 
-	//Vectors
-	Vector3 inputVect = new Vector3(); //Velocity Given by Input Events (user walking, robot walking, etc)
+    //Vectors
+    Vector3 inputVect = new Vector3(); //Velocity Given by Input Events (user walking, robot walking, etc)
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes
 	public Vector3 gravity = new(0,-ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle(),0);
+	bool customGravity = false;
 
 
 	//Camera
@@ -60,7 +65,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 				energyBar = soldier.EnergyBar;
 			else
 				energyBar = value;
-		}
+			if (Multiplayer.IsServer())
+				SyncEnergyServer();
+        }
 	}
 
 	public bool atria = false; //Need Atria Module for Core Module
@@ -70,11 +77,14 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	public bool isCrouching = false;
 	public bool isAiming = false;
 	public bool hasWeapon = false;
-	public float Health = 100;
+	public int Health = 100;
+	public bool moduleEnable = true;
+
+	public virtual int energyMax { get; } = 100;
 
 
-	//Weapons
-	public FocusState FocusState = FocusState.Weapon;
+    //Weapons
+    public FocusState FocusState = FocusState.Weapon;
 	public Weapon Melee;
 	public Weapon Secondary;
 	public Weapon Primary;
@@ -105,10 +115,10 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	\°----------------------*/
 	bool test = true; // TO REMOVE
 	
-	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
-	public PackedScene weaponTest = GD.Load<PackedScene>("res://Scenes/Nelson/predator.tscn");
-	public PackedScene weaponTest2 = GD.Load<PackedScene>("res://Scenes/Nelson/predator_test.tscn");
-
+	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
+	public string weaponTest = "res://Scenes/Nelson/Weapons/predator.tscn";
+	public string weaponTest2 = "res://Scenes/Nelson/Weapons/predator_test.tscn";
+    public override string defaultWeapon => weaponTest;
 
 
 
@@ -123,11 +133,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
     /*----------------------°\
 	|		FUNCTIONS	     |
 	\°----------------------*/
-
-    public override void _Ready() //TO REMOVE
-    {
-        InitPlayer();
-    }
 	
     public override void InitPlayer()
 	{
@@ -143,18 +148,22 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 		secondaryAnimator = head.GetNode<AnimationPlayer>("Arms/SecondaryAnimator");
 		meleeAnimator = head.GetNode<AnimationPlayer>("Arms/MeleeAnimator");
 
-		//Mouse in FPS
-		Input.MouseMode = Input.MouseModeEnum.Captured;
+		InitSub();
 
-		GetWeapon((Weapon)weaponTest.Instantiate()); //TO REMOVE IN FUTURE
+        //Mouse in FPS
+        Input.MouseMode = Input.MouseModeEnum.Captured;
+
+		//GetWeaponClient((Weapon)weaponTest.Instantiate()); //TO REMOVE IN FUTURE
 	}
+
+	protected virtual void InitSub() { throw new NotImplementedException(); }
 
     public override void InputProcess(double delta)
 	{
-		if (test && Input.IsActionJustPressed("test")) {
+		/*if (test && Input.IsActionJustPressed("test")) {
 			test = false;
-			GetWeapon((Weapon)weaponTest2.Instantiate());
-		}
+			GetWeaponClient((Weapon)weaponTest2.Instantiate());
+		}*/
 
 		//[BUILD KEY CONTROLS]
 		KeyState fire = new KeyState("fire");
@@ -206,18 +215,29 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 			//Inspect Event
 			if (Input.IsActionJustPressed("inspect") && FocusState == FocusState.Weapon &&hasWeapon) {
 				_inspect();
+				SendInspectWeapon();
 			}
 
 
 			//[MODULES]
-			if (Input.IsActionJustPressed("low_module"))
-				_ActivateModule(FocusState.LowModule);
-			else if (Input.IsActionJustPressed("medium_module"))
-			    _ActivateModule(FocusState.MediumModule);
-			else if (Input.IsActionJustPressed("high_module"))
-			    _ActivateModule(FocusState.HighModule);
-			else if (Input.IsActionJustPressed("core_module"))
-				_ActivateModule(FocusState.CoreModule);
+			if (moduleEnable) {
+				if (Input.IsActionJustPressed("low_module"))
+				{
+                    _ActivateModule(FocusState.LowModule);
+                }
+				else if (Input.IsActionJustPressed("medium_module"))
+				{
+                    _ActivateModule(FocusState.MediumModule);
+                }
+				else if (Input.IsActionJustPressed("high_module"))
+				{
+                    _ActivateModule(FocusState.HighModule);
+                }
+				else if (Input.IsActionJustPressed("core_module"))
+				{
+                    _ActivateModule(FocusState.CoreModule);
+                }
+			}
 		
 		} else {
 			//Building Key Controls
@@ -235,7 +255,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 		//Crouching Event
 		if (Input.IsActionJustPressed("crouch")||Input.IsActionJustReleased("crouch")) {
 			_crouch();
-			SendCrouch(isCrouching);
+			SendCrouch(!isCrouching);
 		}
 
 
@@ -271,9 +291,53 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 			}
 		}
 
-		// Add the gravity.
-		//Vector3 gravityVect = Velocity - inputVect; //Since inputVect is known, i extract gravity from velocity 
-		Velocity += gravity * (float)delta;
+        if (Input.IsActionJustPressed("interact"))
+        {
+            PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(camera.GlobalPosition, camera.GlobalPosition + (camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+            Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+            if (hit.ContainsKey("collider"))
+            {
+                Node obj = (Node)hit["collider"];
+                if (obj is Interactible inter)
+                {
+                    SendInteractionStart(inter);
+                    interaction = inter;
+                }
+            }
+        }
+        else if (Input.IsActionPressed("interact"))
+        {
+            if (interaction != null)
+            {
+                PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(camera.GlobalPosition, camera.GlobalPosition + (camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+                Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+                if (hit.ContainsKey("collider"))
+                {
+                    if ((Node)hit["collider"] != interaction)
+                    {
+                        SendInteractionEnd();
+                        interaction = null;
+                    }
+                }
+                else
+                {
+                    SendInteractionEnd();
+                    interaction = null;
+                }
+            }
+        }
+        else
+        {
+            if (interaction != null)
+            {
+                SendInteractionEnd();
+                interaction = null;
+            }
+        }
+
+        // Add the gravity.
+        //Vector3 gravityVect = Velocity - inputVect; //Since inputVect is known, i extract gravity from velocity 
+        Velocity += gravity * (float)delta;
 		
 		//Damping gravity on axis with no actual gravity
 		/*if (gravity.X==0)
@@ -319,15 +383,21 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	////
 	////FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS
 	////
+	///
 	
+	public bool IsAbleToFire()
+	{
+        var anim_name = focusAnimator.CurrentAnimation;
+        return anim_name != "Fire" && anim_name != "Swap" && anim_name != "AimFire" && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true);
+    }
 
 	//Gun Fire - Melee Weapon Hit
 	public void _fire(KeyState key) {
 		if (hasWeapon) { //Avoid error
 			var anim_name = focusAnimator.CurrentAnimation;
-			if (key.JustPressed && anim_name != "Fire" && anim_name != "Swap" && anim_name != "AimFire" && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
-				FireLocal(); //Calling Fire Calculations + On other players
-				Weapon.Fire(); //Adjusting the stats of the weapons (eg. bullets)
+			if (key.JustPressed && IsAbleToFire()) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
+				FireLocal(!(!Weapon.canAimFire || !isAiming)); //Calling Fire Calculations + On other players
+				Weapon.Fire(); //Play anims
 				if (!Weapon.canAimFire || !isAiming) //Playing correct animation
 					ShowAnimation("Fire");
 				else
@@ -351,7 +421,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 				else {
 					focusAnimator.PlayBackwards("Aim");
 				}
-				isAiming = !isAiming; //SETTINGS: could change
+                SendAim(isAiming);
+                isAiming = !isAiming; //SETTINGS: could change
 			}
 		}
 	}
@@ -362,8 +433,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 		{
 			if (weapon.currBullets < weapon.bulletPerMag && weapon.bullets > 0 && focusAnimator.CurrentAnimation != "Reload") //Checking if you can reload
 			{
-				weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
-				ShowAnimation("Reload");
+				ReloadLocal();
+				/*weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
+				ShowAnimation("Reload");*/
 				if (isAiming)
 					isAiming = false;
 			}
@@ -378,7 +450,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 
 	//Death
 	public void _death(DeathCause cause) {
-		GD.Print($"dead by {cause}");
+		GameManager.singleton.PlayerDeath(this, cause);
 	}
 
 	//Toggle Crouch Function
@@ -408,26 +480,39 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	}
 
 	//Decal - Will have to switch for a weapon dependant decal
-	public void SpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal) {
-		////Bullet Hole
-		var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
-		collider.AddChild(b); //Add child to collider
-		b.GlobalPosition = rayPosition; //Putting the bullet hole where we hit on the collider
-		var value = rayNormal.Dot(Vector3.Up);
-		if (value != 1) {
-			if (value != -1) {
-				var dir = rayPosition + rayNormal; //Calculating the direction
-				b.LookAt(dir, Vector3.Up);
-			} else {
-				b.RotationDegrees = new Vector3(-90,0,0);
-			}
-		} else {
-			b.RotationDegrees = new Vector3(90,0,0);
-		}
+	public void SpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal) 
+	{
+		if (Multiplayer.IsServer())
+			SpawnDecalServer(collider, rayPosition, rayNormal);
+        ActualSpawnDecal(collider, rayPosition, rayNormal);
+    }
 
-	}
+	public void ActualSpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal)
+	{
+        ////Bullet Hole
+        var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
+        collider.AddChild(b); //Add child to collider
+        b.GlobalPosition = rayPosition; //Putting the bullet hole where we hit on the collider
+        var value = rayNormal.Dot(Vector3.Up);
+        if (value != 1)
+        {
+            if (value != -1)
+            {
+                var dir = rayPosition + rayNormal; //Calculating the direction
+                b.LookAt(dir, Vector3.Up);
+            }
+            else
+            {
+                b.RotationDegrees = new Vector3(-90, 0, 0);
+            }
+        }
+        else
+        {
+            b.RotationDegrees = new Vector3(90, 0, 0);
+        }
+    }
 
-	//Camera
+    //Camera
     public override void InputLocalEvent(InputEvent @event)
     {
         if (@event is InputEventMouseMotion mouseEvent&&Input.MouseMode == Input.MouseModeEnum.Captured) {
@@ -506,9 +591,11 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 		}
 		focusAnimator.Play("Swap");
 		Weapon.Swap();
+		if (IsLocalPlayer)
+			SendSwapWeapon((int)weaponClass);
 	}
 
-	public override void GetWeapon(Weapon weapon) {
+	public override void GetWeaponClient(Weapon weapon) {
 		var type = weapon.info.WeaponClass;
 		//Instantiating it
 		GetNode<Node3D>("Head/Arms").AddChild(weapon);
@@ -530,12 +617,19 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 		validPlayer.AddAnimationLibrary("", weapon.animations);
 		SwapWeapon(weapon.info.WeaponClass); //Called by LocalEntity??
 		hasWeapon = true;
-	}
+		if (!(Melee is null))
+            Melee.SetRenderLayer((uint)(IsLocalPlayer ? 2 : 1));
+        if (!(Primary is null))
+            Primary.SetRenderLayer((uint)(IsLocalPlayer ? 2 : 1));
+        if (!(Secondary is null))
+            Secondary.SetRenderLayer((uint)(IsLocalPlayer ? 2 : 1));
+    }
 
 	public void DropWeapon() {}
 
 	private void ClearAnimations(AnimationPlayer player) {
 		foreach (var anim_name in player.GetAnimationList()) {
+			Debug.Print(anim_name.ToString());
 			player.RemoveAnimationLibrary(anim_name);
 		}
 	}
@@ -574,6 +668,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 
 	public bool Damaged(int damage) {
 		Health-=damage;
+		SyncHealth(Health);
 		if (Health <= 0) {
 			_death(DeathCause.Health);
 			return true;
@@ -582,11 +677,40 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	}
 
 	public void ChangeGravity(Vector3 vector) {
-		gravity = vector;
+		if (!customGravity)
+			gravity = vector;
+		else
+			gravity = new Vector3(Mathf.Clamp(gravity.X + vector.X, Mathf.Min(gravity.X, vector.X), Mathf.Max(gravity.X, vector.X)),
+				Mathf.Clamp(gravity.Y + vector.Y, Mathf.Min(gravity.Y, vector.Y), Mathf.Max(gravity.Y, vector.Y)),
+				Mathf.Clamp(gravity.Z + vector.Z, Mathf.Min(gravity.Z, vector.Z), Mathf.Max(gravity.Z, vector.Z)));
+		customGravity = true;
 	}
 
 	public void ResetGravity() {
 		gravity = new Vector3(0,-ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle(),0);
+		customGravity = false;
+	}
+
+
+	public void Disable() {
+		if (HasNode("Effects/TechDisable")) {
+			GetNode<Timer>("Effects/TechDisable").Start();
+		} else { //Create new
+			var timer = new Timer() {
+				OneShot = true,
+				WaitTime = 3,
+				Autostart = true,
+			};
+			AddChild(timer);
+			timer.Connect("timeout", new Callable(this, nameof(Enable)));
+			moduleEnable = false;
+			if (FocusState != FocusState.Weapon)
+				_CancelModule();
+		}
+	}
+
+	public void Enable() {
+		moduleEnable = true;
 	}
 
 
@@ -600,6 +724,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 	public virtual void _UpdateModule(KeyState send, KeyState fire, KeyState altfire, KeyState rotate) {throw new NotImplementedException();}
 	//Module Cancel
 	public virtual void _CancelModule() {throw new NotImplementedException();}
+
+	public virtual void _UseModule(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
 }
 
 
@@ -624,6 +750,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier
 public class Soldier {
 	public string Name {get;}
 	public string Desc {get;}
+	public SoldierRole[] Roles {get;}
 	public int InitialEnergy {get; set;}
 	public int EnergyBar {get;}
 	public ModuleInfo LowModule {get;}
@@ -631,9 +758,10 @@ public class Soldier {
 	public ModuleInfo HighModule {get;}
 	public ModuleInfo Core {get;}
 
-	public Soldier(string name, string desc, int initialEnergy, int energyBar, ModuleInfo lowModule, ModuleInfo mediumModule, ModuleInfo highModule, ModuleInfo core) {
+	public Soldier(string name, string desc, SoldierRole[] roles, int initialEnergy, int energyBar, ModuleInfo lowModule, ModuleInfo mediumModule, ModuleInfo highModule, ModuleInfo core) {
 		Name = name;
 		Desc = desc;
+		Roles = roles;
 		InitialEnergy = initialEnergy;
 		EnergyBar = energyBar;
 		LowModule = lowModule;
@@ -709,6 +837,19 @@ public enum FocusState {
 	MediumModule,
 	HighModule,
 	CoreModule
+}
+
+public enum SoldierRole {
+	Stealth, //Self-Explanatory
+	Recon, //Self-Explanatory
+	Tactician, //Self-Explanatory
+	Architect, //Build upon the map like their playground to give them the best advantages
+	Manipulator, //Control, confuse or influence ennemies
+	Enforcer, //Mass Destruction frontline
+	Saboteur, //Traps and corrupt enemies
+	Harbinger, //Foresee and counter modules
+	Invoker, //Bonus Entities
+	Guardian, //Protects a
 }
 
 public class KeyState {

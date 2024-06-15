@@ -9,12 +9,14 @@ public partial class vortex : player
 	\°----------------------*/
 
     public override Soldier soldier => _soldier;
-    private static int energyMax {get;set;} = 200;
+    public override int energyMax {get;} = 200;
     protected Soldier _soldier = new Soldier(
         "Vortex",
-        "Desc of Vortex",
+        "Vortex is a master manipulator of gravitational forces, using advanced technology to control the battlefield.\n" +
+        "Capable of disrupting enemy movements and creating chaos, Vortex excels at crowd control and tactical disruption, making them a strategic powerhouse.",
+        new SoldierRole[] {SoldierRole.Tactician, SoldierRole.Enforcer},
         50,
-        energyMax,
+        200,//energyMax
         new ModuleInfo(
             "Force Field",
             "Deploys an energy shield in front of the player that absorbs incoming projectiles and produces energy from the radioactive ones.",
@@ -37,7 +39,7 @@ public partial class vortex : player
             "Supernova",
             "Produces a strong blast affecting any entities depending on the range distance. Effects varies from module deffect to instant death.",
             "FIRE to create a blast at your feet, dealing different effects to players based on the distance, from instant death to module deffect.",
-            energyMax
+            200//energyMax
         )
     );
 
@@ -57,9 +59,9 @@ public partial class vortex : player
     public float fieldDuration = 0;
 
     //Scenes
-    PackedScene warpProjectile = (PackedScene)GD.Load("res://Scenes/Nelson/Soldiers/Vortex/warp_projectile.tscn");
-    PackedScene pulsarProjectile = (PackedScene)GD.Load("res://Scenes/Nelson/Soldiers/Vortex/pulsar_projectile.tscn");
-    PackedScene supernovaScene = (PackedScene)GD.Load("res://Scenes/Nelson/Soldiers/Vortex/supernova.tscn");
+    PackedScene warpProjectile = GD.Load<PackedScene>("res://Scenes/Nelson/Soldiers/Vortex/warp_projectile.tscn");
+    PackedScene pulsarProjectile = GD.Load<PackedScene>("res://Scenes/Nelson/Soldiers/Vortex/pulsar_projectile.tscn");
+    PackedScene supernovaScene = GD.Load<PackedScene>("res://Scenes/Nelson/Soldiers/Vortex/supernova.tscn");
 
     //External References
     public warp_projectile currentWarp;
@@ -88,7 +90,6 @@ public partial class vortex : player
         //Properties
         forceField.Parent = this;
         base.InitPlayer();
-        atria = true;
     }
 
     public override bool canUpdateModule(KeyState fire, KeyState altfire, KeyState rotate, KeyState module)
@@ -96,6 +97,18 @@ public partial class vortex : player
         return fire.Active() || altfire.Active() || rotate.Active() || module.Passive();;
     }
 
+    protected override void InitSub()
+    {
+        if (IsLocalPlayer)
+            return;
+        GetNode<SubViewportContainer>("3DHUDManager").Visible = false;
+        GetNode<SubViewportContainer>("LayersManager").Visible = false;
+        uint layer = (uint)(IsLocalPlayer ? 2 : 1);
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/arm").Layers = layer;
+        if (Weapon is null)
+            return;
+        Weapon.SetRenderLayer(layer);
+    }
 
     //Event Function
     public override void InputLocalEvent(InputEvent @event) {
@@ -119,7 +132,7 @@ public partial class vortex : player
 		if (IsOnFloor()) 
 			doubleJump = true;
 		
-		if (jumpKey && (IsOnFloor()||doubleJump)) {
+		if (jumpKey && (IsOnFloor()||(doubleJump && moduleEnable))) {
 			if (!IsOnFloor()) doubleJump = false;
 			if (Velocity.Y < JUMP_VELOCITY) //Jumping should add onto the positive Y velocity or reset it if negatively directed
 				Velocity = new Vector3(Velocity.X, JUMP_VELOCITY, Velocity.Z);
@@ -138,7 +151,7 @@ public partial class vortex : player
     //VIRTUAL
     public override void _ActivateModule(FocusState module)
     {
-        energyBar = 2000;
+        EnergyBar = 2000;
         if (module == FocusState.LowModule) {
             if (EnergyBar < soldier.LowModule.EnergyRequired && fieldDuration <= 0) {//Doesn't have enough energy
                 return;
@@ -181,7 +194,9 @@ public partial class vortex : player
     {
         if (FocusState == FocusState.LowModule) { //Low Module
             if (send.JustReleased || fieldDuration <= 0)
+            {
                 _CancelModule();
+            }
             else
                 fieldDuration -= 0.25f;
         }
@@ -197,20 +212,7 @@ public partial class vortex : player
                 else if (altfire.JustReleased)
                     cam_lock = false;
                 else if (!cam_lock && fire.JustPressed) { //Throw Module
-                    //Launching Projectile
-                    warp_projectile projectile = (warp_projectile)warpProjectile.Instantiate();
-                    
-                    //Fill in launching variables
-                    projectile.Warp_Angle = angle_Warp + Rotation;
-                    projectile.Parent = this;
-
-                    GetTree().Root.AddChild(projectile);
-
-                    currentWarp = projectile;
-
-                    projectile.GlobalPosition = camera.GlobalPosition + camera.GlobalBasis * new Vector3(0,0,(float)-0.5);
-                    projectile.Rotation = new Vector3(head.Rotation.X-Mathf.Pi/2,Rotation.Y,0);
-                    projectile.LinearVelocity = projectile.GlobalBasis * new Vector3(0,projectile.Speed,0);
+                    SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
 
                     //Reset
                     _CancelModule();
@@ -218,32 +220,83 @@ public partial class vortex : player
             }
         } else if (FocusState == FocusState.HighModule) { //High Module
             if (altfire.JustPressed || fire.JustPressed) { //Launch
-                EnergyBar -= soldier.HighModule.EnergyRequired; //Consuming energy
-                pulsar_projectile projectile = (pulsar_projectile)pulsarProjectile.Instantiate();
-
-                if (!fire.JustPressed) //Launching without boosters
-                    projectile.boosters = false;
-                
-                //Adding to map
-                GetTree().Root.AddChild(projectile);
-
-                projectile.GlobalPosition = camera.GlobalPosition + camera.GlobalBasis * new Vector3(0,0,(float)-0.5);
-                projectile.Rotation = new Vector3(head.Rotation.X-Mathf.Pi/2,Rotation.Y,0); //Orientating Correctly
-                projectile.LinearVelocity = projectile.GlobalBasis * pulsar_projectile.constantVelocity; //Giving an initial velocity
+                SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { fire.JustPressed, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
 
                 _CancelModule();
             }
         } else if (FocusState == FocusState.CoreModule) {
             if (fire.JustPressed) { //Burst Supernova
-                supernova Supernova = (supernova)supernovaScene.Instantiate();
-                GetTree().Root.AddChild(Supernova);
-                Supernova.GlobalPosition = GlobalPosition;
-
-                EnergyBar = 0;
-                atria = false;
+                SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { GlobalPosition });
 
                 _CancelModule();
             }
+        }
+    }
+
+    public override void _UseModule(FocusState module, Godot.Collections.Array<Variant> args)
+    {
+        if (FocusState == FocusState.LowModule)
+        {
+
+        }else if (FocusState == FocusState.MediumModule)
+        {
+            // args = {Warp_Angle, GlobalPosition, Rotation}
+            //Launching Projectile
+            warp_projectile projectile = (warp_projectile)warpProjectile.Instantiate();
+
+            //Fill in launching variables
+            //projectile.Warp_Angle = angle_Warp + Rotation;
+            projectile.Warp_Angle = args[0].AsVector3();
+            projectile.Parent = this;
+
+            GetTree().Root.AddChild(projectile);
+
+            currentWarp = projectile;
+
+            //projectile.GlobalPosition = camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5);
+            projectile.GlobalPosition = args[1].AsVector3();
+            //projectile.Rotation = new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0);
+            projectile.Rotation = args[2].AsVector3();
+            projectile.LinearVelocity = projectile.GlobalBasis * new Vector3(0, projectile.Speed, 0);
+        }
+        else if (FocusState == FocusState.HighModule)
+        {
+            //args = {fire.JustPressed, GlobalPosition, Rotation}
+
+            if (Multiplayer.IsServer())
+            {
+                EnergyBar -= soldier.HighModule.EnergyRequired; //Consuming energy
+                SyncEnergyServer();
+            }
+            
+            pulsar_projectile projectile = (pulsar_projectile)pulsarProjectile.Instantiate();
+
+            if (!args[0].AsBool()) //Launching without boosters
+                projectile.boosters = false;
+
+            //Adding to map
+            GetTree().Root.AddChild(projectile);
+
+            //projectile.GlobalPosition = camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5);
+            projectile.GlobalPosition = args[1].AsVector3();
+            //projectile.Rotation = new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0); //Orientating Correctly
+            projectile.Rotation = args[2].AsVector3(); //Orientating Correctly
+            projectile.LinearVelocity = projectile.GlobalBasis * pulsar_projectile.constantVelocity; //Giving an initial velocity
+        }
+        else
+        {
+            //args = {GlobalPosition}
+
+            supernova Supernova = (supernova)supernovaScene.Instantiate();
+            GetTree().Root.AddChild(Supernova);
+            Supernova.GlobalPosition = args[0].AsVector3();
+
+            if (Multiplayer.IsServer())
+            {
+                EnergyBar = 0;
+                SyncEnergyServer();
+            }
+            atria = false;
         }
     }
 

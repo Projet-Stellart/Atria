@@ -1,8 +1,7 @@
 using Godot;
-using System;
 
-public partial class blockdata : StaticBody3D
+public partial class blockdata : StaticBody3D, IMaterialData
 {
     [Export]
-    public double density = 1;
+    public double density {get; set;} = 1;
 }

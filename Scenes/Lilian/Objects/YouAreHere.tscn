@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxxgcdfv7t81m"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1lwej"]
+albedo_color = Color(1, 0, 0, 1)
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_yuggs"]
+material = SubResource("StandardMaterial3D_1lwej")
+
+[node name="YouAreHere" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_yuggs")

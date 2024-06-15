@@ -2,8 +2,12 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 public partial class MultiplayerManager : Node
 {
@@ -11,6 +15,11 @@ public partial class MultiplayerManager : Node
     public Dictionary<long, player> playersControler = new Dictionary<long, player>();
 
     private int[,,] tempGrid;
+    private (int, Vector3I)[] tempRooms;
+    private Vector2I[] tempSpawns;
+
+    private TcpClient matchMakerClient = null;
+    private int serverId = 0;
 
     /// <summary>
     /// Init a server connection
@@ -24,7 +33,36 @@ public partial class MultiplayerManager : Node
         peer.CreateServer(port, gamePlayer);
         Multiplayer.MultiplayerPeer = peer;
 
+        if (GameManager.singleton.GameData.publicServer)
+        {
+            matchMakerClient = new TcpClient();
+
+            try
+            {
+                matchMakerClient.Connect(GameManager.singleton.GameData.matchMaker.Split(':')[0], int.Parse(GameManager.singleton.GameData.matchMaker.Split(':')[1]));
+            }catch (SocketException)
+            {
+                matchMakerClient = null;
+            }
+
+            if (matchMakerClient != null) 
+            {
+                int? _servId = PostPublicServer( GameManager.singleton.GameData.publicAddress + ":" + GameManager.singleton.GameData.port, (int)GameManager.singleton.GameData.nbPlayer);
+
+                if (_servId != null)
+                {
+                    serverId = _servId.Value;
+                }
+            }
+        }
+
         SetupMultiplayerHooks();
+    }
+
+    public void CloseServer()
+    {
+        Multiplayer.MultiplayerPeer.Close();
+        Multiplayer.MultiplayerPeer = null;
     }
 
     /// <summary>
@@ -38,6 +76,8 @@ public partial class MultiplayerManager : Node
         ENetMultiplayerPeer peer = new ENetMultiplayerPeer();
         peer.CreateClient(adr, port);
         Multiplayer.MultiplayerPeer = peer;
+
+        GameManager.singleton.StartClientTimeout();
 
         SetupMultiplayerHooks();
     }
@@ -63,6 +103,8 @@ public partial class MultiplayerManager : Node
             }
             GameManager.singleton.ManageNewClient(id);
             //InstantiateNewPlayer(id);
+            if (serverId > 0)
+                UpdatePublicServerData(serverId, Multiplayer.GetPeers().Length);
         }
         else
         {
@@ -92,6 +134,8 @@ public partial class MultiplayerManager : Node
             //Server OnClientDisconnect
             GameManager.singleton.ManageDisconnectedClient(id);
             Debug.Print("Client disconnected");
+            if (serverId > 0)
+                UpdatePublicServerData(serverId, Multiplayer.GetPeers().Length);
         }
         else
         {
@@ -122,7 +166,7 @@ public partial class MultiplayerManager : Node
         int h = GameManager.singleton.tileMapGenerator.tileMap.GetLength(0);
         int x = GameManager.singleton.tileMapGenerator.tileMap.GetLength(1);
         int y = GameManager.singleton.tileMapGenerator.tileMap.GetLength(2);
-        RpcId(id, "StartMapSync", new Variant[] {h, x, y});
+        RpcId(id, "StartMapSync", new Variant[] {h, x, y, GameManager.singleton.tileMapGenerator.spawnsPos.Length, GameManager.singleton.tileMapGenerator.tempRoom.Count});
         for (int i = 0; i < h; i++)
         {
             for (int j = 0; j < x; j++)
@@ -133,6 +177,18 @@ public partial class MultiplayerManager : Node
                 }
             }
         }
+        for (int i = 0; i < GameManager.singleton.tileMapGenerator.tempRoom.Count; i++)
+        {
+            RpcId(id, "ReceiveRoomData", new Variant[] { i, 
+                new Godot.Collections.Array() 
+                {
+                    (Variant)GameManager.singleton.tileMapGenerator.tempRoom[i].Item1, (Variant)GameManager.singleton.tileMapGenerator.tempRoom[i].Item2
+                } });
+        }
+        for (int i = 0; i < GameManager.singleton.tileMapGenerator.spawnsPos.Length; i++)
+        {
+            RpcId(id, "ReceiveSpawnData", new Variant[] { i, GameManager.singleton.tileMapGenerator.spawnsPos[i] });
+        }
         RpcId(id, "FinishedMap", new Variant[] { GameManager.singleton.GameData.mapParam.startHeight });
     }
 
@@ -142,16 +198,18 @@ public partial class MultiplayerManager : Node
             return;
         if (playersControler.ContainsKey(id))
             return;
-        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<player>();
-        GameManager.singleton.GetChild(1).AddChild(player);
+        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate().GetChild<player>(0);
+        GameManager.singleton.GetChild(1).AddChild(player.GetParent());
         playersControler.Add(id, player);
         player.Position = pos;
         player.IsLocalPlayer = false;
         player.uid = id;
-        player.Name = "Player" + id;
+        player.GetParent().Name = "Player" + id;
         player.Init();
         player.camera.ClearCurrent(false);
         Rpc("InstantiatePlayer", new Variant[] { id, pos });
+        player.GetWeaponServer(player.defaultWeapon);
+        player.SyncBulletsServer();
     }
 
     public void SendPlayer(long receiver, long id, Vector3 pos)
@@ -162,14 +220,14 @@ public partial class MultiplayerManager : Node
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void InstantiatePlayer(Variant id, Variant pos)
     {
-        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate<player>();
-        GameManager.singleton.GetChild(1).AddChild(player);
+        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate().GetChild<player>(0);
+        GameManager.singleton.GetChild(1).AddChild(player.GetParent());
         playersControler.Add(id.As<long>(), player);
         player.Position = pos.AsVector3();
         bool localPl = Multiplayer.GetUniqueId() == id.As<long>();
         player.IsLocalPlayer = localPl;
         player.uid = id.As<long>();
-        player.Name = "Player" + id;
+        player.GetParent().Name = "Player" + id;
         player.Init();
         player.camera.Current = localPl;
         if (localPl)
@@ -190,22 +248,18 @@ public partial class MultiplayerManager : Node
     {
         long pid = id.As<long>();
         bool localPl = Multiplayer.GetUniqueId() == pid;
-        if (localPl)
-        {
-            //Quit server
-        }
-        else
-        {
-            playersControler[pid].QueueFree();
-            playersControler.Remove(pid);
-        }
+
+        playersControler[pid].QueueFree();
+        playersControler.Remove(pid);
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void StartMapSync(Variant h, Variant x, Variant y)
+    private void StartMapSync(Variant h, Variant x, Variant y, Variant ts, Variant rs)
     {
         GameManager.singleton.tileMapGenerator.GetData();
         tempGrid = new int[h.As<int>(), x.As<int>(), y.As<int>()];
+        tempRooms = new (int, Vector3I)[rs.AsInt32()];
+        tempSpawns = new Vector2I[ts.AsInt32()];
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -216,12 +270,35 @@ public partial class MultiplayerManager : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ReceiveRoomData(Variant i, Variant value)
+    {
+        //Debug.Print(new Vector3I(h.As<int>(), x.As<int>(), y.As<int>()) + "");
+        var items = value.AsGodotArray();
+        tempRooms[i.AsInt32()] = (items[0].AsInt32(), items[1].AsVector3I());
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ReceiveSpawnData(Variant i, Variant value)
+    {
+        //Debug.Print(new Vector3I(h.As<int>(), x.As<int>(), y.As<int>()) + "");
+        tempSpawns[i.AsInt32()] = value.AsVector2I();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void FinishedMap(Variant layer)
     {
         GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
+        GameManager.singleton.tileMapGenerator.InstantiateRooms(tempRooms);
+        GameManager.singleton.tileMapGenerator.SpawnSpawns(tempSpawns, tempRooms, tempGrid, tempGrid.GetLength(1));
         if (GameManager.singleton.lobby == null)
             return;
         ((Lobby_Script)GameManager.singleton.lobby).InitMiniMap((int)layer);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ClearMap()
+    {
+        GameManager.singleton.tileMapGenerator.ClearMap();
     }
 
     //Game management
@@ -233,14 +310,46 @@ public partial class MultiplayerManager : Node
         Rpc("StartGameClient");
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void StartGameClient()
     {
         GameManager.singleton.lobby.QueueFree();
     }
 
-    //Lobby sync
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void DisplayLobby()
+    {
+        GameManager.singleton.lobby = GD.Load<PackedScene>(GameManager.lobbyTemplate).Instantiate();
+        GameManager.singleton.AddChild(GameManager.singleton.lobby);
+    }
 
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void HideHUD()
+    {
+        GameManager.singleton.hudManager.Visible = false;
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void StartMatchClient()
+    {
+        foreach (var sp in GameManager.singleton.tileMapGenerator.spawns)
+        {
+            sp.GetNode<Node3D>("Door").Position += new Vector3(0, GameManager.singleton.tileMapGenerator.tileSize, 0);
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ResetRoundClient()
+    {
+        Debug.Print("Ok");
+        foreach (var sp in GameManager.singleton.tileMapGenerator.spawns)
+        {
+            Node3D spD = sp.GetNode<Node3D>("Door");
+            spD.Position = new Vector3(spD.Position.X, GameManager.singleton.tileMapGenerator.tileSize * GameManager.singleton.GameData.mapParam.startHeight, spD.Position.Z);
+        }
+    }
+
+    //Lobby sync
     public void LobbySync()
     {
         if (!Multiplayer.IsServer())
@@ -297,6 +406,7 @@ public partial class MultiplayerManager : Node
         SyncHUDLobbyClient();
     }
 
+
     private void SyncHUDLobbyClient()
     {
         if (GameManager.singleton.lobby == null)
@@ -313,6 +423,14 @@ public partial class MultiplayerManager : Node
                 lobby.PlayerJoin(username, (uint)i);
             }
         }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SyncServerStatusClientRpc(Variant statusIndex, Variant progressionVar)
+    {
+        ServerStatus status = (ServerStatus)((int)statusIndex);
+        float progression = (float)progressionVar;
+        Debug.Print("Server status: " + status.ToString() + " advancment: " + progression.ToString());
     }
 
     //Fun Function
@@ -383,4 +501,103 @@ public partial class MultiplayerManager : Node
         return args[i+1];
     }
 
+    //MatchMaking Connectivity
+
+    public static string? GetPublicServer(string matchMakerAdress, int port)
+    {
+        TcpClient client = new TcpClient();
+
+        try
+        {
+            client.Connect(matchMakerAdress, port);
+        }
+        catch (Exception e)
+        {
+            Debug.Print("Unable to connect to match maker: " + e.Message);
+            return null;
+        }
+
+        WriteToStream(client.GetStream(), "client request");
+
+        while (true)
+        {
+            string msg = WaitForMessage(client.GetStream());
+
+            string[] parts = msg.Split(' ');
+
+            if (parts.Length == 3)
+            {
+                if (parts[0] == "client" && parts[1] == "request")
+                {
+                    if (parts[2].Split(':').Length == 2)
+                    {
+                        return parts[2];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
+    private int? PostPublicServer(string serverInfo, int maxPl)
+    {
+        WriteToStream(matchMakerClient.GetStream(), "server create " + serverInfo + " " + maxPl);
+
+        while (true)
+        {
+            string msg = WaitForMessage(matchMakerClient.GetStream());
+
+            string[] parts = msg.Split(' ');
+
+            if (parts.Length == 3)
+            {
+                if (parts[0] == "server" && parts[1] == "created")
+                {
+                    if (int.TryParse(parts[2], out int servId))
+                    {
+                        return servId;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
+    private void UpdatePublicServerData(int servId, int nbPlayer)
+    {
+        WriteToStream(matchMakerClient.GetStream(), "server update " + servId + " " + nbPlayer);
+    }
+
+    private void DeletePublicServer(int servId)
+    {
+        WriteToStream(matchMakerClient.GetStream(), "server delete " + servId);
+    }
+
+    private static void WriteToStream(NetworkStream stream, string msg)
+    {
+        StreamWriter writer = new StreamWriter(stream);
+        writer.Write(msg);
+        writer.Flush();
+    }
+
+    private static string WaitForMessage(NetworkStream stream)
+    {
+        string message = "";
+
+        while (message == "")
+        {
+            while (stream.DataAvailable)
+            {
+                message += (char)stream.ReadByte();
+            }
+        }
+
+        return message;
+    }
 }

@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://nay8wtbjxetx"
+path="res://.godot/imported/GeneratorMonitor.obj-bbf0d5070498e9ca9926403d44be842a.mesh"
+
+[deps]
+
+files=["res://.godot/imported/GeneratorMonitor.obj-bbf0d5070498e9ca9926403d44be842a.mesh"]
+
+source_file="res://Ressources/ProceduralGeneration/Rooms/Room3x3Gene/GeneratorMonitor.obj"
+dest_files=["res://.godot/imported/GeneratorMonitor.obj-bbf0d5070498e9ca9926403d44be842a.mesh", "res://.godot/imported/GeneratorMonitor.obj-bbf0d5070498e9ca9926403d44be842a.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
