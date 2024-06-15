@@ -82,9 +82,53 @@ public partial class HudManager : CanvasLayer
         GetNode<Control>("GpsSelectionDisplay").Visible = true;
     }
 
-    public void HideGps()
+    public void HideGpsSelection()
     {
         GetNode<Control>("GpsSelectionDisplay").Visible = false;
+    }
+
+    public void HideGps()
+    {
+        miniMap.HidePath();
+    }
+
+    public void DisplayPath(Node3D to, Vector3 from)
+    {
+        Vector3I fromV = GameManager.singleton.tileMapGenerator.FromRealToTilePos(from);
+        Vector3I toV = GameManager.singleton.tileMapGenerator.FromRealToTilePos(to.Position);
+
+        Vector3I[] path = Pathfinding.GetPath(new Vector3I(fromV.Y, fromV.Z, fromV.X), new Vector3I(toV.Y, toV.Z, toV.X), GameManager.singleton.tileMapGenerator.tileMap, GameManager.singleton.tileMapGenerator.tileTemplates);
+        if (path.Length <= 0)
+        {
+            HideGps();
+            return;
+        }
+
+        Vector3I[] validPath;
+        if (new Vector3I(path[0].Z, path[0].X, path[0].Y) == toV)
+        {
+            HideGps();
+            return;
+        }
+        else
+        {
+            validPath = new Vector3I[path.Length + 1];
+        }
+        
+        validPath[^1] = toV;
+
+        for (int i = 0; i < path.Length; i++)
+        {
+            validPath[^(i+2)] = new Vector3I(path[i].Z, path[i].X, path[i].Y);
+        }
+
+        /*foreach (var v in validPath)
+        {
+            Debug.Print(v.ToString());
+        }*/
+
+        miniMap.GeneratePath(validPath);
+        miniMap.SelectPathLayer(fromV.X);
     }
 }
 
@@ -96,4 +140,5 @@ public struct GpsDisplayInfo
     public float minAngle;
     public float maxAngle;
     public float dSize;
+    public Node3D node;
 }

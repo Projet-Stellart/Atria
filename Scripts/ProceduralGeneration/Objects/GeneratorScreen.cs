@@ -25,9 +25,9 @@ public partial class GeneratorScreen : Interactible
     {
         if (!process)
             return;
-        if (DateTime.Now <= endTime)
+        if (DateTime.UtcNow <= endTime)
         {
-            TimeSpan remaining = endTime - DateTime.Now;
+            TimeSpan remaining = endTime - DateTime.UtcNow;
             GetNode<ProgressBar>("ScreenMenu/Control/VBoxContainer/VBoxContainer/ProgressBar").Value = (totTime - remaining)/totTime;
         }
         else
@@ -52,7 +52,7 @@ public partial class GeneratorScreen : Interactible
     {
         gen.CollectStart(player);
         TimeSpan time = TimeSpan.FromSeconds(gen.CollectingTime);
-        Rpc("SendStatusClient", new Variant[] { true, (DateTime.Now + time).ToString(), time.Ticks });
+        Rpc("SendStatusClient", new Variant[] { true, (DateTime.Now.ToUniversalTime() + time).ToString(), time.Ticks });
     }
 
     public override void OnClickEnd(player player)
@@ -80,8 +80,9 @@ public partial class GeneratorScreen : Interactible
         }
         else
         {
-            endTime = DateTime.Parse(_endTime.AsString());
-            totTime = new TimeSpan(_totTime.As<long>());
+            TimeSpan delay = TimeSpan.FromSeconds(0.3f);
+            endTime = DateTime.Parse(_endTime.AsString()) + delay;
+            totTime = new TimeSpan(_totTime.As<long>()) + delay;
             GetNode<ProgressBar>("ScreenMenu/Control/VBoxContainer/VBoxContainer/ProgressBar").Visible = true;
             GetNode<RichTextLabel>("ScreenMenu/Control/VBoxContainer/VBoxContainer/Click").Visible = false;
         }

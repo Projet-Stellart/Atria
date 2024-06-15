@@ -19,6 +19,7 @@ public static class DataManager
             name = "StraitCorridor",    //0
             weight = 75,                //1
             transition = 0,             //2
+            walkTransition = 0,
             conjugate = 0,              //3
             north = "corridor",         //4
             south = "corridor",         //5
@@ -34,6 +35,7 @@ public static class DataManager
             name = "CurvedCorridor",
             weight = 60,
             transition = 0,
+            walkTransition = 0,
             conjugate = 0,
             north = "space",
             south = "corridor",
@@ -49,6 +51,7 @@ public static class DataManager
             name = "TCorridor",
             weight = 30,
             transition = 0,
+            walkTransition = 0,
             conjugate = 0,
             north = "corridor",
             south = "corridor",
@@ -64,6 +67,7 @@ public static class DataManager
             name = "XCorridor",
             weight = 1,
             transition = 0,
+            walkTransition = 0,
             conjugate = 0,
             north = "corridor",
             south = "corridor",
@@ -79,6 +83,7 @@ public static class DataManager
             name = "EndCorridor",
             weight = 1,
             transition = 0,
+            walkTransition = 0,
             conjugate = 0,
             north = "space",
             south = "corridor",
@@ -94,6 +99,7 @@ public static class DataManager
             name = "StairHighCorridor",
             weight = 10,
             transition = -1,
+            walkTransition = -1,
             conjugate = 6,
             north = "space",
             south = "corridor",
@@ -109,6 +115,7 @@ public static class DataManager
             name = "StairLowCorridor",
             weight = 10,
             transition = 1,
+            walkTransition = 1,
             conjugate = 5,
             north = "space",
             south = "corridor",
@@ -118,12 +125,13 @@ public static class DataManager
         },
         new TilePrefa() //MultiXVentLowCorridor;50;1;8;corridor;corridor;space;space
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorLow.tscn"),
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLow.tscn"),
             modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/ModelMultiVentLvlXCorridorLow.tscn"),
             mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLowMap.png",
             name = "MultiXVentLowCorridor",
             weight = 20,
             transition = 1,
+            walkTransition = 0,
             conjugate = 8,
             north = "corridor",
             south = "corridor",
@@ -133,12 +141,13 @@ public static class DataManager
         },
         new TilePrefa() //MultiXVentHighCorridor;50;-1;7;space;space;corridor;corridor
         {
-            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorHigh.tscn"),
+            tile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHigh.tscn"),
             modelTile = GD.Load<PackedScene>("res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/ModelMultiVentLvlXCorridorHigh.tscn"),
             mapRes = "res://Ressources/ProceduralGeneration/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHighMap.png",
             name = "MultiXVentHighCorridor",
             weight = 20,
             transition = -1,
+            walkTransition = 0,
             conjugate = 7,
             north = "space",
             south = "space",
@@ -154,6 +163,7 @@ public static class DataManager
             name = "Empty",
             weight = 700,
             transition = 0,
+            walkTransition = 0,
             conjugate = 0,
             north = "space",
             south = "space",

@@ -198,7 +198,7 @@ public partial class MultiplayerManager : Node
             return;
         if (playersControler.ContainsKey(id))
             return;
-        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate().GetChild<player>(0);
+        player player = GD.Load<PackedScene>(GameManager.singleton.characterDatas[GameManager.singleton.PlayerInfo[id].characterIndex].playerScene).Instantiate().GetChild<player>(0);
         GameManager.singleton.GetChild(1).AddChild(player.GetParent());
         playersControler.Add(id, player);
         player.Position = pos;
@@ -207,7 +207,7 @@ public partial class MultiplayerManager : Node
         player.GetParent().Name = "Player" + id;
         player.Init();
         player.camera.ClearCurrent(false);
-        Rpc("InstantiatePlayer", new Variant[] { id, pos });
+        Rpc("InstantiatePlayer", new Variant[] { id, GameManager.singleton.characterDatas[GameManager.singleton.PlayerInfo[id].characterIndex].playerScene, pos });
         player.GetWeaponServer(player.defaultWeapon);
         player.GetDirectWeapon(player.defaultWeapon);
         player.SyncBulletsServer();
@@ -215,13 +215,13 @@ public partial class MultiplayerManager : Node
 
     public void SendPlayer(long receiver, long id, Vector3 pos)
     {
-        RpcId(receiver, "InstantiatePlayer", new Variant[] { id, pos });
+        RpcId(receiver, "InstantiatePlayer", new Variant[] { id, GameManager.singleton.characterDatas[GameManager.singleton.PlayerInfo[id].characterIndex].playerScene, pos });
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void InstantiatePlayer(Variant id, Variant pos)
+    private void InstantiatePlayer(Variant id, Variant plRes, Variant pos)
     {
-        player player = GD.Load<PackedScene>(GameManager.playerTemplate).Instantiate().GetChild<player>(0);
+        player player = GD.Load<PackedScene>(plRes.AsString()).Instantiate().GetChild<player>(0);
         GameManager.singleton.GetChild(1).AddChild(player.GetParent());
         playersControler.Add(id.As<long>(), player);
         player.Position = pos.AsVector3();
@@ -291,6 +291,7 @@ public partial class MultiplayerManager : Node
         GameManager.singleton.tileMapGenerator.InstantiateGrid(tempGrid);
         GameManager.singleton.tileMapGenerator.InstantiateRooms(tempRooms);
         GameManager.singleton.tileMapGenerator.SpawnSpawns(tempSpawns, tempRooms, tempGrid, tempGrid.GetLength(1));
+        GameManager.singleton.tileMapGenerator.spawnsPos = tempSpawns;
         if (GameManager.singleton.lobby == null)
             return;
         ((Lobby_Script)GameManager.singleton.lobby).InitMiniMap((int)layer);
@@ -314,14 +315,14 @@ public partial class MultiplayerManager : Node
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void StartGameClient()
     {
+        GameManager.singleton.waitingSpawn = false;
         GameManager.singleton.lobby.QueueFree();
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void DisplayLobby()
     {
-        GameManager.singleton.lobby = GD.Load<PackedScene>(GameManager.lobbyTemplate).Instantiate();
-        GameManager.singleton.AddChild(GameManager.singleton.lobby);
+        GameManager.singleton.SetupLobby();
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -339,6 +340,48 @@ public partial class MultiplayerManager : Node
         }
     }
 
+    public void RequestPlayerLobbyData()
+    {
+        Rpc("RequestPlayerLobbyDataClient");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RequestPlayerLobbyDataClient()
+    {
+        LobbyData data = new LobbyData(((Lobby_Script)GameManager.singleton.lobby).GetSelectedCharacter().index);
+
+        RpcId(1, "RequestPlayerLobbyDataServer", new Variant[] { data.ToVariant() });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RequestPlayerLobbyDataServer(Variant playerData)
+    {
+        LobbyData data = new LobbyData(playerData);
+        PlayerData info = GameManager.singleton.PlayerInfo[Multiplayer.GetRemoteSenderId()];
+
+        info.characterIndex = data.selectedCharacter;
+
+        GameManager.singleton.PlayerInfo[Multiplayer.GetRemoteSenderId()] = info;
+        GameManager.singleton.playerReady[Multiplayer.GetRemoteSenderId()] = true;
+
+        Debug.Print("Received from: " + Multiplayer.GetRemoteSenderId() + " selected character = " + data.selectedCharacter);
+
+        bool read = true;
+        foreach (var ready in GameManager.singleton.playerReady)
+        {
+            if (!ready.Value)
+            {
+                read = false;
+                break;
+            }
+        }
+        if (read)
+        {
+            GameManager.singleton.SpawnPlayers();
+            GameManager.singleton.playerReady.Clear();
+        }
+    }
+
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void ResetRoundClient()
     {
@@ -348,6 +391,30 @@ public partial class MultiplayerManager : Node
             Node3D spD = sp.GetNode<Node3D>("Door");
             spD.Position = new Vector3(0, 0, 1.6f);
         }
+    }
+
+    public void SendHUDInfoServer(string msg)
+    {
+        Rpc("SendHUDInfoClient", new Variant[] { msg });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SendHUDInfoClient(Variant msg)
+    {
+        GameManager.singleton.hudManager.subHud.SetInfo(msg.AsString());
+        GameManager.singleton.waitingMatch = false;
+    }
+
+    public void SendWaitingServer(DateTime end)
+    {
+        Rpc("SendWaitingClient", new Variant[] { end.ToUniversalTime().Ticks });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SendWaitingClient(Variant end)
+    {
+        GameManager.singleton.startMatchDate = new DateTime(end.AsInt64());
+        GameManager.singleton.waitingMatch = true;
     }
 
     //Lobby sync
@@ -429,9 +496,37 @@ public partial class MultiplayerManager : Node
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void SyncServerStatusClientRpc(Variant statusIndex, Variant progressionVar)
     {
+        Dictionary<ServerStatus, string> StatusToString = new Dictionary<ServerStatus, string>()
+        {
+            { ServerStatus.Paused, "Paused" },
+            { ServerStatus.Generating, "Generating map: " },
+            { ServerStatus.Waiting, "Waiting for players" },
+            { ServerStatus.Starting, "Starting" },
+            { ServerStatus.Running, "Starting" },
+        };
         ServerStatus status = (ServerStatus)((int)statusIndex);
         float progression = (float)progressionVar;
-        Debug.Print("Server status: " + status.ToString() + " advancment: " + progression.ToString());
+        if (status == ServerStatus.Generating)
+        {
+            ((Lobby_Script)GameManager.singleton.lobby).SetLobbyProgress(true, progression);
+        }
+        else
+        {
+            ((Lobby_Script)GameManager.singleton.lobby).SetLobbyProgress(false, 0f);
+        }
+        ((Lobby_Script)GameManager.singleton.lobby).SetLobbyTitle(StatusToString[status]);
+    }
+
+    public void SyncLobbySpawnServer(DateTime spawnTime)
+    {
+        Rpc("SyncLobbySpawnClientRpc", new Variant[] { spawnTime.ToUniversalTime().Ticks });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SyncLobbySpawnClientRpc(Variant startTime)
+    {
+        GameManager.singleton.startSpawnDate = new DateTime(startTime.AsInt64());
+        GameManager.singleton.waitingSpawn = true;
     }
 
     //Fun Function
@@ -600,5 +695,29 @@ public partial class MultiplayerManager : Node
         }
 
         return message;
+    }
+}
+
+public class LobbyData
+{
+    public int selectedCharacter;
+
+    public LobbyData(int _selectedCharacter)
+    {
+        selectedCharacter = _selectedCharacter;
+    }
+
+    public LobbyData(Variant lobbyDataSerialized)
+    {
+        Godot.Collections.Array<Variant> arr = lobbyDataSerialized.As<Godot.Collections.Array<Variant>>();
+        selectedCharacter = arr[0].As<int>();
+    }
+
+    public Variant ToVariant()
+    {
+        return new Godot.Collections.Array<Variant>()
+        {
+            selectedCharacter
+        };
     }
 }

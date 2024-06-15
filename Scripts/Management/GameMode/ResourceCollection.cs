@@ -49,12 +49,26 @@ public class ResourceCollection : Gamemode
             playerRes.Add(peer, 0);
         }
         ResetGen();
+        UpdateHUDInfo();
+    }
+
+    public void UpdateHUDInfo()
+    {
+        string str = $"Team1: {teamScore[0]} vs {teamScore[1]} :Team2\nResources/{MaxRes} : ";
+
+        for (int i = 0; i < teamsRes.Length; i++)
+        {
+            str += $"Team{(i+1)}: {teamsRes[i]}" + (i == teamsRes.Length - 1 ? "" : ", ");
+        }
+
+        GameManager.singleton.multiplayerManager.SendHUDInfoServer(str);
     }
 
     public override void BeginRound()
     {
         MatchStarted = true;
         ResetGen();
+        UpdateHUDInfo();
     }
 
     public override void PlayerDeath(LocalEntity player, LocalEntity other, DeathCause cause)
@@ -81,6 +95,7 @@ public class ResourceCollection : Gamemode
         teamsRes[team] += playerRes[player.uid];
         Debug.Print($"[GameMode]: {GameManager.singleton.PlayerInfo[player.uid].Username} deposited {playerRes[player.uid]} resources for team {team + 1}");
         playerRes[player.uid] = 0;
+        UpdateHUDInfo();
         if (teamsRes[team] >= MaxRes)
         {
             RoundEnd(team);
@@ -96,10 +111,7 @@ public class ResourceCollection : Gamemode
         int tScore = 0;
         if (GameManager.singleton.GameData.totalScore)
         {
-            foreach (var teamS in teamScore)
-            {
-                tScore += teamS;
-            }
+            tScore = TotalTeamScore;
         }
         else
         {

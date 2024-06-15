@@ -17,7 +17,7 @@ public partial class HUD : Control
     }
     public void SetInfo(string infos)
     {
-        GetNode<Info>("Infos").SetInfo(infos);
+        GetNode<Info>("Info").SetInfo(infos);
     }
     public void SetWinBanner(string infos)
     {

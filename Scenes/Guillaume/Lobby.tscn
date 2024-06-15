@@ -1,9 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://crg0ua4vy7tlf"]
+[gd_scene load_steps=10 format=3 uid="uid://crg0ua4vy7tlf"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/Lobby_Script.cs" id="1_bi12c"]
 [ext_resource type="PackedScene" uid="uid://4ia8ae3lyb7i" path="res://Scenes/Lilian/UI/mini_map.tscn" id="2_eqo5k"]
 [ext_resource type="Texture2D" uid="uid://dowuts2osg2p0" path="res://Ressources/UI/MapLayers/layer-download-svgrepo-com - Copy.svg" id="2_jp1ac"]
+[ext_resource type="Texture2D" uid="uid://c6hbfmws7kw30" path="res://Ressources/UI/Fond1.jpeg" id="2_qclo7"]
 [ext_resource type="Texture2D" uid="uid://b5n5nr41bqeou" path="res://Ressources/UI/MapLayers/layer-upload-svgrepo-com - Copy.svg" id="3_dwoyv"]
+[ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="4_gu0pb"]
+[ext_resource type="Texture2D" uid="uid://dgxynxnhxc4of" path="res://Ressources/UI/Button_CLicked.png" id="5_evlfy"]
+[ext_resource type="Texture2D" uid="uid://bxkcfq3dhpm75" path="res://Ressources/UI/Button_Moused.png" id="6_msvdf"]
+[ext_resource type="Texture2D" uid="uid://lpcbw8y5umkt" path="res://Ressources/UI/Button_0.png" id="7_k33il"]
 
 [node name="Lobby" type="CanvasLayer"]
 script = ExtResource("1_bi12c")
@@ -16,23 +21,36 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LobbyTitle" type="RichTextLabel" parent="Custom"]
-layout_mode = 0
-anchor_left = 0.304688
-anchor_top = 0.0277778
-anchor_right = 0.484375
-anchor_bottom = 0.0833333
+[node name="Background" type="TextureRect" parent="Custom"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_qclo7")
+expand_mode = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Custom"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="LobbyTitle" type="RichTextLabel" parent="Custom/HBoxContainer"]
+custom_minimum_size = Vector2(250, 25)
+layout_mode = 2
+size_flags_vertical = 4
 bbcode_enabled = true
 metadata/_edit_use_anchors_ = true
 
-[node name="LobbyProgress" type="RichTextLabel" parent="Custom"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.515625
-anchor_top = 0.0277778
-anchor_right = 0.546875
-anchor_bottom = 0.0833333
-bbcode_enabled = true
+[node name="LobbyProgress" type="ProgressBar" parent="Custom/HBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
 metadata/_edit_use_anchors_ = true
 
 [node name="MarginContainer5" type="MarginContainer" parent="Custom"]
@@ -74,7 +92,7 @@ anchors_preset = -1
 anchor_left = 0.03125
 anchor_top = 0.0555556
 anchor_right = 0.3125
-anchor_bottom = 0.944445
+anchor_bottom = 0.5
 metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Custom/ScrollContainer"]
@@ -115,15 +133,7 @@ metadata/_edit_use_anchors_ = true
 [node name="VBoxContainer" type="Control" parent="Custom/MarginContainer9"]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer9/VBoxContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Down" type="Button" parent="Custom/MarginContainer9/VBoxContainer"]
+[node name="Down" type="TextureButton" parent="Custom/MarginContainer9/VBoxContainer"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -132,14 +142,27 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
-text = "
-
-"
-icon = ExtResource("2_jp1ac")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("4_gu0pb")
+texture_pressed = ExtResource("5_evlfy")
+texture_hover = ExtResource("6_msvdf")
+texture_disabled = ExtResource("7_k33il")
+texture_focused = ExtResource("4_gu0pb")
+ignore_texture_size = true
+stretch_mode = 0
 metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="Custom/MarginContainer9/VBoxContainer/Down"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.2
+anchor_right = 0.8
+anchor_bottom = 0.8
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_jp1ac")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="MarginContainer10" type="MarginContainer" parent="Custom"]
 layout_mode = 1
@@ -160,16 +183,7 @@ metadata/_edit_use_anchors_ = true
 [node name="VBoxContainer" type="Control" parent="Custom/MarginContainer10"]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="Custom/MarginContainer10/VBoxContainer"]
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Up" type="Button" parent="Custom/MarginContainer10/VBoxContainer"]
+[node name="Up" type="TextureButton" parent="Custom/MarginContainer10/VBoxContainer"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -178,10 +192,120 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
-text = "
+texture_normal = ExtResource("4_gu0pb")
+texture_pressed = ExtResource("5_evlfy")
+texture_hover = ExtResource("6_msvdf")
+texture_disabled = ExtResource("7_k33il")
+texture_focused = ExtResource("4_gu0pb")
+ignore_texture_size = true
+stretch_mode = 0
 
-"
-icon = ExtResource("3_dwoyv")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="TextureRect" type="TextureRect" parent="Custom/MarginContainer10/VBoxContainer/Up"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.2
+anchor_right = 0.8
+anchor_bottom = 0.8
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_dwoyv")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CharacterSelection" type="Control" parent="Custom"]
+layout_mode = 1
+anchor_left = 0.031
+anchor_top = 0.5
+anchor_right = 0.313
+anchor_bottom = 0.944
+
+[node name="Background" type="ColorRect" parent="Custom/CharacterSelection"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.207843, 0.207843, 0.207843, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Custom/CharacterSelection"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="Title" type="Control" parent="Custom/CharacterSelection/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Custom/CharacterSelection/VBoxContainer/Title"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 27
+bbcode_enabled = true
+text = "[center]Character selection:"
+
+[node name="CharacterSelect" type="Control" parent="Custom/CharacterSelection/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Custom/CharacterSelection/VBoxContainer/CharacterSelect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+follow_focus = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Custom/CharacterSelection/VBoxContainer/CharacterSelect/ScrollContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Info" type="VBoxContainer" parent="Custom/CharacterSelection/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Name" type="Control" parent="Custom/CharacterSelection/VBoxContainer/Info"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Custom/CharacterSelection/VBoxContainer/Info/Name"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.02
+anchor_top = 0.08
+anchor_right = 0.98
+anchor_bottom = 0.92
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+text = "Test"
+
+[node name="Description" type="Control" parent="Custom/CharacterSelection/VBoxContainer/Info"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Custom/CharacterSelection/VBoxContainer/Info/Description"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.02
+anchor_top = 0.02
+anchor_right = 0.98
+anchor_bottom = 0.98
+grow_horizontal = 2
+grow_vertical = 2

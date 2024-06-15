@@ -83,6 +83,7 @@ public abstract partial class LocalEntity : CharacterBody3D
             { 
                 GameManager.singleton.hudManager.miniMap.UpdatePlayerPos(new Vector2(Position.X, Position.Z) / 6.4f, Rotation.Y);
                 GameManager.singleton.hudManager.miniMap.SelectLayer((int)((Position.Y + 3.2f) / 6.4f));
+                GameManager.singleton.hudManager.miniMap.SelectPathLayer((int)((Position.Y + 3.2f) / 6.4f));
             }
         }
 
@@ -102,34 +103,48 @@ public abstract partial class LocalEntity : CharacterBody3D
     public void DisplayGpsSelection()
     {
         gpsSelected = -1;
-        gpsInfos = new GpsDisplayInfo[2 + GameManager.singleton.tileMapGenerator.rooms.Length];
+        gpsInfos = new GpsDisplayInfo[3 + GameManager.singleton.tileMapGenerator.rooms.Length];
 
         dangle = 2*(Mathf.Pi) / gpsInfos.Length;
 
         float startAngle = -(Mathf.Pi)/2f;
 
+        int pT = GameManager.singleton.FindPlayerTeam(uid);
+        int eT = pT == 0 ? 1 : 0;
+
         gpsInfos[0] = new GpsDisplayInfo() {
-            name = "Ally Spawn",
-            color = new Color(0, 255, 0),
+            name = "Cancel",
+            color = new Color(0.1f, 0.1f, 0.1f),
             angle = startAngle,
             minAngle = startAngle - (dangle / 2f),
             maxAngle = startAngle + (dangle / 2f)
         };
-        gpsInfos[1] = new GpsDisplayInfo() {
-            name = "Ennemy Spawn",
-            color = new Color(255, 0, 0),
+        gpsInfos[1] = new GpsDisplayInfo()
+        {
+            name = "Ally Spawn",
+            color = new Color(0, 1, 0),
             angle = startAngle + dangle,
             minAngle = startAngle + dangle - (dangle / 2f),
-            maxAngle = startAngle + dangle + (dangle / 2f)
+            maxAngle = startAngle + dangle + (dangle / 2f),
+            node = GameManager.singleton.tileMapGenerator.spawns[pT]
+        };
+        gpsInfos[2] = new GpsDisplayInfo() {
+            name = "Ennemy Spawn",
+            color = new Color(1, 0, 0),
+            angle = startAngle + dangle * 2,
+            minAngle = startAngle + dangle * 2 - (dangle / 2f),
+            maxAngle = startAngle + dangle * 2 + (dangle / 2f),
+            node = GameManager.singleton.tileMapGenerator.spawns[eT]
         };
         for (int i = 0; i < GameManager.singleton.tileMapGenerator.rooms.Length; i++)
         {
-            gpsInfos[2 + i] = new GpsDisplayInfo() {
+            gpsInfos[3 + i] = new GpsDisplayInfo() {
                 name = "Room " + (i+1),
-                color = new Color(20, 20, 20),
-                angle = startAngle + dangle * (2 + i),
-                minAngle = (startAngle + dangle * (2 + i)) - (dangle / 2f),
-                maxAngle = (startAngle + dangle * (2 + i)) + (dangle / 2f)
+                color = new Color(0.8f, 0.8f, 0.8f),
+                angle = startAngle + dangle * (3 + i),
+                minAngle = (startAngle + dangle * (3 + i)) - (dangle / 2f),
+                maxAngle = (startAngle + dangle * (3 + i)) + (dangle / 2f),
+                node = GameManager.singleton.tileMapGenerator.rooms[i]
             };
         }
 
@@ -138,7 +153,7 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public void HideGpsSelection()
     {
-        GameManager.singleton.hudManager.HideGps();
+        GameManager.singleton.hudManager.HideGpsSelection();
     }
 
     public void UpdateGpsSelection(Vector2 mouseDelta)
@@ -164,7 +179,14 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public void SendGps()
     {
-        Debug.Print("Gps to: " + gpsInfos[gpsSelected].name);
+        if (gpsSelected == 0)
+        {
+            GameManager.singleton.hudManager.HideGps();
+        }
+        else
+        {
+            GameManager.singleton.hudManager.DisplayPath(gpsInfos[gpsSelected].node, Position);
+        }
     }
 
     public override void _Input(InputEvent @event)

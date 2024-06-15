@@ -14,7 +14,6 @@ public partial class GameManager : Node
     public TileMeshGeneration tileMapGenerator;
     public HudManager hudManager;
 
-    public const string playerTemplate = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn";
     public Gamemode gamemode;
 
     public Random random;
@@ -24,6 +23,18 @@ public partial class GameManager : Node
     private string[] startingArgs;
 
     private int seed;
+
+    public DateTime startMatchDate;
+    public bool waitingMatch;
+
+    public DateTime startSpawnDate;
+    public bool waitingSpawn;
+
+    public CharacterData[] characterDatas = new CharacterData[]
+    {
+        new CharacterData() { index = 0, name = "Vortex", description = "Desc test for Vortex", image = "res://Ressources/UI/Fond1.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" },
+        new CharacterData() { index = 1,name = "Other", description = "Desc test for Other", image = "res://Ressources/UI/Fond0.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" }
+    };
 
     public static Dictionary<ServerStatus, string> statusText = new Dictionary<ServerStatus, string>
     {
@@ -61,6 +72,8 @@ public partial class GameManager : Node
     public PlayerData localPlayerData;
 
     private Dictionary<long, PlayerData> playerInfo;
+
+    public Dictionary<long, bool> playerReady;
 
     public Dictionary<long, PlayerData> PlayerInfo { get => playerInfo; set => SetPlayerInfo(value); }
 
@@ -120,7 +133,7 @@ public partial class GameManager : Node
         if (tileMapGenerator != null && tileMapGenerator.isGenerating)
         {
             float prec = 20;
-            if ( (int)(tileMapGenerator.gridGenerationAdvencement * prec) > (int)(previousAdvencmentChecked * prec))
+            if ( (int)(tileMapGenerator.gridGenerationAdvencement * prec) > (int)(previousAdvencmentChecked * prec) || (int)(tileMapGenerator.gridGenerationAdvencement * prec) < (int)(previousAdvencmentChecked * prec))
             {
                 previousAdvencmentChecked = tileMapGenerator.gridGenerationAdvencement;
                 SyncServAdv(tileMapGenerator.gridGenerationAdvencement);
@@ -145,6 +158,34 @@ public partial class GameManager : Node
                 delayedActions.Remove(action);
                 i--;
                 action.Item2.Invoke();
+            }
+        }
+
+        if (waitingMatch)
+        {
+            TimeSpan remainingTime = startMatchDate - DateTime.UtcNow;
+            TimeSpan remainingClamp = new TimeSpan(remainingTime.Ticks < 0 ? 0 : remainingTime.Ticks);
+            if (remainingTime.TotalMinutes >= 1)
+            {
+                hudManager.subHud.SetInfo($"Round starting in {Mathf.RoundToInt(remainingTime.TotalMinutes)} min {remainingTime.Seconds} s");
+            }
+            else
+            {
+                hudManager.subHud.SetInfo("Round starting in " + remainingTime.Seconds + " s");
+            }
+        }
+
+        if (waitingSpawn)
+        {
+            TimeSpan remainingTime = startSpawnDate - DateTime.UtcNow;
+            TimeSpan remainingClamp = new TimeSpan(remainingTime.Ticks < 0 ? 0 : remainingTime.Ticks);
+            if (remainingTime.TotalMinutes >= 1)
+            {
+                ((Lobby_Script)lobby).SetLobbyTitle($"Deploying soldiers in {Mathf.RoundToInt(remainingTime.TotalMinutes)} min {remainingTime.Seconds} s");
+            }
+            else
+            {
+                ((Lobby_Script)lobby).SetLobbyTitle("Round starting in " + remainingTime.Seconds + " s");
             }
         }
     }
@@ -204,8 +245,15 @@ public partial class GameManager : Node
         }
 
         //Display lobby
+        SetupLobby();
+    }
+
+    public void SetupLobby()
+    {
         lobby = GD.Load<PackedScene>(lobbyTemplate).Instantiate();
         AddChild(lobby);
+        ((Lobby_Script)lobby).CreateCharacterList(characterDatas);
+        ((Lobby_Script)lobby).SelectCharacter(0);
     }
 
     public void CloseScene()
@@ -310,7 +358,7 @@ public partial class GameManager : Node
             Debug.Print("Match seed: " + seed);
             multiplayerManager.InitServer((int)GameData.port, (int)GameData.nbPlayer);
             serverStatus = ServerStatus.Generating;
-            if (GameData.GameMode == null || GameData.GameMode == "")
+            if (GameData.GameMode == null || GameData.GameMode == "" || !Gamemode.Gamemodes.ContainsKey(GameData.GameMode))
             {
                 gamemode = Gamemode.Gamemodes[Gamemode.DefaultGamemode].Copy();
             }
@@ -437,12 +485,13 @@ public partial class GameManager : Node
         serverStatus = ServerStatus.Starting;
 
         Debug.Print("Players will be dispatch in " + GameData.spawnDelay + " seconds!");
-        delayedActions.Add((Time.GetTicksMsec() + GameData.spawnDelay*1000, SpawnPlayers));
 
-        delayedActions.Add((Time.GetTicksMsec() + (GameData.beginDelay + GameData.spawnDelay) * 1000, StartMatch));
+        multiplayerManager.SyncLobbySpawnServer(DateTime.UtcNow + TimeSpan.FromSeconds(GameData.spawnDelay));
+
+        delayedActions.Add((Time.GetTicksMsec() + GameData.spawnDelay*1000, RequestSpawnPlayers));
     }
 
-    private void SpawnPlayers()
+    public void SpawnPlayers()
     {
         matchStatus = 0;
         serverStatus = ServerStatus.Running;
@@ -455,6 +504,10 @@ public partial class GameManager : Node
         }
 
         multiplayerManager.SyncStartGame();
+
+        multiplayerManager.SendWaitingServer(DateTime.UtcNow + TimeSpan.FromSeconds(GameData.beginDelay));
+
+        delayedActions.Add((Time.GetTicksMsec() + (GameData.beginDelay) * 1000, StartMatch));
 
         Debug.Print("Match will begin in " + (GameData.beginDelay) + " seconds!");
     }
@@ -496,6 +549,7 @@ public partial class GameManager : Node
     {
         multiplayerManager.Rpc("ResetRoundClient");
         HidePlayerBanner();
+        multiplayerManager.SendWaitingServer(DateTime.UtcNow + TimeSpan.FromSeconds(GameData.beginDelay));
         foreach (var pl in multiplayerManager.playersControler)
         {
             if (pl.Value.dead)
@@ -506,6 +560,16 @@ public partial class GameManager : Node
             {
                 pl.Value.SendServerPosVelo(tileMapGenerator.GetRandPlayerSpawn(FindPlayerTeam(pl.Key), random), Vector3.Zero);
             }
+        }
+    }
+
+    public void RequestSpawnPlayers()
+    {
+        multiplayerManager.RequestPlayerLobbyData();
+        playerReady = new Dictionary<long, bool>();
+        foreach (var p in playerInfo)
+        {
+            playerReady.Add(p.Key, false);
         }
     }
 
@@ -699,6 +763,7 @@ public struct GameData
 public struct PlayerData
 {
     public string Username;
+    public int characterIndex;
 
     public Variant Serialize()
     {

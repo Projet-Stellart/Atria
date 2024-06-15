@@ -128,7 +128,19 @@ public partial class TileMeshGeneration : Node3D
 
         Task<int[,,]> generating = Task.Run(() =>
         {
-            return GenerateGrid(sizex, sizey, spawnsPos, rand);
+            int i = 0;
+            int[,,] grid = GenerateGrid(sizex, sizey, spawnsPos, rand);
+            bool valid = CheckMapViability(grid, tileTemplates);
+
+            while (!valid && i < 50)
+            {
+                Debug.Print("Generation " + i + " failled");
+                grid = GenerateGrid(sizex, sizey, spawnsPos, rand);
+                valid = CheckMapViability(grid, tileTemplates);
+                i++;
+            }
+
+            return grid;
         });
 
         PostGenerationProcess(generating, spawnsPos, rand);
@@ -289,6 +301,7 @@ public partial class TileMeshGeneration : Node3D
             Node3D spawn = DataManager.spawnTemplate.Instantiate<Node3D>();
             AddChild(spawn);
             spawns[i] = spawn;
+            spawn.Name = "Spawn" + i;
             spawn.Position = new Vector3(v.X * tileSize, GameManager.singleton.GameData.mapParam.startHeight * tileSize, v.Y * tileSize);
             if (v.X < 0)
             {
@@ -473,6 +486,143 @@ public partial class TileMeshGeneration : Node3D
     public Node3D GetTeamSpawnPointList(int team)
     {
         return spawns[team].GetNode<Node3D>("SpawnPoints");
+    }
+
+    /// <summary>
+    /// Convert (float x, float h, float y) into (int h, int x, int y) usable on the tileMap
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public Vector3I FromRealToTilePos(Vector3 pos)
+    {
+        Vector3 toFoor = pos / tileSize;
+        Vector3I Rounded = new Vector3I(Mathf.RoundToInt(toFoor.Y), Mathf.RoundToInt(toFoor.X), Mathf.RoundToInt(toFoor.Z));
+        if (Rounded.Y < 0 || Rounded.Y >= GameManager.singleton.tileMapGenerator.tileMap.GetLength(1) || Rounded.Z < 0 || Rounded.Z >= GameManager.singleton.tileMapGenerator.tileMap.GetLength(2))
+        {
+            Vector2I val = GetCorespSpawnCoord(new Vector2I(Rounded.Y, Rounded.Z));
+            Rounded = new Vector3I(Rounded.X, val.X, val.Y);
+        }
+        
+        return Rounded;
+    }
+
+    public Vector2I GetCorespSpawnCoord(Vector2I v)
+    {
+        if (v.X < 0)
+        {
+            foreach (var sp in GameManager.singleton.tileMapGenerator.spawnsPos)
+            {
+                if (sp.X < 0)
+                {
+                    return sp + new Vector2I(1, 0);
+                }
+            }
+        }
+        else if (v.X >= GameManager.singleton.tileMapGenerator.tileMap.GetLength(1))
+        {
+            foreach (var sp in GameManager.singleton.tileMapGenerator.spawnsPos)
+            {
+                if (sp.X >= GameManager.singleton.tileMapGenerator.tileMap.GetLength(1))
+                {
+                    return sp - new Vector2I(1, 0);
+                }
+            }
+        }
+        else if (v.Y < 0)
+        {
+            foreach (var sp in GameManager.singleton.tileMapGenerator.spawnsPos)
+            {
+                if (sp.Y < 0)
+                {
+                    return sp + new Vector2I(0, 1);
+                }
+            }
+        }
+        else
+        {
+            foreach (var sp in GameManager.singleton.tileMapGenerator.spawnsPos)
+            {
+                if (sp.Y >= GameManager.singleton.tileMapGenerator.tileMap.GetLength(2))
+                {
+                    return sp - new Vector2I(0, 1);
+                }
+            }
+        }
+        return v;
+    }
+
+    public Vector2I GetCorespSpawnCoord(Vector2I v, int sizeX, int sizeY)
+    {
+        if (v.X < 0)
+        {
+            foreach (var sp in GameManager.singleton.tileMapGenerator.spawnsPos)
+            {
+                if (sp.X < 0)
+                {
+                    return sp + new Vector2I(1, 0);
+                }
+            }
+        }
+        else if (v.X >= sizeX)
+        {
+            foreach (var sp in GameManager.singleton.tileMapGenerator.spawnsPos)
+            {
+                if (sp.X >= sizeX)
+                {
+                    return sp - new Vector2I(1, 0);
+                }
+            }
+        }
+        else if (v.Y < 0)
+        {
+            foreach (var sp in GameManager.singleton.tileMapGenerator.spawnsPos)
+            {
+                if (sp.Y < 0)
+                {
+                    return sp + new Vector2I(0, 1);
+                }
+            }
+        }
+        else
+        {
+            foreach (var sp in GameManager.singleton.tileMapGenerator.spawnsPos)
+            {
+                if (sp.Y >= sizeY)
+                {
+                    return sp - new Vector2I(0, 1);
+                }
+            }
+        }
+        return v;
+    }
+
+    public bool CheckMapViability(int[,,] grid, TilePrefa[] tileTemplates)
+    {
+        bool result = true;
+
+        Vector3I sp1 = new Vector3I(GameManager.singleton.GameData.mapParam.startHeight, GetCorespSpawnCoord(spawnsPos[0], grid.GetLength(1), grid.GetLength(2)).X, GetCorespSpawnCoord(spawnsPos[0], grid.GetLength(1), grid.GetLength(2)).Y);
+        Vector3I sp2 = new Vector3I(GameManager.singleton.GameData.mapParam.startHeight, GetCorespSpawnCoord(spawnsPos[1], grid.GetLength(1), grid.GetLength(2)).X, GetCorespSpawnCoord(spawnsPos[1], grid.GetLength(1), grid.GetLength(2)).Y);
+
+        Vector3I[] SToSPath = Pathfinding.GetPath(new Vector3I(sp1.Y, sp1.Z, sp1.X), new Vector3I(sp2.Y, sp2.Z, sp2.X), grid, tileTemplates);
+
+        if (SToSPath.Length <= 0)
+        {
+            return false;
+        }
+
+        foreach (var room in tempRoom)
+        {
+            Vector2I tilePosWH = new Vector2I(room.Item2.Y, room.Item2.Z);
+
+            Vector3I cRoom = new Vector3I(GameManager.singleton.GameData.mapParam.startHeight, GetCorespSpawnCoord(tilePosWH, grid.GetLength(1), grid.GetLength(2)).X, GetCorespSpawnCoord(tilePosWH, grid.GetLength(1), grid.GetLength(2)).Y);
+
+            if (Pathfinding.GetPath(new Vector3I(sp1.Y, sp1.Z, sp1.X), new Vector3I(cRoom.Y, cRoom.Z, cRoom.X), grid, tileTemplates).Length <= 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -906,6 +1056,7 @@ public class TilePrefa
     public string name;
 	public int rotation;
     public int transition;
+    public int walkTransition;
     public int conjugate;
 	public string north;
     public string south;
@@ -923,6 +1074,7 @@ public class TilePrefa
         this.name = "";
         this.rotation = 0;
         this.transition = 0;
+        this.walkTransition = 0;
         this.north = "";
         this.south = "";
         this.est = "";
@@ -951,6 +1103,7 @@ public class TilePrefa
         this.name = copy.name;
         this.rotation = copy.rotation;
         this.transition = copy.transition;
+        this.walkTransition = copy.walkTransition;
         this.north = copy.north;
         this.south = copy.south;
         this.est = copy.est;
