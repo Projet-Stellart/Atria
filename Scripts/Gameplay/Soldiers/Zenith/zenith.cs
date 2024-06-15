@@ -38,8 +38,8 @@ public partial class zenith : player
         ),
         new ModuleInfo(
             "Override",
-            "Corrupt an enemy's advanced armor and control it from a distance.",
-            "Take control of a close range enemy, able to attack its own teammates.",
+            "Corrupt an enemy's advanced armor.", //TO CHANGE AFTER SOUTENANCE
+            "Disrupts the key bindings of a close range enemy.",
             energyMax
         )
     );
@@ -109,7 +109,7 @@ public partial class zenith : player
                 GetTree().Root.AddChild(ScramblerRobot);
                 ScramblerRobot.GlobalPosition = GlobalPosition + new Vector3(0,1,0);
                 ScramblerRobot.GlobalRotation = GlobalRotation;
-                ScramblerRobot.Initializing(GlobalPosition + new Vector3(10,0,-10));
+                ScramblerRobot.Initializing(GlobalPosition + new Vector3(10,0,-10), this);
 
                 _CancelModule();
             }

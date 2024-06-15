@@ -4,9 +4,11 @@ using Godot;
 public partial class scrambler : CharacterBody3D
 {
     NavigationAgent3D navigation;
-    bool isTargetLiving = false;
     float SPEED = 3.0f;
-    Node3D Target;
+    zenith Parent;
+    Node3D TargetNode;
+    Vector3 TargetPos;
+    bool wayBack = false;
     bool hasTarget = false;
 
     public override void _Ready()
@@ -17,9 +19,9 @@ public partial class scrambler : CharacterBody3D
     public override void _PhysicsProcess(double delta)
     {
         if (hasTarget)
-        {
-            navigation.TargetPosition = Target.GlobalPosition;
-        }
+            navigation.TargetPosition = TargetNode.GlobalPosition;
+        else
+            navigation.TargetPosition = TargetPos;
         var currPos = GlobalPosition;
         var nextPos = navigation.GetNextPathPosition();
         var velocity = (nextPos - currPos).Normalized() * SPEED;
@@ -29,18 +31,35 @@ public partial class scrambler : CharacterBody3D
     }
 
     public void FoundTarget(Node3D body) {
-        if (body is player Player && !Player.IsInGroup("Enemy"))
+        if (body is player Player && Player.IsInGroup("Enemy"))
         {
-            Target = Player;
+            TargetNode = Player;
+            SPEED = 3.0f * 1.4f;
             hasTarget = true;
-            SPEED *= 1.4f;
-            GetNode<Timer>("Explode").Start();
+            Timer timer = GetNode<Timer>("Explode");
+            if (timer.TimeLeft <= 0)
+                timer.Start();
         }
     }
 
-    public void Initializing(Vector3 target) {
+    public void TargetReached() {
+        if (!wayBack) {
+            TargetNode = Parent;
+            hasTarget = true;
+            wayBack = true;
+        }
+        else
+        {
+            Parent.EnergyBar += Parent.soldier.HighModule.EnergyRequired / 2;
+            QueueFree();
+        }
+    }
+
+    public void Initializing(Vector3 target, zenith parent) {
         MoveAndCollide(Vector3.Down * 10);
+        Parent = parent;
         navigation.TargetPosition = target;
+        TargetPos = target;
     }
 
     public void onExplosion() {
