@@ -1,6 +1,7 @@
-using Godot;
+﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -17,24 +18,33 @@ public static class Pathfinding
 
         public int Z { get; }
 
-        public bool Walkable;
+        public bool North;
+        public bool South;
+        public bool East;
+        public bool West;
 
         public int GCost;
         public int HCost;
         public int FCost => GCost + HCost;
 
         public CustomNode? Parent;
+        public int Transition;
 
-        public CustomNode(int x, int y, int z, bool walkable)
+        public CustomNode(int x, int y, int z, TilePrefa data)
         {
             X = x;
             Y = y;
-            Z = Z;
+            Z = z;
+            North = data.north != "space";
+            South = data.south != "space";
+            East = data.est != "space";
+            West = data.west != "space";
             GCost = int.MaxValue;
             HCost = 0;
             Parent = null;
-            Walkable = walkable;
+            Transition = data.transition;
         }
+
 
         public bool Same(CustomNode? node)
         {
@@ -69,11 +79,13 @@ public static class Pathfinding
     {
         int dx = (a.X - b.X);
         int dy = (a.Y - b.Y);
-        return ((int)Math.Round(Math.Sqrt((dx * dx) + (dy * dy))));
+        int dz = (a.Z -  b.Z);
+        return ((int)Math.Round(Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz))));
     }
 
     private static List<Vector3I> BuildPath(CustomNode node)
     {
+        Debug.Print("try build");
         if (node == null)
             return new List<Vector3I>();
 
@@ -83,16 +95,16 @@ public static class Pathfinding
 
         while (processing != null)
         {
-            path.Add(new Vector3I(node.X,node.Y,node.Z));
+            path.Add(new Vector3I(processing.X, processing.Y, processing.Z));
             processing = processing.Parent;
         }
 
         return path;
     }
 
-    public static Vector3I[] GetPath(Vector3I start, Vector3I goal, int[,,] grid, TileData[] tileData)
+    public static Vector3I[] GetPath(Vector3I start, Vector3I goal, int[,,] grid, TilePrefa[] tileData)
     {
-        CustomNode[,,] customNodes = new CustomNode[grid.GetLength(0), grid.GetLength(1), grid.GetLength(1)];
+        CustomNode[,,] customNodes = new CustomNode[grid.GetLength(1), grid.GetLength(2), grid.GetLength(0)];
 
         for (int h = 0; h < grid.GetLength(0); h++)
         {
@@ -100,12 +112,13 @@ public static class Pathfinding
             {
                 for (int y = 0; y < grid.GetLength(2); y++)
                 {
-                    customNodes[h, x, y] = new CustomNode(x, y, h, true);
+                    customNodes[x, y, h] = new CustomNode(x, y, h, tileData[grid[h, x, y] - 1]);
+                    // north c'est y -1, south y+1, west x-1, east x+1
                 }
             }
         }
 
-        return AStar(customNodes, new CustomNode(start.X, start.Y, start.Z,true), new CustomNode(goal.X, goal.Y, goal.Z, true)).ToArray();
+        return AStar(customNodes, new CustomNode(start.X, start.Y, start.Z, tileData[grid[start.Z, start.X, start.Y] - 1]), new CustomNode(goal.X, goal.Y, goal.Z, tileData[grid[goal.Z, goal.X, goal.Y] - 1])).ToArray();
     }
 
     public static List<Vector3I> AStar(CustomNode[,,] grid, CustomNode start, CustomNode goal)
@@ -124,25 +137,64 @@ public static class Pathfinding
 
             if (current.Same(goal))
             {
+                Debug.Print("same");
                 return BuildPath(current);
             }
 
             toProcess.Remove(current);
 
+            //Debug.Print($"On : ({current.X},{current.Y},{current.Z})");
+
             for (int i = 0; i < 4; i++)
             {
                 int x = current.X + (i % 2) * (i == 3 ? -1 : 1);
                 int y = current.Y + ((i + 1) % 2) * (i == 2 ? -1 : 1);
-                int z = 0;
+                int z = current.Z + current.Transition;
+                //Debug.Print((new Vector3I(x, y, z)).ToString());
 
                 if (x < 0 || y < 0 || x >= grid.GetLength(0) || y >= grid.GetLength(1))
                 {
+                    //Debug.Print("out");
                     continue;
                 }
 
-                if (!grid[x, y, z].Walkable)
+                if (grid[x, y, z].Same(goal))
                 {
-                    continue;
+                    Debug.Print("Found");
+                    return BuildPath(current);
+                }
+                if (current.Transition == 0)
+                {
+
+                if (i== 0)
+                {
+                    if (!grid[x, y, z].South)
+                    {
+                        continue;
+                    }
+                }
+                if (i == 1)
+                {
+                    if (!grid[x, y, z].East)
+                    {
+                        continue;
+                    }
+                }
+                if(i == 2)
+                {
+                    if (!grid[x, y, z].North)
+                    {
+                        continue;
+                    }
+                }
+                if (i == 3)
+                {
+                    if (!grid[x, y, z].West)
+                    {
+                        continue;
+                    }
+                }
+
                 }
 
                 int tent = current.GCost + 1;
@@ -160,9 +212,12 @@ public static class Pathfinding
                     if (!toProcess.Contains(grid[x, y, z]))
                     {
                         toProcess.Add(grid[x, y, z]);
+                        //Debug.Print($"added : ({x},{y},{z})");
                     }
                 }
+                //Debug.Print("loop");
             }
+            //Debug.Print("end loop");
         }
 
         return new List<Vector3I>();
