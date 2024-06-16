@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://d665uokxdhaj"]
 
-[ext_resource type="ArrayMesh" uid="uid://bqoiebjvlf14v" path="res://Scenes/Nelson/Weapons/Predator/predator_drop.mesh" id="1_b3nvi"]
+[ext_resource type="ArrayMesh" uid="uid://bqoiebjvlf14v" path="res://Ressources/GamePlay/3D_Models/Weapons/Predator/predator_drop.mesh" id="1_b3nvi"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tsijp"]
 size = Vector3(0.2, 0.415, 1.855)

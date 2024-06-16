@@ -13,9 +13,16 @@ public abstract partial class WeaponAmo : Weapon
 	public abstract float penetration {get; protected set;}
     public int currBullets;
 
-    public abstract void Reload();
+	//Common actions of a weapon amo
+    public virtual void Reload() { PlayAnimation("Swap"); }
     public abstract void onReload();
 
+
+    public override bool canFire()
+    {
+        return base.canFire() && animator.CurrentAnimation != "FireAim";
+    }
+    //Calculating who to hit with the damages
     public override void CalculateFire(player Player) {
         var spaceState = GetWorld3D().DirectSpaceState;
 		Vector3 dir = Player.camera.GlobalBasis * new Vector3(0,0,-200);
@@ -102,23 +109,6 @@ public abstract partial class WeaponAmo : Weapon
 }
 
 
-/*--------------------°\
-|	  MELEE WEAPON	   |
-\°--------------------*/
-public abstract partial class WeaponMelee : Weapon
-{
-    public override bool canAimFire {get;} = true;
-}
-
-
-
-
-
-
-
-
-
-
 
 
 /*--------------------------------°\
@@ -142,4 +132,33 @@ public abstract partial class WeaponRadiation : WeaponAmo {
 		}
 		return true;
 	}
+}
+
+
+
+
+
+
+
+
+
+
+
+/*--------------------°\
+|	  MELEE WEAPON	   |
+\°--------------------*/
+public abstract partial class WeaponMelee : Weapon
+{
+    public override bool canAimFire {get;} = false;
+	public override bool canDrop {get;set;}= false;
+	
+    public abstract int secondaryDamage {get; protected set;}
+
+    public override void Fire(player Owner) {PlayAnimation("Fire");}
+
+    public override void CalculateFire(player Player) {}
+    public override bool canFire()
+    {
+        return base.canFire() && animator.CurrentAnimation != "AltFire";
+    }
 }

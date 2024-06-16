@@ -1,17 +1,14 @@
-using System.Diagnostics;
 using Godot;
 
 public partial class predator : WeaponAmo
 {
-    AudioStreamPlayer3D stream1;
-    AudioStreamPlayer3D reloadStream;
-    AudioStreamPlayer inspectStream;
-    AudioStreamPlayer swapStream;
-    GpuParticles3D muzzleFlash;
-    Timer reloadTime;
-    public override bool drop {get;set;} = true;
+
+    /*----------------------°\
+	|	 Class Properties    |
+	\°----------------------*/
 
     public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Primary, WeaponType.Normal, "Predator", "None", null);
+    public override bool canDrop {get;set;} = true;
 
     [Export]
     public override int bullets {get; protected set;} = 16;
@@ -25,9 +22,27 @@ public partial class predator : WeaponAmo
 
     public override bool canAimFire {get;} = false;
 
+    public override Node3D[] HandsPlacement {get; protected set;}
+
+
+    /*----------------------°\
+	|	    References       |
+	\°----------------------*/
+
+    AudioStreamPlayer3D fireStream;
+    AudioStreamPlayer3D reloadStream;
+    AudioStreamPlayer inspectStream;
+    AudioStreamPlayer swapStream;
+    GpuParticles3D muzzleFlash;
+    Timer reloadTime;
     Camera3D camera;
     Node3D savePosition;
-    Node3D[] HandsPlacement;
+
+
+
+    /*----------------------°\
+	|	    Functions        |
+	\°----------------------*/
 
     public override void _Ready()
     {
@@ -54,7 +69,7 @@ public partial class predator : WeaponAmo
             AlbedoTexture = GetNode<SubViewport>("Skeleton3D/MainGripAttachment/SubViewport").GetTexture()
         });
 
-        stream1 = GetNode<AudioStreamPlayer3D>("GunSound1");
+        fireStream = GetNode<AudioStreamPlayer3D>("GunSound1");
         reloadStream = GetNode<AudioStreamPlayer3D>("ReloadSound");
         inspectStream = GetNode<AudioStreamPlayer>("InspectSound");
         swapStream = GetNode<AudioStreamPlayer>("SwapSound");
@@ -69,62 +84,45 @@ public partial class predator : WeaponAmo
         camera.GlobalTransform = savePosition.GlobalTransform;
     }
 
-    public override void Fire() {
-        //Variables
-        currBullets--;
-        //Sound
-        PlaySound();
-        //Effects
-        Effects();
-    }
 
-    public override void AltFire()
-    {
-        throw new System.NotImplementedException();
-    }
 
-    public override void PlaySound() {
-		stream1.Play();
-	}
+
+
+    /*----------------------°\
+	|	Inherited Functions  |
+	\°----------------------*/
+
+    public override void Fire(player Owner) {
+        currBullets--; //Variables
+        fireStream.Play(); //Sound
+        muzzleFlash.Emitting = true; //Effects
+
+        base.Fire(Owner);
+    }
 
     public override void Reload() {
-        reloadStream.Play();
-        reloadTime.Start();
+        reloadStream.Play(); //Sound
+        reloadTime.Start(); //Timer
+
+        base.Reload();
     }
 
     public override void onReload() {
+        //Updating variables
         bullets -= bulletPerMag - currBullets;
         currBullets = bulletPerMag;
     }
 
-    public override void Effects() {
-        muzzleFlash.Emitting = true;
-    }
-
-    public override void Finisher()
-    {
-        //Not implemented for weapons with no cosmetics
-    }
-
     public override void Swap() {
-        swapStream.Play();
+        swapStream.Play(); //Sound
+        
+        base.Swap();
     }
 
     public override void Inspect()
     {
-        inspectStream.Play();
-    }
-
-    public override void StopAnimations()
-    {
+        inspectStream.Play(); //Sound
         
-    }
-
-    public override NodePath[] GetHandsPlacements() {
-        var res = new NodePath[12];
-        for (int i = 0; i < 12 ;i++) {
-            res[i] = HandsPlacement[i].GetPath();
-        }
-        return res;
+        base.Inspect();
     }
 }

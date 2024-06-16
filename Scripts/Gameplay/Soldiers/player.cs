@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Godot;
 
 public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDisable
@@ -98,6 +97,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	
 	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
 	public PackedScene weaponTest = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/Predator/predator.tscn");
+	public PackedScene meleeTest = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/Ember_Blade/ember_blade.tscn");
 
 
 
@@ -147,7 +147,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		//Mouse in FPS
 		Input.MouseMode = Input.MouseModeEnum.Captured;
 
-		GetWeapon((Weapon)weaponTest.Instantiate()); //TO REMOVE IN FUTURE
+		GetWeapon((Weapon)meleeTest.Instantiate()); //TO REMOVE IN FUTURE
 	}
 
     public override void InputProcess(double delta)
@@ -329,14 +329,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	//Gun Fire - Melee Weapon Hit
 	public void _fire(KeyState key) {
 		if (hasWeapon) { //Avoid error
-			var anim_name = Weapon.animator.CurrentAnimation;
-			if (key.JustPressed && anim_name != "Fire" && anim_name != "Swap" && anim_name != "AimFire" && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
-				FireLocal(); //Calling Fire Calculations + On other players
-				Weapon.Fire(); //Adjusting the stats of the weapons (eg. bullets)
-				if (!Weapon.canAimFire || !isAiming) //Playing correct animation
-					ShowAnimation("Fire");
-				else
-					ShowAnimation("AimFire");
+			if (key.JustPressed && Weapon.canFire() && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
+				FireLocal(); //Calling Fire llations + On other players
+				Weapon.Fire(this); //Adjusting the stats of the weapons (eg. bullets)
 				
 				if (isAiming && !Weapon.canAimFire) //Resetting aim if weapon cannot shoot and keep aim
 					isAiming = false;
@@ -347,16 +342,19 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	//Aim with Weapon
 	public void _alt_fire(KeyState key) {
 		if (hasWeapon) {
-			if (key.JustPressed && Weapon.animator.CurrentAnimation != "Swap" && Weapon.animator.CurrentAnimation != "Fire" && Weapon.animator.CurrentAnimation != "FireAim") { //Aiming - SETTINGS: could change (holding for aim)
-				//Aiming
-				if (!isAiming) {
-					Weapon.animator.Play("Aim");
-				}
-				//Stop Aiming
-				else {
-					Weapon.animator.PlayBackwards("Aim");
-				}
-				isAiming = !isAiming; //SETTINGS: could change
+			if (key.JustPressed && Weapon.canFire()) { //Aiming - SETTINGS: could change (holding for aim)
+				if (Weapon is WeaponAmo) {
+					//Aiming
+					if (!isAiming) {
+						Weapon.AltFire(true);
+					}
+					//Stop Aiming
+					else {
+						Weapon.AltFire(false);
+					}
+					isAiming = !isAiming; //SETTINGS: could change
+				} else
+					Weapon.AltFire(false);
 			}
 		}
 	}
@@ -368,7 +366,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			if (weapon.currBullets < weapon.bulletPerMag && weapon.bullets > 0 && Weapon.animator.CurrentAnimation != "Reload") //Checking if you can reload
 			{
 				weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
-				ShowAnimation("Reload");
 				if (isAiming)
 					isAiming = false;
 			}
@@ -377,8 +374,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	//Inspect weapon
 	public void _inspect() {
-		Weapon.Inspect();
-		ShowAnimation("Inspect");
+		if (Weapon.animator.CurrentAnimation != "Inspect")
+			Weapon.Inspect();
 	}
 
 	//Death
@@ -398,12 +395,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			GetNode<AnimationPlayer>("Crouching").PlayBackwards("Crouch");
 		}
 		isCrouching = Input.IsActionPressed("crouch");
-	}
-
-
-	//Show Any Animations
-	public override void ShowAnimation(string anim_name) {
-		Weapon.animator.Play(anim_name);
 	}
 
 
