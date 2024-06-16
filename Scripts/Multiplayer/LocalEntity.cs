@@ -17,7 +17,7 @@ public abstract partial class LocalEntity : CharacterBody3D
     private GpsDisplayInfo[] gpsInfos;
     private float dangle;
     private const float defaultSize = 0f;
-    private const float selectedSize = 20f;
+    private const float selectedSize = 30f;
     private int gpsSelected;
 
     public abstract string defaultWeapon { get; }
@@ -700,13 +700,117 @@ public abstract partial class LocalEntity : CharacterBody3D
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
-        Rpc("SyncUseModuleClient", new Variant[] { module, args });
+        foreach (long peer in Multiplayer.GetPeers())
+        {
+            if (peer == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(peer, "SyncUseModuleClient", new Variant[] { module, args });
+        }
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void SyncUseModuleClient(Variant module, Variant args)
     {
         ((player)this)._UseModule((FocusState)module.AsInt32(), args.AsGodotArray<Variant>());
+    }
+
+    public void SendCancelModule()
+    {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "SyncCancelModuleServer", new Variant[] { });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncCancelModuleServer()
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        foreach (long peer in Multiplayer.GetPeers())
+        {
+            if (peer == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(peer, "SyncCancelModuleClient", new Variant[] {  });
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncCancelModuleClient()
+    {
+        ((player)this)._CancelModule();
+    }
+
+    public void SendActivateModule(int module)
+    {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "SyncActivateModuleServer", new Variant[] { module });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncActivateModuleServer(Variant module)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        foreach (long peer in Multiplayer.GetPeers())
+        {
+            if (peer == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(peer, "SyncActivateModuleClient", new Variant[] { module });
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncActivateModuleClient(Variant module)
+    {
+        ((player)this)._ActivateModule((FocusState)module.AsInt32());
+    }
+
+    public void SendUpdateModule(KeyState send, KeyState fire, KeyState altfire, KeyState rotate)
+    {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "SyncUpdateModuleServer", new Variant[] { KeyStateToArray(send), KeyStateToArray(fire), KeyStateToArray(altfire), KeyStateToArray(rotate) });
+    }
+
+    public Godot.Collections.Array KeyStateToArray(KeyState key)
+    {
+        return new Godot.Collections.Array() { key.JustPressed, key.Pressed, key.JustReleased };
+    }
+
+    public static KeyState KeyStateFromArray(Godot.Collections.Array key)
+    {
+        KeyState keyState = new KeyState();
+
+        keyState.JustPressed = key[0].AsBool();
+        keyState.Pressed = key[1].AsBool();
+        keyState.JustReleased = key[2].AsBool();
+
+        return keyState;
+    }
+
+    public static Godot.Collections.Array ConvertKeyState(KeyState key)
+    {
+        return new Godot.Collections.Array() { key.JustPressed, key.Pressed, key.JustReleased };
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    public void SyncUpdateModuleServer(Variant send, Variant fire, Variant altfire, Variant rotate)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        foreach (long peer in Multiplayer.GetPeers())
+        {
+            if (peer == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(peer, "SyncUpdateModuleClient", new Variant[] { send, fire, altfire, rotate });
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    public void SyncUpdateModuleClient(Variant send, Variant fire, Variant altfire, Variant rotate)
+    {
+        ((player)this)._UpdateModule(KeyStateFromArray(send.AsGodotArray()), KeyStateFromArray(fire.AsGodotArray()), KeyStateFromArray(altfire.AsGodotArray()), KeyStateFromArray(rotate.AsGodotArray()));
     }
 
     public void SpawnDecalServer(Node collider, Vector3 rayPosition, Vector3 rayNormal)

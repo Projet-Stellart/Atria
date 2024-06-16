@@ -151,7 +151,6 @@ public partial class vortex : player
     //VIRTUAL
     public override void _ActivateModule(FocusState module)
     {
-        EnergyBar = 2000;
         if (module == FocusState.LowModule) {
             if (EnergyBar < soldier.LowModule.EnergyRequired && fieldDuration <= 0) {//Doesn't have enough energy
                 return;
@@ -196,6 +195,7 @@ public partial class vortex : player
             if (send.JustReleased || fieldDuration <= 0)
             {
                 _CancelModule();
+                SendCancelModule();
             }
             else
                 fieldDuration -= 0.25f;
@@ -205,6 +205,7 @@ public partial class vortex : player
         else if (FocusState == FocusState.MediumModule) { //Medium Module
             if (send.JustPressed) {
                 _CancelModule();
+                SendCancelModule();
             }
             else {
                 if (altfire.JustPressed)
@@ -213,22 +214,28 @@ public partial class vortex : player
                     cam_lock = false;
                 else if (!cam_lock && fire.JustPressed) { //Throw Module
                     SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
-
+                    _UseModule(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
                     //Reset
+
                     _CancelModule();
+                    SendCancelModule();
                 }
             }
         } else if (FocusState == FocusState.HighModule) { //High Module
             if (altfire.JustPressed || fire.JustPressed) { //Launch
                 SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { fire.JustPressed, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
+                _UseModule(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
 
                 _CancelModule();
+                SendCancelModule();
             }
         } else if (FocusState == FocusState.CoreModule) {
             if (fire.JustPressed) { //Burst Supernova
                 SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { GlobalPosition });
+                _UseModule(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
 
                 _CancelModule();
+                SendCancelModule();
             }
         }
     }
@@ -270,6 +277,7 @@ public partial class vortex : player
             }
             
             pulsar_projectile projectile = (pulsar_projectile)pulsarProjectile.Instantiate();
+            projectile.owner = this;
 
             if (!args[0].AsBool()) //Launching without boosters
                 projectile.boosters = false;
@@ -288,6 +296,7 @@ public partial class vortex : player
             //args = {GlobalPosition}
 
             supernova Supernova = (supernova)supernovaScene.Instantiate();
+            Supernova.owner = this;
             GetTree().Root.AddChild(Supernova);
             Supernova.GlobalPosition = args[0].AsVector3();
 

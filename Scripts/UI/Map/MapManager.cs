@@ -121,8 +121,16 @@ public partial class MapManager : Control
         pathData[0] = new PathData() { position = path[0] };    //First Tile on path
 
         Vector3I FirstTo = path[1] - path[0];
-        int toFirstAngle = rotData[new Vector2I(FirstTo.Y, FirstTo.Z)];
 
+        int toFirstAngle;
+        if (new Vector2I(FirstTo.Y, FirstTo.Z) == Vector2I.Zero)
+        {
+            toFirstAngle = 0;
+        }
+        else
+        {
+            toFirstAngle = rotData[new Vector2I(FirstTo.Y, FirstTo.Z)];
+        }
         TextureRect FirstPathNode = PathTemplate.Instantiate<TextureRect>();
 
         container.AddChild(FirstPathNode);
@@ -187,7 +195,16 @@ public partial class MapManager : Control
         pathData[^1] = new PathData() { position = path[^1] };    //First Tile on path
 
         Vector3I LastFrom = path[^2] - path[^1];
-        int toLastAngle = rotData[new Vector2I(LastFrom.Y, LastFrom.Z)];
+
+        int toLastAngle;
+        if (new Vector2I(FirstTo.Y, FirstTo.Z) == Vector2I.Zero)
+        {
+            toLastAngle = 0;
+        }
+        else
+        {
+            toLastAngle = rotData[new Vector2I(LastFrom.Y, LastFrom.Z)];
+        }
 
         TextureRect LastPathNode = PathTemplate.Instantiate<TextureRect>();
 

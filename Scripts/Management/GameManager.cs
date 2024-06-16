@@ -107,6 +107,7 @@ public partial class GameManager : Node
             minRoom = 1,
             maxRoom = 2,
         },
+        friendlyFire = false,
         GameMode = "",
         maxScore = 3,
         totalScore = false,
@@ -512,12 +513,15 @@ public partial class GameManager : Node
         Debug.Print("Match will begin in " + (GameData.beginDelay) + " seconds!");
     }
 
-    public void PlayerDeath(LocalEntity player, DeathCause cause)
+    public void PlayerDeath(LocalEntity player, LocalEntity from, DeathCause cause)
     {
         if (!Multiplayer.IsServer())
             return;
 
-        Debug.Print($"{playerInfo[player.uid].Username} died by {cause.ToString()}");
+        if (cause == DeathCause.Killed)
+            Debug.Print($"{playerInfo[player.uid].Username} was killed by {from.GetParent().Name}");
+        else
+            Debug.Print($"{playerInfo[player.uid].Username} died by {cause.ToString()}");
 
         player.SyncDeathServer(true);
         player.SyncVisibility(false);
@@ -571,6 +575,20 @@ public partial class GameManager : Node
         {
             playerReady.Add(p.Key, false);
         }
+    }
+
+    public bool CanHurt(LocalEntity from, LocalEntity to)
+    {
+        if (from == null || to == null)
+            return true;
+
+        if (FindPlayerTeam(from.uid) == FindPlayerTeam(to.uid) && !GameData.friendlyFire)
+        {
+            Debug.Print("Failed");
+            return false;
+        }
+
+        return gamemode.CanHurt(from, to);
     }
 
     public void RoundStart()
@@ -692,6 +710,11 @@ public struct GameData
     /// Map parameters for the server
     /// </summary>
     public MapParam mapParam {  get; set; }
+
+    /// <summary>
+    /// Is friendly fire activated
+    /// </summary>
+    public bool friendlyFire { get; set; }
 
     /// <summary>
     /// Selected gamemode

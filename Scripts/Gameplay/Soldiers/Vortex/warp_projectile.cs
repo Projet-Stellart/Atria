@@ -110,7 +110,7 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
         QueueFree();
     }
 
-    public bool Damaged(int damage) {
+    public bool Damaged(int damage, player player) {
         ImpactNotFound();
         return true;
     }

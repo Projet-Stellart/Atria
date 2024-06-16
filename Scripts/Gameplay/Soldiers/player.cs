@@ -223,18 +223,22 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			if (moduleEnable) {
 				if (Input.IsActionJustPressed("low_module"))
 				{
+					SendActivateModule((int)FocusState.LowModule);
                     _ActivateModule(FocusState.LowModule);
                 }
 				else if (Input.IsActionJustPressed("medium_module"))
 				{
+                    SendActivateModule((int)FocusState.MediumModule);
                     _ActivateModule(FocusState.MediumModule);
                 }
 				else if (Input.IsActionJustPressed("high_module"))
 				{
+                    SendActivateModule((int)FocusState.HighModule);
                     _ActivateModule(FocusState.HighModule);
                 }
 				else if (Input.IsActionJustPressed("core_module"))
 				{
+                    SendActivateModule((int)FocusState.CoreModule);
                     _ActivateModule(FocusState.CoreModule);
                 }
 			}
@@ -249,7 +253,10 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 					                                  new KeyState("core_module"); //Core Module
 			//Sending Updates to Modules
 			if (canUpdateModule(fire, altfire, rotate, module))
-				_UpdateModule(module, fire, altfire, rotate);
+			{
+                _UpdateModule(module, fire, altfire, rotate);
+				SendUpdateModule(module, fire, altfire, rotate);
+            }
 		}
 
 		//Crouching Event
@@ -449,8 +456,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	}
 
 	//Death
-	public void _death(DeathCause cause) {
-		GameManager.singleton.PlayerDeath(this, cause);
+	public void _death(DeathCause cause, player player) {
+		GameManager.singleton.PlayerDeath(this, player, cause);
 	}
 
 	//Toggle Crouch Function
@@ -613,7 +620,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			Primary = weapon;
 			validPlayer = primaryAnimator;
 		}
-		ClearAnimations(validPlayer);
+		weapon.Player = this;
+        ClearAnimations(validPlayer);
 		validPlayer.AddAnimationLibrary("", weapon.animations);
 		SwapWeapon(weapon.info.WeaponClass); //Called by LocalEntity??
 		hasWeapon = true;
@@ -666,11 +674,20 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	|	  IMPORTED CLASSES FUNCTIONS	   |
 	\°------------------------------------*/
 
-	public bool Damaged(int damage) {
-		Health-=damage;
+	public bool Damaged(int damage, player player) {
+		if (!GameManager.singleton.CanHurt(player, this))
+			return false;
+        Health -=damage;
 		SyncHealth(Health);
 		if (Health <= 0) {
-			_death(DeathCause.Health);
+			if (player != null)
+			{
+                _death(DeathCause.Killed, player);
+            }
+			else
+			{
+                _death(DeathCause.Health, player);
+            }
 			return true;
 		}
 		return false;
@@ -829,6 +846,7 @@ public enum DeathCause
 {
 	DeathRegion,
 	Health,
+	Killed
 }
 
 public enum FocusState {
@@ -853,9 +871,9 @@ public enum SoldierRole {
 }
 
 public class KeyState {
-	public bool Pressed {get;}
-	public bool JustPressed {get;}
-	public bool JustReleased {get;}
+	public bool Pressed { get; set; }
+	public bool JustPressed { get; set; }
+	public bool JustReleased { get; set; }
 
 	public bool Active() {
 		return JustPressed || JustReleased;
@@ -870,4 +888,8 @@ public class KeyState {
 		JustPressed = Input.IsActionJustPressed(input_key);
 		JustReleased = Input.IsActionJustReleased(input_key);
 	}
+
+    public KeyState()
+    {
+    }
 }

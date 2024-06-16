@@ -15,6 +15,8 @@ public class ResourceCollection : Gamemode
 
     public bool MatchStarted { get; private set; } = false;
 
+    public bool RoundStarted { get; private set; } = false;
+
     public Dictionary<long, int> playerRes { get; }
 
     public ResourceCollection(int maxRes)
@@ -43,6 +45,7 @@ public class ResourceCollection : Gamemode
     public override void BeginMatch()
     {
         MatchStarted = true;
+        RoundStarted = true;
         playerRes.Clear();
         foreach (int peer in GameManager.singleton.Multiplayer.GetPeers())
         {
@@ -67,6 +70,7 @@ public class ResourceCollection : Gamemode
     public override void BeginRound()
     {
         MatchStarted = true;
+        RoundStarted = true;
         ResetGen();
         UpdateHUDInfo();
     }
@@ -107,6 +111,8 @@ public class ResourceCollection : Gamemode
         if (!MatchStarted)
             return;
         teamScore[winner]++;
+
+        RoundStarted = false;
 
         int tScore = 0;
         if (GameManager.singleton.GameData.totalScore)
@@ -151,5 +157,11 @@ public class ResourceCollection : Gamemode
         {
             gen.Reset();
         }
+    }
+
+    public override bool CanHurt(LocalEntity from, LocalEntity to)
+    {
+        Debug.Print("Ok: " + RoundStarted);
+        return RoundStarted;
     }
 }

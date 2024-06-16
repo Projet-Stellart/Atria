@@ -38,6 +38,8 @@ public abstract class Gamemode
 
     public abstract void BeginRound();
 
+    public abstract bool CanHurt(LocalEntity from, LocalEntity to);
+
     public abstract void PlayerDeath(LocalEntity player, LocalEntity other, DeathCause cause);
 
     public abstract Gamemode Copy();

@@ -89,7 +89,7 @@ public abstract partial class WeaponAmo : Weapon
 
 	public virtual bool AffectTarget(player Player, Godot.Collections.Dictionary collide, Node3D collider, float currentPenetration, int damageDealt) {
 		if (collider is IDamagable Entity) {
-			if (Entity.Damaged(damageDealt) && collider is player)
+			if (Entity.Damaged(damageDealt, Player) && collider is player)
 				Player.EnergyBar += 50;
 
 			//Testing with Enemy - //TO REMOVE
@@ -133,7 +133,7 @@ public abstract partial class WeaponRadiation : WeaponAmo {
 				field.HitByAmmo(currentPenetration);
 				return false; //BULLET ABSORBED
 		} else if (collider is IDamagable Entity) {
-			Entity.Damaged(damageDealt);
+			Entity.Damaged(damageDealt, Player);
 
 			//Testing with Enemy - //TO REMOVE
 			if (Entity is enemy Enemy && Enemy.IsInGroup("Enemy"))

@@ -30,7 +30,7 @@ public partial class nelson_main : Node3D
 
     public void _on_death_region_body_entered(Node3D body) {
         if (body is player Player) {
-            Player._death(DeathCause.DeathRegion);
+            Player._death(DeathCause.DeathRegion, null);
         }
     }
 }
