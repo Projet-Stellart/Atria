@@ -86,7 +86,6 @@ public partial class TileMeshGeneration : Node3D
             child.QueueFree();
             deleted++;
         }
-        Debug.Print("deleted: " + deleted + " remaining nodes: " + GetChildCount());
         tileMap = null;
         spawnsPos = null;
         spawns = null;
@@ -102,7 +101,7 @@ public partial class TileMeshGeneration : Node3D
     {
         if (isGenerating && ((int)(Time.GetTicksMsec()/10)*10) % 200 == 0)
         {
-            Debug.Print("Generation advencement: " + (gridGenerationAdvencement * 100) + "%");
+            Debug.Print("[MapGeneration]: Generation advencement: " + (gridGenerationAdvencement * 100) + "%");
         }
     }
 
@@ -134,7 +133,7 @@ public partial class TileMeshGeneration : Node3D
 
             while (!valid && i < 50)
             {
-                Debug.Print("Generation " + i + " failled");
+                Debug.Print("[MapGeneration]: Generation " + i + " failled");
                 grid = GenerateGrid(sizex, sizey, spawnsPos, rand);
                 valid = CheckMapViability(grid, tileTemplates);
                 i++;
@@ -174,7 +173,7 @@ public partial class TileMeshGeneration : Node3D
 
         OnMapGenerated.Invoke();
 
-        Debug.Print("Map ready!");
+        Debug.Print("[MapGeneration]: Map ready!");
     }
 
     public Node3D GenerateMapModel(int[,,] grid, Vector2I[] spawns, (int, Vector3I)[] rooms, Node3D Parent, Material mat)
@@ -727,24 +726,13 @@ public partial class TileMeshGeneration : Node3D
             }
             if (chosenTile == 0)
             {
-                //Debug.Print(selected.ToString() + " | " + totalWeight);
                 throw new Exception("not defined");
-            }
-            if (tileTemplates[chosenTile - 1].weight == 0)
-            {
-                Debug.Print("Error");
             }
             tGrid[layer, wTilePos.Item1, wTilePos.Item2] = chosenTile;
             if (tileTemplates[chosenTile-1].transition != 0)
             {
-                //Debug.Print(tileTemplates[chosenTile - 1].name + ":" + (tileTemplates[tileTemplates[chosenTile - 1].conjugate].name));
                 tGrid[layer + tileTemplates[chosenTile - 1].transition, wTilePos.Item1, wTilePos.Item2] = tileTemplates[chosenTile - 1].conjugate + 1;
             }
-            if (wTilePos.Item1 == 5 && wTilePos.Item2 == 4)
-            {
-                //Debug.Print("\ndebug: " + tileTemplates[tGrid[wTilePos.Item1, wTilePos.Item2]-1].name);
-            }
-            //gridGenerationAdvencement = ;
             int nbLayerTiles = (tGrid.GetLength(1) * tGrid.GetLength(2));
             int tHeight = tGrid.GetLength(0);
             gridGenerationAdvencement = baseStatus + (((float)nbLayerTiles - GetNbUndefinedTiles(tGrid, layer)) / (nbLayerTiles * tHeight));
@@ -809,10 +797,6 @@ public partial class TileMeshGeneration : Node3D
     
     private int[] GetGridPossiblity(int x, int y, int height, int[,,] grid, bool antiBack, bool checkTrans)
     {
-        /*if (x == 5 && y == 4)
-        {
-            Debug.Print("" + '\n');
-        }*/
         //Getting adjacent ids
         //Verify x limit and get value
         string n;
@@ -960,10 +944,6 @@ public partial class TileMeshGeneration : Node3D
 		{
             //Original tile
             tileTemplates[i * 4] = DataManager.prefas[i];
-            /*string[] par = tilesParams[i].Split(';');
-            tileTemplates[i * 4] = new TilePrefa(tiles[i], mpRes[i].ResourcePath, par[0], int.Parse(par[1]), par[4], par[5], par[6], par[7]);*/
-            /*if (tileTemplates[i * 4].est == "corridor" && tileTemplates[i * 4].west == "corridor" && tileTemplates[i * 4].north == "corridor" && tileTemplates[i * 4].south == "corridor")
-                Debug.Print("X is at pos: " + (i * 4));*/
             int conjugateRef = tileTemplates[i * 4].conjugate;
             if (conjugateRef * 4 + 2 < i * 4)
             {
@@ -994,11 +974,11 @@ public partial class TileMeshGeneration : Node3D
         }
 
         //Debug print to visualize data
-            /*for (int i = 0; i < tileTemplates.Length; i++) 
-            {
-                TilePrefa tile = tileTemplates[i];
-                Debug.Print(i + ":\n" + tile.ToString());
-            }*/
+        /*for (int i = 0; i < tileTemplates.Length; i++) 
+        {
+            TilePrefa tile = tileTemplates[i];
+            Debug.Print(i + ":\n" + tile.ToString());
+        }*/
     }
 
     /// <summary>

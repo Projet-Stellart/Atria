@@ -15,6 +15,19 @@ public partial class warp : Area3D
         timer.Start();
     }
 
+    public void SyncDataServer()
+    {
+        Rpc("SetDataClient", new Variant[] { Position, Rotation, angle });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SetDataClient(Variant pos, Variant rot, Variant _angle)
+    {
+        Position = pos.AsVector3();
+        Rotation = rot.AsVector3();
+        angle = _angle.AsVector3();
+    }
+
     public void EntityEnter(Node body) {
         if (body is IPhysicsModifier modifiable) {
             if (body is RigidBody3D rb)

@@ -197,7 +197,7 @@ public partial class MapManager : Control
         Vector3I LastFrom = path[^2] - path[^1];
 
         int toLastAngle;
-        if (new Vector2I(FirstTo.Y, FirstTo.Z) == Vector2I.Zero)
+        if (new Vector2I(LastFrom.Y, LastFrom.Z) == Vector2I.Zero)
         {
             toLastAngle = 0;
         }

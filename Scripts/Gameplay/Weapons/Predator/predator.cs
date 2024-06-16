@@ -7,7 +7,7 @@ public partial class predator : WeaponAmo
 	|	 Class Properties    |
 	\°----------------------*/
 
-    public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Primary, WeaponType.Normal, "Predator", "None", null);
+    public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Primary, WeaponType.Normal, "Predator", "None", null) { dropable = true, ResPath = "res://Scenes/Nelson/Weapons/Predator/predator.tscn", PickableResPath = "res://Scenes/Nelson/Weapons/Predator/predator_drop.tscn" };
     public override bool canDrop {get;set;} = true;
 
     [Export]
@@ -94,12 +94,38 @@ public partial class predator : WeaponAmo
 	|	Inherited Functions  |
 	\°----------------------*/
 
-    public override void Fire(player Owner) {
-        currBullets--; //Variables
+    public override void FireLocal(player Owner)
+    {
+        Owner.SendFire(0);
+        FireMeca();
+        GameManager.singleton.hudManager.subHud.SetBullets(currBullets, bullets);
+        Owner.SendFireAnim(false, false);
+        FireAnim(Owner);
+    }
+
+    public override void FireAnim(player Owner) {
         fireStream.Play(); //Sound
         muzzleFlash.Emitting = true; //Effects
 
-        base.Fire(Owner);
+        base.FireAnim(Owner);
+    }
+
+    public override void AltFireLocal(player Owner, bool way)
+    {
+        Owner.SendFireAnim(true, Owner.isAiming);
+    }
+
+    public override void AltFireAnim(player Owner, bool way)
+    {
+        if (!way)
+        {
+            animator.Play("Aim");
+        }
+        //Not Aiming
+        else
+        {
+            animator.PlayBackwards("Aim");
+        }
     }
 
     public override void Reload() {
@@ -112,8 +138,12 @@ public partial class predator : WeaponAmo
     public override void onReload() {
         if (Multiplayer.IsServer())
         {
-            bullets -= bulletPerMag - currBullets;
-            currBullets = bulletPerMag;
+            int delta = bulletPerMag - currBullets;
+            if (bullets < delta)
+                delta = bullets;
+
+            bullets -= delta;
+            currBullets = delta;
             Player.SyncBulletsServer();
         }
     }

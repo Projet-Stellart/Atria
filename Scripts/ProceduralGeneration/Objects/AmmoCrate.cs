@@ -3,7 +3,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 
-public partial class AmmoCrate : Interactible
+public partial class AmmoCrate : StaticBody3D, IInteractible
 {
     public override void _Ready()
     {
@@ -11,24 +11,26 @@ public partial class AmmoCrate : Interactible
         GetNode<AnimationPlayer>("AnimationPlayer").Stop();
     }
 
-    public override void OnClickBegin(player player)
+    public void OnClickBegin(player player)
     {
-        if (!(player.Weapon is WeaponAmo wa))
-            return;
         SendAnim();
         GetNode<AnimationPlayer>("AnimationPlayer").AnimationFinished += (StringName animName) =>
         {
             Rpc("DestroyCrate");
-            wa.bullets += 10;
-            player.SyncBulletsServer();
+            WeaponAmo wp = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/Sting/sting.tscn").Instantiate<WeaponAmo>();
+
+            wp.bullets = 20;
+
+            player.GetDirectWeapon(wp);
+            player.GetWeaponServer(wp.info.ResPath);
         };
     }
 
-    public override void OnClickEnd(player player) { }
+    public void OnClickEnd(player player) { }
 
-    public override void OnCursorIn(player player) { }
+    public void OnCursorIn(player player) { }
 
-    public override void OnCursorOut(player player) { }
+    public void OnCursorOut(player player) { }
 
     public void SendAnim()
     {

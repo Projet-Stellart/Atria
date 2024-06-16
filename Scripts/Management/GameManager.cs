@@ -30,10 +30,12 @@ public partial class GameManager : Node
     public DateTime startSpawnDate;
     public bool waitingSpawn;
 
+    public static string weaponDropResPath = "res://Scenes/Lilian/Objects/PickableWeapon.tscn";
+
     public CharacterData[] characterDatas = new CharacterData[]
     {
-        new CharacterData() { index = 0, name = "Vortex", description = "Desc for Vortex", image = "res://Ressources/UI/Fond1.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" },
-        new CharacterData() { index = 1,name = "Zenith", description = "Desc for Zenith", image = "res://Ressources/UI/Fond0.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Zenith/zenith.tscn" }
+        new CharacterData() { index = 0, name = vortex.Info.Name, description = vortex.Info.Desc, image = "res://Ressources/UI/Fond1.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" },
+        new CharacterData() { index = 1,name = zenith.Info.Name, description = zenith.Info.Desc, image = "res://Ressources/UI/Fond0.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Zenith/zenith.tscn" }
     };
 
     public static Dictionary<ServerStatus, string> statusText = new Dictionary<ServerStatus, string>
@@ -94,6 +96,12 @@ public partial class GameManager : Node
             return;
         teams = value;
     }
+
+    public TeamData[] TeamData { get; } = new TeamData[]
+    {
+        new TeamData(){ Name = "Blue", color = new Color(0.1f, 0.2f, 0.8f) },
+        new TeamData(){ Name = "Red", color = new Color(0.8f, 0.1f, 0.1f) },
+    };
 
     private GameData _gameData = new GameData()
     {
@@ -217,7 +225,7 @@ public partial class GameManager : Node
                 catch (JsonException)
                 {
                     File.Delete(paramPath);
-                    Debug.Print("Server parameters file is corrupted. The file has been removed");
+                    Debug.Print("[GameManager]: Server parameters file is corrupted. The file has been removed");
                 }
             }
         }
@@ -242,7 +250,7 @@ public partial class GameManager : Node
             {
                 writter.Write(jsonText);
             }
-            Debug.Print($"Parameters saved to: {paramPath}");
+            Debug.Print($"[GameManager]: Parameters saved to: {paramPath}");
         }
 
         //Display lobby
@@ -268,7 +276,6 @@ public partial class GameManager : Node
     {
         delayedActions.Add((Time.GetTicksMsec() + 5 * 1000, () =>
         {
-            Debug.Print(Multiplayer.GetPeers().Length.ToString());
             if (Multiplayer.GetPeers().Length == 0)
                 SceneManager.singelton.LoadMainMenu(OS.GetCmdlineArgs());
         }
@@ -277,9 +284,9 @@ public partial class GameManager : Node
 
     private void LoadData(string[] args)
     {
-        tileMapGenerator = (TileMeshGeneration)GetChild(0);
+        tileMapGenerator = GetNode<TileMeshGeneration>("TileMapGenerator");
         hudManager = GetNode<HudManager>("HUD");
-        multiplayerManager = ((MultiplayerManager)GetChild(3));
+        multiplayerManager = GetNode<MultiplayerManager>("Multiplayer");
         
         if (args.Contains("--nbPlayers"))
         {
@@ -356,7 +363,7 @@ public partial class GameManager : Node
         playerInfo = new Dictionary<long, PlayerData>();
         if (args.Contains("--server"))
         {
-            Debug.Print("Match seed: " + seed);
+            Debug.Print("[GameManager]: Match seed: " + seed);
             multiplayerManager.InitServer((int)GameData.port, (int)GameData.nbPlayer);
             serverStatus = ServerStatus.Generating;
             if (GameData.GameMode == null || GameData.GameMode == "" || !Gamemode.Gamemodes.ContainsKey(GameData.GameMode))
@@ -387,6 +394,7 @@ public partial class GameManager : Node
         tileMapGenerator.OnMapGenerated = () =>
         {
             multiplayerManager.MapGenerated();
+            GetNode<NavigationRegion3D>("NavigationRegion3D").BakeNavigationMesh();
             serverStatus = ServerStatus.Waiting;
             if (Multiplayer.GetPeers().Length == GameData.nbPlayer)
             {
@@ -448,7 +456,7 @@ public partial class GameManager : Node
             if (Multiplayer.GetPeers().Length == 0)
             {
                 //Restart game
-                Debug.Print($"All players disconnected, reloading in {GameData.emptyReloadDelay} seconds");
+                Debug.Print($"[GameManager]: All players disconnected, reloading in {GameData.emptyReloadDelay} seconds");
                 delayedActions.Add((Time.GetTicksMsec() + GameData.emptyReloadDelay * 1000, () =>
                 {
                     SceneManager.singelton.LoadGame(startingArgs, new PlayerData());
@@ -501,7 +509,8 @@ public partial class GameManager : Node
         {
             Vector3 npos = tileMapGenerator.GetRandPlayerSpawn(FindPlayerTeam(id), random);
             //Vector3 npos = tileMapGenerator.GetRandPoint(tileMapGenerator.tileMap, new Random());
-            multiplayerManager.InstantiateNewPlayer(id, npos);
+            multiplayerManager.InstantiateNewPlayer(id, FindPlayerTeam(id), npos);
+            multiplayerManager.SendBottomHUDInfoServer(characterDatas[playerInfo[id].characterIndex].name, id);
         }
 
         multiplayerManager.SyncStartGame();
@@ -510,7 +519,7 @@ public partial class GameManager : Node
 
         delayedActions.Add((Time.GetTicksMsec() + (GameData.beginDelay) * 1000, StartMatch));
 
-        Debug.Print("Match will begin in " + (GameData.beginDelay) + " seconds!");
+        Debug.Print("[GameMode]: Match will begin in " + (GameData.beginDelay) + " seconds!");
     }
 
     public void PlayerDeath(LocalEntity player, LocalEntity from, DeathCause cause)
@@ -519,10 +528,16 @@ public partial class GameManager : Node
             return;
 
         if (cause == DeathCause.Killed)
-            Debug.Print($"{playerInfo[player.uid].Username} was killed by {from.GetParent().Name}");
+            Debug.Print($"[GameManager]: {playerInfo[player.uid].Username} was killed by {playerInfo[from.uid].Username}");
         else
-            Debug.Print($"{playerInfo[player.uid].Username} died by {cause.ToString()}");
+            Debug.Print($"[GameManager]: {playerInfo[player.uid].Username} died by {cause.ToString()}");
 
+        if (((player)player).Secondary != null && ((player)player).Secondary.info.dropable)
+            player.DropWeapon(((player)player).Secondary);
+        if (((player)player).Primary != null && ((player)player).Primary.info.dropable)
+            player.DropWeapon(((player)player).Primary);
+        if (((player)player).Melee != null && ((player)player).Melee.info.dropable)
+            player.DropWeapon(((player)player).Melee);
         player.SyncDeathServer(true);
         player.SyncVisibility(false);
 
@@ -547,6 +562,11 @@ public partial class GameManager : Node
         player.SendServerPosVelo(npos, Vector3.Zero);
         player.SyncVisibility(true);
         player.SyncDeathServer(false);
+        if (((player)player).Melee == null)
+        {
+            player.GetDirectWeapon(player.defaultWeapon);
+            player.GetWeaponServer(player.defaultWeapon);
+        }
     }
 
     public void ResetRound()
@@ -582,9 +602,11 @@ public partial class GameManager : Node
         if (from == null || to == null)
             return true;
 
+        if (from == to)
+            return false;
+
         if (FindPlayerTeam(from.uid) == FindPlayerTeam(to.uid) && !GameData.friendlyFire)
         {
-            Debug.Print("Failed");
             return false;
         }
 
@@ -605,12 +627,12 @@ public partial class GameManager : Node
 
         gamemode.BeginMatch();
 
-        Debug.Print("Match started!");
+        Debug.Print("[GameMode]: Match started!");
     }
 
     public void RoundWon(int team)
     {
-        Debug.Print("Round won by team " + (team + 1));
+        Debug.Print("[GameMode]: Round won by team " + (team + 1));
         DisplayRoundWin(team);
         delayedActions.Add((Time.GetTicksMsec() + GameData.roundReloadDelay * 1000, () =>
         {
@@ -642,7 +664,7 @@ public partial class GameManager : Node
 
     public void MatchWon(int team)
     {
-        Debug.Print("Match won by team " + (team + 1));
+        Debug.Print("[GameMode]: Match won by team " + (team + 1));
         DisplayMatchWin(team);
         delayedActions.Add((Time.GetTicksMsec() + GameData.finishReloadDelay * 1000, () =>
         {
@@ -802,7 +824,8 @@ public struct PlayerData
 
 public struct TeamData
 {
-    public int score;
+    public string Name;
+    public Color color;
 }
 
 public enum ServerStatus

@@ -8,15 +8,16 @@ public partial class vortex : player
 	|	 Class Properties    |
 	\°----------------------*/
 
+    public static Soldier Info { get => _soldier; }
     public override Soldier soldier => _soldier;
-    public override int energyMax {get;} = 200;
-    protected Soldier _soldier = new Soldier(
+    private static int energyMax { get; set; } = 200;
+    protected static Soldier _soldier { get; } = new Soldier(
         "Vortex",
         "Vortex is a master manipulator of gravitational forces, using advanced technology to control the battlefield.\n" +
         "Capable of disrupting enemy movements and creating chaos, Vortex excels at crowd control and tactical disruption, making them a strategic powerhouse.",
-        new SoldierRole[] {SoldierRole.Tactician, SoldierRole.Enforcer},
+        new SoldierRole[] { SoldierRole.Tactician, SoldierRole.Enforcer },
         50,
-        200,//energyMax
+        energyMax,//energyMax
         new ModuleInfo(
             "Force Field",
             "Deploys an energy shield in front of the player that absorbs incoming projectiles and produces energy from the radioactive ones.",
@@ -39,7 +40,7 @@ public partial class vortex : player
             "Supernova",
             "Produces a strong blast affecting any entities depending on the range distance. Effects varies from module deffect to instant death.",
             "FIRE to create a blast at your feet, dealing different effects to players based on the distance, from instant death to module deffect.",
-            200//energyMax
+            energyMax//energyMax
         )
     );
 
@@ -80,8 +81,6 @@ public partial class vortex : player
 	\°----------------------*/
     public override void InitPlayer()
     {
-
-
         //References
         departPoint = GetNode<MeshInstance3D>("HUD_3D/A");
         arrivePoint = GetNode<MeshInstance3D>("HUD_3D/A/B");
@@ -91,20 +90,12 @@ public partial class vortex : player
         forceField.Parent = this;
         base.InitPlayer();
         atria = true;
-    }
 
-    public override bool canUpdateModule(KeyState fire, KeyState altfire, KeyState rotate, KeyState module)
-    {
-        return fire.Active() || altfire.Active() || rotate.Active() || module.Passive();;
-    }
-
-    protected override void InitSub()
-    {
         if (IsLocalPlayer)
             return;
         GetNode<SubViewportContainer>("3DHUDManager").Visible = false;
         GetNode<SubViewportContainer>("LayersManager").Visible = false;
-        uint layer = (uint)(IsLocalPlayer ? 2 : 1);
+        uint layer = (uint)1;
         GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Hand_L/Hand_L").Layers = layer;
         GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Arm_L_02/Arm_L_02").Layers = layer;
         GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Arm_L_01/Arm_L_01").Layers = layer;
@@ -115,6 +106,16 @@ public partial class vortex : player
         if (Weapon is null)
             return;
         Weapon.SetRenderLayer(layer);
+    }
+
+    public override void SetTeamColor(Material m)
+    {
+        GetNode<MeshInstance3D>("MeshInstance3D").MaterialOverride = m;
+    }
+
+    public override bool canUpdateModule(KeyState fire, KeyState altfire, KeyState rotate, KeyState module)
+    {
+        return fire.Active() || altfire.Active() || rotate.Active() || module.Passive();;
     }
 
     //Event Function
@@ -156,7 +157,7 @@ public partial class vortex : player
 	\°----------------------------*/
 
     //VIRTUAL
-    public override void _ActivateModule(FocusState module)
+    public override void _ActivateModuleLocal(FocusState module)
     {
         if (module == FocusState.LowModule) {
             if (EnergyBar < soldier.LowModule.EnergyRequired && fieldDuration <= 0) {//Doesn't have enough energy
@@ -164,24 +165,29 @@ public partial class vortex : player
             }
             if (fieldDuration <= 0) {
                 EnergyBar -= soldier.LowModule.EnergyRequired;
+                SyncEnergyServer();
                 fieldDuration = 100; //Charging it
+                GameManager.singleton.hudManager.subHud.SetEnergy(EnergyBar/soldier.EnergyBar);
             }
             FocusState = FocusState.LowModule;
             forceField.Visible = true;
             forceField.GetNode<CollisionShape3D>("Collision").Disabled = false;
             //SHOW PROGRESSION BAR HUD
         } else if (module == FocusState.MediumModule) {
-            if (currentWarp != null) {//Manually activating current warp
+            if (currentWarp != null)
+            {//Manually activating current warp
                 currentWarp.SpawnWarp();
                 currentWarp = null;
-            } else {
-                if (EnergyBar < soldier.MediumModule.EnergyRequired) { //No energy
+            }
+            else
+            {
+                if (EnergyBar < soldier.MediumModule.EnergyRequired)
+                { //No energy
+                    SendCancelModuleServerRpc((int)module);
                     return;
                 }
-                EnergyBar -= soldier.MediumModule.EnergyRequired;
-                //Make HUD Visible
-                FocusState = FocusState.MediumModule;
                 departPoint.Visible = true;
+                FocusState = FocusState.MediumModule;
             }
         } else if (module == FocusState.HighModule) {
             if (EnergyBar >= soldier.HighModule.EnergyRequired) {
@@ -196,23 +202,104 @@ public partial class vortex : player
         }
     }
 
-    public override void _UpdateModule(KeyState send, KeyState fire, KeyState altfire, KeyState rotate)
+    public override void _ActivateModuleServer(FocusState module)
+    {
+        if (module == FocusState.LowModule)
+        {
+            if (EnergyBar < soldier.LowModule.EnergyRequired && fieldDuration <= 0)//Doesn't have enough energy
+            {
+                SendCancelModuleServer((int)FocusState);
+                return;
+            }
+            if (fieldDuration <= 0)
+            {
+                EnergyBar -= soldier.LowModule.EnergyRequired;
+                SyncEnergyServer();
+                fieldDuration = 100; //Charging it
+            }
+            FocusState = FocusState.LowModule;
+            forceField.GetNode<CollisionShape3D>("Collision").Disabled = false;
+        }
+        else if (module == FocusState.MediumModule)
+        {
+            if (currentWarp != null)
+            {//Manually activating current warp
+                currentWarp.SpawnWarp();
+                currentWarp = null;
+            }
+            else
+            {
+                if (EnergyBar < soldier.MediumModule.EnergyRequired)
+                { //No energy
+                    SendCancelModuleServer((int)FocusState);
+                    return;
+                }
+                //Make HUD Visible
+                FocusState = FocusState.MediumModule;
+            }
+        }
+        else if(module == FocusState.HighModule)
+        {
+            if (EnergyBar >= soldier.HighModule.EnergyRequired)
+            {
+                FocusState = FocusState.HighModule;
+                //Make HUD Visible
+            }
+            else
+            {
+                SendCancelModuleServer((int)FocusState);
+            }
+        }
+        else if (FocusState == FocusState.CoreModule)
+        {
+            if (EnergyBar >= soldier.EnergyBar && atria)
+            {
+                FocusState = FocusState.CoreModule;
+                //Make HUD Visible
+            }
+            else
+            {
+                SendCancelModuleServer((int)FocusState);
+            }
+        }
+    }
+
+    public override void _ActivateModuleClient(FocusState module)
+    {
+        if (module == FocusState.LowModule)
+        {
+            forceField.Visible = true;
+            forceField.GetNode<CollisionShape3D>("Collision").Disabled = false;
+        }
+        else if (module == FocusState.MediumModule)
+        {
+            
+        }
+        else if (module == FocusState.HighModule)
+        {
+
+        }
+        else if (FocusState == FocusState.CoreModule)
+        {
+
+        }
+    }
+
+    public override void _UpdateModuleLocal(KeyState send, KeyState fire, KeyState altfire, KeyState rotate)
     {
         if (FocusState == FocusState.LowModule) { //Low Module
             if (send.JustReleased || fieldDuration <= 0)
             {
-                _CancelModule();
-                SendCancelModule();
+                _CancelModuleLocal();
+                SendCancelModuleServerRpc((int)FocusState);
             }
             else
                 fieldDuration -= 0.25f;
         }
-
-
         else if (FocusState == FocusState.MediumModule) { //Medium Module
             if (send.JustPressed) {
-                _CancelModule();
-                SendCancelModule();
+                _CancelModuleLocal();
+                SendCancelModuleServerRpc((int)FocusState);
             }
             else {
                 if (altfire.JustPressed)
@@ -221,49 +308,131 @@ public partial class vortex : player
                     cam_lock = false;
                 else if (!cam_lock && fire.JustPressed) { //Throw Module
                     SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
-                    _UseModule(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
+                    _UseModuleLocal(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
                     //Reset
 
-                    _CancelModule();
-                    SendCancelModule();
+                    _CancelModuleLocal();
+                    SendCancelModuleServerRpc((int)FocusState);
                 }
             }
-        } else if (FocusState == FocusState.HighModule) { //High Module
+        } 
+        else if (FocusState == FocusState.HighModule) { //High Module
             if (altfire.JustPressed || fire.JustPressed) { //Launch
                 SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { fire.JustPressed, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
-                _UseModule(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
+                _UseModuleLocal(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
 
-                _CancelModule();
-                SendCancelModule();
+                _CancelModuleLocal();
+                SendCancelModuleServerRpc((int)FocusState);
             }
-        } else if (FocusState == FocusState.CoreModule) {
+        } 
+        else if (FocusState == FocusState.CoreModule) {
             if (fire.JustPressed) { //Burst Supernova
                 SendUseModule((int)FocusState, new Godot.Collections.Array<Variant>() { GlobalPosition });
-                _UseModule(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
+                _UseModuleLocal(FocusState, new Godot.Collections.Array<Variant>() { angle_Warp + Rotation, camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5), new Vector3(head.Rotation.X - Mathf.Pi / 2, Rotation.Y, 0) });
 
-                _CancelModule();
-                SendCancelModule();
+                _CancelModuleLocal();
+                SendCancelModuleServerRpc((int)FocusState);
             }
         }
     }
 
-    public override void _UseModule(FocusState module, Godot.Collections.Array<Variant> args)
+    public override void _UpdateModuleServer()
+    {
+        if (FocusState == FocusState.LowModule) 
+        {
+            if (fieldDuration <= 0)
+            {
+                _CancelModuleServer();
+                SendCancelModuleServer((int)FocusState);
+            }
+            else
+                fieldDuration -= 0.25f;
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+
+        }
+        else if(FocusState == FocusState.CoreModule)
+        {
+
+        }
+    }
+
+    public override void _UpdateModuleClient(FocusState module)
+    {
+        if (FocusState == FocusState.LowModule)
+        {
+
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+
+        }
+        else if (FocusState == FocusState.CoreModule)
+        {
+
+        }
+    }
+
+    public override void _UseModuleLocal(FocusState module, Godot.Collections.Array<Variant> args)
     {
         if (FocusState == FocusState.LowModule)
         {
 
         }else if (FocusState == FocusState.MediumModule)
         {
+            
+        }
+        else if (FocusState == FocusState.HighModule)
+        {
+            
+        }
+        else if(FocusState == FocusState.CoreModule)
+        {
+            EnergyBar = 0;
+            GameManager.singleton.hudManager.subHud.SetEnergy(EnergyBar/soldier.EnergyBar);
+
+            atria = false;
+        }
+    }
+
+    public override void _UseModuleServer(FocusState module, Godot.Collections.Array<Variant> args)
+    {
+
+        if (FocusState == FocusState.LowModule)
+        {
+
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+            if (EnergyBar < soldier.MediumModule.EnergyRequired)
+            { //No energy
+                SendCancelModuleServerRpc((int)FocusState);
+                return;
+            }
+            EnergyBar -= soldier.MediumModule.EnergyRequired;
+            SyncEnergyServer();
+
             // args = {Warp_Angle, GlobalPosition, Rotation}
             //Launching Projectile
             warp_projectile projectile = (warp_projectile)warpProjectile.Instantiate();
+
+            GameManager.singleton.GetNode("Objects").AddChild(projectile);
+
+            GameManager.singleton.multiplayerManager.InstantiateObjectServer(warpProjectile.ResourcePath, GameManager.singleton.GetNode("Objects"), projectile.Name);
 
             //Fill in launching variables
             //projectile.Warp_Angle = angle_Warp + Rotation;
             projectile.Warp_Angle = args[0].AsVector3();
             projectile.Parent = this;
-
-            GetTree().Root.AddChild(projectile);
 
             currentWarp = projectile;
 
@@ -275,14 +444,15 @@ public partial class vortex : player
         }
         else if (FocusState == FocusState.HighModule)
         {
+            if (EnergyBar < soldier.HighModule.EnergyRequired)
+            { //No energy
+                SendCancelModuleServerRpc((int)FocusState);
+                return;
+            }
+            EnergyBar -= soldier.HighModule.EnergyRequired;
+            SyncEnergyServer();
             //args = {fire.JustPressed, GlobalPosition, Rotation}
 
-            if (Multiplayer.IsServer())
-            {
-                EnergyBar -= soldier.HighModule.EnergyRequired; //Consuming energy
-                SyncEnergyServer();
-            }
-            
             pulsar_projectile projectile = (pulsar_projectile)pulsarProjectile.Instantiate();
             projectile.owner = this;
 
@@ -290,7 +460,9 @@ public partial class vortex : player
                 projectile.boosters = false;
 
             //Adding to map
-            GetTree().Root.AddChild(projectile);
+            GameManager.singleton.GetNode("Objects").AddChild(projectile);
+
+            GameManager.singleton.multiplayerManager.InstantiateObjectServer(pulsarProjectile.ResourcePath, GameManager.singleton.GetNode("Objects"), projectile.Name);
 
             //projectile.GlobalPosition = camera.GlobalPosition + camera.GlobalBasis * new Vector3(0, 0, (float)-0.5);
             projectile.GlobalPosition = args[1].AsVector3();
@@ -298,25 +470,45 @@ public partial class vortex : player
             projectile.Rotation = args[2].AsVector3(); //Orientating Correctly
             projectile.LinearVelocity = projectile.GlobalBasis * pulsar_projectile.constantVelocity; //Giving an initial velocity
         }
-        else
+        else if (module == FocusState.CoreModule)
         {
-            //args = {GlobalPosition}
-
             supernova Supernova = (supernova)supernovaScene.Instantiate();
             Supernova.owner = this;
-            GetTree().Root.AddChild(Supernova);
+            GameManager.singleton.GetNode("Objects").AddChild(Supernova);
             Supernova.GlobalPosition = args[0].AsVector3();
 
-            if (Multiplayer.IsServer())
-            {
-                EnergyBar = 0;
-                SyncEnergyServer();
-            }
+            GameManager.singleton.multiplayerManager.InstantiateObjectServer(supernovaScene.ResourcePath, GameManager.singleton.GetNode("Objects"), Supernova.Name);
+
+            Supernova.SyncPosServer();
+
+            EnergyBar = 0;
+            SyncEnergyServer();
+
             atria = false;
         }
     }
 
-    public override void _CancelModule() {
+    public override void _UseModuleClient(FocusState module, Godot.Collections.Array<Variant> args)
+    {
+        if (FocusState == FocusState.LowModule)
+        {
+
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+
+        }
+        else if (FocusState == FocusState.CoreModule)
+        {
+
+        }
+    }
+
+    public override void _CancelModuleLocal() {
         if (FocusState == FocusState.LowModule) {
             forceField.Visible = false;
             forceField.GetNode<CollisionShape3D>("Collision").Disabled = true;
@@ -332,6 +524,47 @@ public partial class vortex : player
         if (FocusState != FocusState.Weapon) {
             FocusState = FocusState.Weapon;
             SwapWeapon(focus);
+        }
+    }
+
+    public override void _CancelModuleServer()
+    {
+        if (FocusState == FocusState.LowModule)
+        {
+            forceField.Visible = false;
+            forceField.GetNode<CollisionShape3D>("Collision").Disabled = true;
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+        }
+        else if (FocusState == FocusState.HighModule)
+        {
+        }
+        else if (FocusState == FocusState.CoreModule)
+        {
+        }
+
+        if (FocusState != FocusState.Weapon)
+        {
+            FocusState = FocusState.Weapon;
+        }
+    }
+    public override void _CancelModuleClient(FocusState module)
+    {
+        if (FocusState == FocusState.LowModule)
+        {
+            forceField.Visible = false;
+            forceField.GetNode<CollisionShape3D>("Collision").Disabled = true;
+        }
+        else if (FocusState == FocusState.MediumModule)
+        {
+            departPoint.Visible = false;
+        }
+        else if (FocusState == FocusState.HighModule)
+        {
+        }
+        else if (FocusState == FocusState.CoreModule)
+        {
         }
     }
 

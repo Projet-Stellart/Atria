@@ -2,7 +2,7 @@
 using Godot;
 using System;
 
-public partial class ResourcePack : Interactible
+public partial class ResourcePack : AnimatableBody3D, IInteractible
 {
     private Action<player, int> collect;
     public int Resources { get; private set; }
@@ -13,7 +13,7 @@ public partial class ResourcePack : Interactible
         collect = _collect;
     }
 
-    public override void OnClickBegin(player player)
+    public void OnClickBegin(player player)
     {
         if (collect == null)
             return;
@@ -21,11 +21,11 @@ public partial class ResourcePack : Interactible
         DestroyReplicated();
     }
 
-    public override void OnClickEnd(player player) { }
+    public void OnClickEnd(player player) { }
 
-    public override void OnCursorIn(player player) { }
+    public void OnCursorIn(player player) { }
 
-    public override void OnCursorOut(player player) { }
+    public void OnCursorOut(player player) { }
 
     private void DestroyReplicated()
     {

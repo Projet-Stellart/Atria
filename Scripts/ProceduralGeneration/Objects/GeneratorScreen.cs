@@ -3,7 +3,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 
-public partial class GeneratorScreen : Interactible
+public partial class GeneratorScreen : StaticBody3D, IInteractible
 {
 
     private Generator gen;
@@ -48,24 +48,24 @@ public partial class GeneratorScreen : Interactible
         GetNode<RichTextLabel>("ScreenMenu/Control/VBoxContainer/VBoxContainer/Res").Text = $"[center]{Mathf.FloorToInt(gen.Resources)}/{gen.Capacity}[center]";
     }
 
-    public override void OnClickBegin(player player)
+    public void OnClickBegin(player player)
     {
         gen.CollectStart(player);
         TimeSpan time = TimeSpan.FromSeconds(gen.CollectingTime);
         Rpc("SendStatusClient", new Variant[] { true, (DateTime.Now.ToUniversalTime() + time).ToString(), time.Ticks });
     }
 
-    public override void OnClickEnd(player player)
+    public void OnClickEnd(player player)
     {
         gen.CollectEnd();
         Rpc("SendStatusClient", new Variant[] { false, "", 0 });
     }
 
-    public override void OnCursorIn(player player)
+    public void OnCursorIn(player player)
     {
     }
 
-    public override void OnCursorOut(player player)
+    public void OnCursorOut(player player)
     {
     }
 

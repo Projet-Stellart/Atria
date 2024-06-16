@@ -39,10 +39,24 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
         Inactive.Start();
     }
 
+    public override void _Process(double delta)
+    {
+        if (Multiplayer.IsServer())
+            Rpc("SyncPosVeloClient", new Variant[] { Position, Rotation });
+        base._Process(delta);
+    }
 
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    private void SyncPosVeloClient(Variant pos, Variant rot)
+    {
+        Position = pos.AsVector3();
+        Rotation = rot.AsVector3();
+    }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state)
     {
+        if (!Multiplayer.IsServer())
+            return;
         if (state.GetContactCount() == 1) {
             localCollisionPos = state.GetContactLocalPosition(0);
             localCollisionNormal = state.GetContactLocalNormal(0);
@@ -50,6 +64,8 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
     }
 
     public void Collision(Node body) {
+        if (!Multiplayer.IsServer())
+            return;
         if (!attached && !(body is player Player && Parent == Player))
             CallDeferred("Attach", body);
     }
@@ -57,8 +73,10 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
     
     
     public void Attach(Node body) {
-            //Changing Physics Process
-            Freeze = true;
+        if (!Multiplayer.IsServer())
+            return;
+        //Changing Physics Process
+        Freeze = true;
             
             //Notifying
             Inactive.Stop();
@@ -94,28 +112,49 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
     }
 
     public void SpawnWarp() {//Spawn Warp
+        if (!Multiplayer.IsServer())
+            return;
         warp Warp = (warp)WarpScene.Instantiate();
-        GetTree().Root.AddChild(Warp);
+        GameManager.singleton.GetNode("Objects").AddChild(Warp);
+
+        GameManager.singleton.multiplayerManager.InstantiateObjectServer(WarpScene.ResourcePath, GameManager.singleton.GetNode("Objects"), Warp.Name);
+
         Warp.GlobalPosition = GlobalPosition;
         Warp.GlobalRotation = Warp_Angle;
 
-        Warp.angle = Warp.GlobalBasis * new Vector3(0,1,0) * Warp.Balance * Warp.GravityScale + GlobalPosition; //Converting to GlobalPositions
+        Warp.angle = Warp.GlobalBasis * new Vector3(0, 1, 0) * Warp.Balance * Warp.GravityScale + GlobalPosition; //Converting to GlobalPositions
+
+        Warp.SyncDataServer();
+        
         ImpactNotFound();
     }
 
-
-
     public void ImpactNotFound() {
+        if (!Multiplayer.IsServer())
+            return;
         ((vortex)Parent).currentWarp = null;
+        GameManager.singleton.multiplayerManager.DeleteObjectServer(this);
         QueueFree();
+        Rpc("ImpactReplicate");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ImpactReplicate()
+    {
+        if (Parent != null)
+            ((vortex)Parent).currentWarp = null;
     }
 
     public bool Damaged(int damage, player player) {
+        if (!Multiplayer.IsServer())
+            return false;
         ImpactNotFound();
         return true;
     }
 
     public void ChangeGravity(Vector3 vector) {
+        if (!Multiplayer.IsServer())
+            return;
         GravityScale = 0;
         if (!customGravity)
             AddConstantForce(vector);
@@ -127,6 +166,8 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
         customGravity = true;
     }
 	public void ResetGravity() {
+        if (!Multiplayer.IsServer())
+            return;
         ConstantForce = new Vector3(0,0,0);
         GravityScale = 1;
         customGravity = false;

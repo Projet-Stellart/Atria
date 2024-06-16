@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="5_obcn5"]
 [ext_resource type="Texture2D" uid="uid://dgxynxnhxc4of" path="res://Ressources/UI/Button_CLicked.png" id="7_tekix"]
 [ext_resource type="Texture2D" uid="uid://bxkcfq3dhpm75" path="res://Ressources/UI/Button_Moused.png" id="8_gcfsc"]
-[ext_resource type="PackedScene" path="res://Scenes/Guillaume/Keybindings.tscn" id="8_yv05f"]
+[ext_resource type="PackedScene" uid="uid://d4eh271trcsje" path="res://Scenes/Guillaume/Keybindings.tscn" id="8_yv05f"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_42bj2"]
 load_path = "res://.godot/imported/Fond1.jpeg-bca3c69e3ab3bf907eddae77f371710f.ctex"
@@ -1530,7 +1530,7 @@ layout_mode = 2
 [connection signal="pressed" from="Play/Online" to="." method="_on_online_pressed"]
 [connection signal="text_changed" from="MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP" to="." method="_on_match_maker_ip_text_changed"]
 [connection signal="pressed" from="MatchMaker/Exit" to="." method="_on_exit_pressed_mm"]
-[connection signal="pressed" from="MatchMaker/Ok" to="." method="_on_ok_pressed"]
+[connection signal="pressed" from="MatchMaker/Ok" to="." method="_on_mm_ok_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/MatchMaker" to="." method="_on_match_maker_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]

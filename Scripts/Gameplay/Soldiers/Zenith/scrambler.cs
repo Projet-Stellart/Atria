@@ -19,6 +19,8 @@ public partial class scrambler : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
+        if (!Multiplayer.IsServer())
+            return;
         if (hasTarget)
             navigation.TargetPosition = TargetNode.GlobalPosition;
         else
@@ -27,8 +29,13 @@ public partial class scrambler : CharacterBody3D
         var nextPos = navigation.GetNextPathPosition();
         var velocity = (nextPos - currPos).Normalized() * SPEED;
 
+        Debug.Print(navigation.TargetPosition.ToString());
+
         Velocity = Velocity.MoveToward(velocity, 0.25f);
         MoveAndSlide();
+
+        if (Multiplayer.IsServer())
+            Rpc("SendPosition", new Variant[] { Position, Rotation });
     }
 
     public void FoundTarget(Node3D body) {
@@ -61,6 +68,24 @@ public partial class scrambler : CharacterBody3D
         Parent = parent;
         navigation.TargetPosition = target;
         TargetPos = target;
+        Rpc("InitClient", new Variant[] { parent.GetPath(), target });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void InitClient(Variant parentPath, Variant target)
+    {
+        MoveAndCollide(Vector3.Down * 10);
+        Parent = GetTree().Root.GetNode<zenith>(parentPath.AsString());
+        navigation.TargetPosition = target.AsVector3();
+        TargetPos = target.AsVector3();
+        hasTarget = true;
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    private void SendPosition(Variant pos, Variant rot)
+    {
+        Position = pos.AsVector3();
+        Rotation = rot.AsVector3();
     }
 
     public void onExplosion() {
@@ -84,6 +109,7 @@ public partial class scrambler : CharacterBody3D
     }
 
     public void onEnd(StringName anim_name) {
+        GameManager.singleton.multiplayerManager.DeleteObjectServer(this);
         QueueFree();
     }
 }

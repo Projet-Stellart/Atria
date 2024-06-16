@@ -20,13 +20,31 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
         animations = GetNode<AnimationPlayer>("Animations");
     }
 
+    public override void _Process(double delta)
+    {
+        if (Multiplayer.IsServer())
+            Rpc("SyncPosVeloClient", new Variant[] { Position, Rotation });
+        base._Process(delta);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    private void SyncPosVeloClient(Variant pos, Variant rot)
+    {
+        Position = pos.AsVector3();
+        Rotation = rot.AsVector3();
+    }
+
     public override void _IntegrateForces(PhysicsDirectBodyState3D state)
     {
-            if (boosters)
-                LinearVelocity = GlobalBasis * constantVelocity;
+        if (!Multiplayer.IsServer())
+            return;
+        if (boosters)
+            LinearVelocity = GlobalBasis * constantVelocity;
     }
 
     private void Contact(Node body) { //First contact
+        if (!Multiplayer.IsServer())
+            return;
         if (!(body is player Player && Player == Parent) && !contact) {
             if (boosters)
                 boosters = false;
@@ -37,30 +55,51 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
     }
     
     private void on_timeout() {
+        if (!Multiplayer.IsServer())
+            return;
         //Animate the explosion
         animations.Play("pulsate");
     }
 
     private void on_animation_end(StringName anim_name) {
+        if (!Multiplayer.IsServer())
+            return;
         //Instantiate Explosion
         pulsar explosion = (pulsar)explosionScene.Instantiate();
         explosion.owner = owner;
-        GetTree().Root.AddChild(explosion);
+        GameManager.singleton.GetNode("Objects").AddChild(explosion);
         explosion.GlobalPosition = GlobalPosition;
-        QueueFree();
+
+        GameManager.singleton.multiplayerManager.InstantiateObjectServer(explosionScene.ResourcePath, GameManager.singleton.GetNode("Objects"), explosion.Name);
+
+        explosion.SyncPosServer();
+
+        Destroy();
     }
 
     private void ExplosionDamage(Node body) {
+        if (!Multiplayer.IsServer())
+            return;
         if (body is IDamagable damagable && body is not pulsar_projectile)
             damagable.Damaged(15, owner);
     }
 
     public bool Damaged(int damage, player player) {
-        QueueFree();
+        if (!Multiplayer.IsServer())
+            return false;
+        Destroy();
         return true;
     }
 
+    public void Destroy()
+    {
+        GameManager.singleton.multiplayerManager.DeleteObjectServer(this);
+        QueueFree();
+    }
+
     public void ChangeGravity(Vector3 vector) {
+        if (!Multiplayer.IsServer())
+            return;
         GravityScale = 0;
         if (customGravity)
             AddConstantCentralForce(vector);
@@ -73,6 +112,8 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
     }
 
     public void ResetGravity() {
+        if (!Multiplayer.IsServer())
+            return;
         ConstantForce = new Vector3(0,0,0);
         GravityScale = 1;
         customGravity = false;

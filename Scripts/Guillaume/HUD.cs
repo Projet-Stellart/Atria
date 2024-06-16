@@ -3,6 +3,11 @@ using System;
 
 public partial class HUD : Control
 {
+    public void Init(player player)
+    {
+
+    }
+
     public void SetHealth(float health)
     {
         GetNode<HealthBar>("Health").SetHealth(health);
@@ -27,5 +32,10 @@ public partial class HUD : Control
     public void SetBannerVisiblity(bool visible)
     {
         GetNode<Control>("TextureRect").Visible = visible;
+    }
+
+    public void SetBottomInfo(string msg)
+    {
+        GetNode<RichTextLabel>("Info2/TextEdit").Text = msg;
     }
 }

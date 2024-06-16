@@ -7,7 +7,10 @@ size = Vector3(1, 1.75, 0.01)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sgxvm"]
 transparency = 1
-albedo_color = Color(0.113725, 0.8, 1, 0.54902)
+albedo_color = Color(0.113725, 0.8, 1, 0.27451)
+emission_enabled = true
+emission = Color(0.0941176, 0.8, 1, 1)
+emission_energy_multiplier = 0.8
 
 [sub_resource type="BoxMesh" id="BoxMesh_0f3qp"]
 material = SubResource("StandardMaterial3D_sgxvm")

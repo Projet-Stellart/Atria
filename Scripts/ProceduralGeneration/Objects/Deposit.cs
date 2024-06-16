@@ -4,7 +4,7 @@ using Godot;
 
 namespace Atria.Scripts.ProceduralGeneration.Objects;
 
-public partial class Deposit : Interactible
+public partial class Deposit : StaticBody3D, IInteractible
 {
     public override void _Ready()
     {
@@ -12,7 +12,7 @@ public partial class Deposit : Interactible
         GetNode<AnimationPlayer>("AnimationPlayer").Advance(3);
     }
 
-    public override void OnClickBegin(player player)
+    public void OnClickBegin(player player)
     {
         if (GameManager.singleton.gamemode is ResourceCollection rc)
         {
@@ -26,17 +26,17 @@ public partial class Deposit : Interactible
         }
     }
 
-    public override void OnClickEnd(player player)
+    public void OnClickEnd(player player)
     {
 
     }
 
-    public override void OnCursorIn(player player)
+    public void OnCursorIn(player player)
     {
 
     }
 
-    public override void OnCursorOut(player player)
+    public void OnCursorOut(player player)
     {
 
     }
