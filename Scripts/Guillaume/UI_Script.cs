@@ -2,8 +2,10 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -361,7 +363,48 @@ public partial class UI_Script : CanvasLayer
 		index = ind;
     }
 
-	private void _on_ok_pressed_graphics()
+    private void _on_mm_ok_pressed()
+    {
+        string ip_port = GetNode<TextEdit>("MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP").Text;
+        string paramPath = ProjectSettings.GlobalizePath("res://serverParams.json");
+		GameData gameData = new GameData()
+        {
+            mapParam = new MapParam()
+            {
+                seed = "",
+                mapHeight = 3,
+                startHeight = 1,
+                sizeX = 10,
+                sizeY = 10,
+                minRoom = 1,
+                maxRoom = 2,
+            },
+            friendlyFire = false,
+            GameMode = "",
+            maxScore = 3,
+            totalScore = false,
+            nbPlayer = 10,
+            spawnDelay = 5,
+            beginDelay = 30,
+            emptyReloadDelay = 10,
+            port = 7308,
+            publicServer = false,
+            publicAddress = "",
+            matchMaker = "127.0.0.1:12345"
+        };
+        if (File.Exists(paramPath))
+		{
+            gameData = JsonSerializer.Deserialize<GameData>(File.ReadAllText(paramPath));
+		}
+
+		gameData.matchMaker = ip_port;
+
+		File.WriteAllText(paramPath, JsonSerializer.Serialize(gameData, new JsonSerializerOptions() { WriteIndented = true }));
+
+		_on_exit_pressed_mm();
+    }
+
+    private void _on_ok_pressed_graphics()
 	{
 		GetWindow().Mode = (Window.ModeEnum)Modes[index];
 		string selectedResolution = Resolutions[resolutionIndex];
