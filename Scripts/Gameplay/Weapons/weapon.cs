@@ -76,6 +76,9 @@ public class WeaponInfo {
     public WeaponType WeaponType;
     public string Name;
     public string Desc;
+    public bool dropable;
+    public string ResPath;
+    public string PickableResPath;
     public Dictionary<string, float> Stats;
 
     public WeaponInfo(WeaponClass weaponclass, WeaponType weaponType, string name, string desc, Dictionary<string, float> stats) {

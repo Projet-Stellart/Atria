@@ -4,7 +4,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 
-public partial class GeneratorResourcePack : Interactible
+public partial class GeneratorResourcePack : AnimatableBody3D, IInteractible
 {
     private Action<player, int> collect;
 
@@ -19,7 +19,7 @@ public partial class GeneratorResourcePack : Interactible
         OnCollected = onCollected;
     }
 
-    public override void OnClickBegin(player player)
+    public void OnClickBegin(player player)
     {
         if (collect == null)
             return;
@@ -27,9 +27,9 @@ public partial class GeneratorResourcePack : Interactible
         OnCollected.Invoke();
     }
 
-    public override void OnClickEnd(player player) { }
+    public void OnClickEnd(player player) { }
 
-    public override void OnCursorIn(player player) { }
+    public void OnCursorIn(player player) { }
 
-    public override void OnCursorOut(player player) { }
+    public void OnCursorOut(player player) { }
 }

@@ -260,7 +260,10 @@ public partial class MultiplayerManager : Node
         player.Init(team.AsInt32());
         player.camera.Current = localPl;
         if (localPl)
+        {
             player.Init(team.AsInt32());
+            GameManager.singleton.hudManager.subHud.Init(player);
+        }
     }
 
     public void DeletePlayer(long id)

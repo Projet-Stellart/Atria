@@ -11,7 +11,7 @@ public abstract partial class LocalEntity : CharacterBody3D
     public bool dead;
 
     public bool interacting;
-    public Interactible interation;
+    public IInteractible interation;
 
     public bool gps { get; private set; }
     private GpsDisplayInfo[] gpsInfos;
@@ -232,7 +232,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         return true;
     }
 
-    public void SendInteractionStart(Interactible inter)
+    public void SendInteractionStart(Node inter)
     {
         RpcId(1, "InteractionStartServer", new Variant[] { inter.GetPath() });
     }
@@ -242,7 +242,7 @@ public abstract partial class LocalEntity : CharacterBody3D
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
-        interation = GetTree().Root.GetNode<Interactible>(interPath.AsString());
+        interation = GetTree().Root.GetNode<IInteractible>(interPath.AsString());
         interacting = true;
         if (InteractionTest())
         {
@@ -312,6 +312,56 @@ public abstract partial class LocalEntity : CharacterBody3D
     public abstract void InputLocalEvent(InputEvent @event);
     public abstract void SyncRotation(Vector2 rot);
     public abstract Vector2 GetRotation();
+
+    public void DropWeapon(Weapon weapon)
+    {
+        PickableWeapon drop = GD.Load<PackedScene>(weapon.info.PickableResPath).Instantiate<PickableWeapon>();
+        GameManager.singleton.GetNode("Objects").AddChild(drop);
+
+        drop.Position = Position;
+
+        GameManager.singleton.multiplayerManager.InstantiateObjectServer(weapon.info.PickableResPath, GameManager.singleton.GetNode("Objects"), drop.Name);
+
+        drop.Init(weapon, weapon.info.PickableResPath);
+
+        RpcId(uid, "SwapDropedWeaponClient", new Variant[] { (int)weapon.info.WeaponClass });
+
+        Rpc("DropedWeaponClient", new Variant[] { (int)weapon.info.WeaponClass });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false,TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SwapDropedWeaponClient(int wClass)
+    {
+        WeaponClass wC = (WeaponClass)wClass;
+        player player = (player)this;
+        if (player.Weapon.info.WeaponClass == wC)
+        {
+            SendSwapWeapon((int)(wC == WeaponClass.Melee ? WeaponClass.Primary : WeaponClass.Melee));
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void DropedWeaponClient(int wClass)
+    {
+        WeaponClass wC = (WeaponClass)wClass;
+        player player = (player)this;
+
+        if (wC == WeaponClass.Melee)
+        {
+            player.Melee.QueueFree();
+            player.Melee = null;
+        }
+        else if (wC == WeaponClass.Primary) 
+        {
+            player.Primary.QueueFree();
+            player.Primary = null;
+        }
+        else
+        {
+            player.Secondary.QueueFree();
+            player.Secondary = null;
+        }
+    }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     public void SyncServerPosVelo(Variant pos, Variant velo)
@@ -500,7 +550,13 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public void GetDirectWeapon(string weaponPath)
     {
-        GetWeaponClient(GD.Load<PackedScene>(weaponPath).Instantiate<Weapon>());
+        GetDirectWeapon(GD.Load<PackedScene>(weaponPath).Instantiate<Weapon>());
+    }
+
+    public void GetDirectWeapon(Weapon weapon)
+    {
+        GetWeaponClient(weapon);
+        SyncBulletsServer();
     }
 
     public void GetWeaponServer(string weaponPath)
@@ -511,7 +567,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         });
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void SyncWeapon(Variant weaponPath)
     {
         GetWeaponClient(GD.Load<PackedScene>(weaponPath.AsString()).Instantiate<Weapon>());
@@ -530,26 +586,46 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public void SyncBulletsServer()
     {
-        if (((player)this).Weapon is WeaponAmo wa)
+        WeaponAmo pwa = null;
+        WeaponAmo swa = null;
+
+        if (((player)this).Primary is WeaponAmo wa)
         {
-            RpcId(uid, "SyncBullets", new Variant[]
-            {
-                wa.currBullets,
-                wa.bullets
-            });
+            pwa = wa;
         }
+        if (((player)this).Secondary is WeaponAmo wa2)
+        {
+            swa = wa2;
+        }
+
+        RpcId(uid, "SyncBullets", new Variant[]
+        {
+            (pwa == null ? 0 : pwa.currBullets),
+            (pwa == null ? 0 : pwa.bullets),
+            (swa == null ? 0 : swa.currBullets),
+            (swa == null ? 0 : swa.bullets)
+        });
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncBullets(Variant currBull, Variant totBull)
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncBullets(Variant pcurrBull, Variant ptotBull, Variant scurrBull, Variant stotBull)
     {
-        if (((player)this).Weapon is WeaponAmo wa)
+        if (((player)this).Primary is WeaponAmo pwa)
         {
-            wa.currBullets = currBull.AsInt32();
-            wa.bullets = totBull.AsInt32();
-            if (IsLocalPlayer)
+            pwa.currBullets = pcurrBull.AsInt32();
+            pwa.bullets = ptotBull.AsInt32();
+            if (IsLocalPlayer && ((player)this).Weapon == ((player)this).Primary)
             {
-                GameManager.singleton.hudManager.subHud.SetBullets(wa.currBullets, wa.bullets);
+                GameManager.singleton.hudManager.subHud.SetBullets(pwa.currBullets, pwa.bullets);
+            }
+        }
+        if (((player)this).Secondary is WeaponAmo swa)
+        {
+            swa.currBullets = scurrBull.AsInt32();
+            swa.bullets = stotBull.AsInt32();
+            if (IsLocalPlayer && ((player)this).Weapon == ((player)this).Primary)
+            {
+                GameManager.singleton.hudManager.subHud.SetBullets(swa.currBullets, swa.bullets);
             }
         }
     }
@@ -663,6 +739,7 @@ public abstract partial class LocalEntity : CharacterBody3D
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
+        RpcId(1, "SyncSwapWeaponClient", new Variant[] { weaponClass });
         foreach (int peer in Multiplayer.GetPeers())
         {
             if (peer == Multiplayer.GetRemoteSenderId())
@@ -675,6 +752,19 @@ public abstract partial class LocalEntity : CharacterBody3D
     public void SyncSwapWeaponClient(Variant weaponClass)
     {
         ((player)this).SwapWeapon((WeaponClass)weaponClass.AsInt32());
+    }
+
+    public void RequestBulletUpdate()
+    {
+        RpcId(1, "RequestBulletUpdateServer");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RequestBulletUpdateServer()
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        SyncBulletsServer();
     }
 
     public void SendInspectWeapon()

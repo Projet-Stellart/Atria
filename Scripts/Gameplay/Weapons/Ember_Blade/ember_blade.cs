@@ -9,7 +9,7 @@ public partial class ember_blade : WeaponMelee
 	|	 Class Properties    |
 	\°----------------------*/
 
-    public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Melee, WeaponType.Normal, "Ember Blade", "None", null);
+    public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Melee, WeaponType.Normal, "Ember Blade", "None", null) { dropable = false, ResPath = "res://Scenes/Nelson/Weapons/Ember_Blade/ember_blade.tscn" };
 
     public override int damage {get; protected set;} = 40;
     public override int secondaryDamage {get; protected set;} = 70;

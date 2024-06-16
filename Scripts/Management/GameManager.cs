@@ -30,6 +30,8 @@ public partial class GameManager : Node
     public DateTime startSpawnDate;
     public bool waitingSpawn;
 
+    public static string weaponDropResPath = "res://Scenes/Lilian/Objects/PickableWeapon.tscn";
+
     public CharacterData[] characterDatas = new CharacterData[]
     {
         new CharacterData() { index = 0, name = vortex.Info.Name, description = vortex.Info.Desc, image = "res://Ressources/UI/Fond1.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" },
@@ -530,6 +532,12 @@ public partial class GameManager : Node
         else
             Debug.Print($"[GameManager]: {playerInfo[player.uid].Username} died by {cause.ToString()}");
 
+        if (((player)player).Secondary != null && ((player)player).Secondary.info.dropable)
+            player.DropWeapon(((player)player).Secondary);
+        if (((player)player).Primary != null && ((player)player).Primary.info.dropable)
+            player.DropWeapon(((player)player).Primary);
+        if (((player)player).Melee != null && ((player)player).Melee.info.dropable)
+            player.DropWeapon(((player)player).Melee);
         player.SyncDeathServer(true);
         player.SyncVisibility(false);
 
@@ -554,6 +562,11 @@ public partial class GameManager : Node
         player.SendServerPosVelo(npos, Vector3.Zero);
         player.SyncVisibility(true);
         player.SyncDeathServer(false);
+        if (((player)player).Melee == null)
+        {
+            player.GetDirectWeapon(player.defaultWeapon);
+            player.GetWeaponServer(player.defaultWeapon);
+        }
     }
 
     public void ResetRound()

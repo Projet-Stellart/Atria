@@ -33,7 +33,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public float accel;
 	public const float JUMP_VELOCITY = 5.0f;
 
-    Interactible interaction;
+    IInteractible interaction;
 
     //Vectors
     Vector3 inputVect = new Vector3(); //Velocity Given by Input Events (user walking, robot walking, etc)
@@ -300,9 +300,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
             if (hit.ContainsKey("collider"))
             {
                 Node obj = (Node)hit["collider"];
-                if (obj is Interactible inter)
+                if (obj is IInteractible inter)
                 {
-                    SendInteractionStart(inter);
+                    SendInteractionStart(obj);
                     interaction = inter;
                 }
             }
@@ -527,7 +527,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public override void SwapWeapon(WeaponClass weaponClass) {
 		isAiming = false;
 		if (FocusState == FocusState.Weapon) {
-		    if (hasWeapon)
+		    if (hasWeapon && Weapon != null)
 				Weapon.StopAnimations();
 		} else
 		    _CancelModuleLocal();
@@ -573,6 +573,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		NodePath[] positions = Weapon.GetHandsPlacements();
 		AttachHands(positions);
 
+		if (Multiplayer.IsServer())
+			SyncBulletsServer();
+
 		Weapon.animator.Play("Swap");
 		Weapon.Swap();
 		if (IsLocalPlayer)
@@ -581,20 +584,65 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	public override void GetWeaponClient(Weapon weapon) {
 		var type = weapon.info.WeaponClass;
-		//Instantiating it
-		GetNode<Node3D>("Head/Arms").AddChild(weapon);
 		//Assigning the new weapon to its slot
 		if (type == WeaponClass.Melee) {
-		    Melee = weapon;
+            if (Melee != null && Melee.info.dropable && Multiplayer.IsServer())
+                DropWeapon(Melee);
+
+            if (Melee != null)
+            {
+                Melee.QueueFree();
+            }
+			
+            GetNode<Node3D>("Head/Arms").AddChild(weapon);
+            
+			Melee = weapon;
 		}
 		else if (type == WeaponClass.Secondary) {
-		    Secondary = weapon;
-		}
+			if (Secondary != null && weapon.GetType() == Secondary.GetType() && Multiplayer.IsServer())
+			{
+				if (weapon is WeaponAmo wa)
+				{
+                    ((WeaponAmo)Secondary).bullets += wa.bullets + wa.currBullets;
+                }
+            }
+			else
+			{
+                if (Secondary != null && Secondary.info.dropable && Multiplayer.IsServer())
+                    DropWeapon(Secondary);
+
+                if (Secondary != null)
+				{
+                    Secondary.QueueFree();
+				}
+                GetNode<Node3D>("Head/Arms").AddChild(weapon);
+
+                Secondary = weapon;
+            }
+        }
 		else {
-			Primary = weapon;
-		}
+            if (Primary != null && weapon.GetType() == Primary.GetType() && Multiplayer.IsServer())
+            {
+                if (weapon is WeaponAmo wa)
+                {
+                    ((WeaponAmo)Primary).bullets += wa.bullets + wa.currBullets;
+                }
+			}
+			else
+			{
+                if (Primary != null && Primary.info.dropable && Multiplayer.IsServer())
+                    DropWeapon(Primary);
+
+                if (Primary != null)
+                {
+                    Primary.QueueFree();
+                }
+                GetNode<Node3D>("Head/Arms").AddChild(weapon);
+                Primary = weapon;
+            }
+        }
 		weapon.Player = this;
-		SwapWeapon(weapon.info.WeaponClass); //Called by LocalEntity??
+		SwapWeapon(weapon.info.WeaponClass);
 		hasWeapon = true;
 		if (!(Melee is null))
             Melee.SetRenderLayer((uint)(IsLocalPlayer ? 2 : 1));

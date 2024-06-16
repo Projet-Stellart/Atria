@@ -3,6 +3,11 @@ using System;
 
 public partial class HUD : Control
 {
+    public void Init(player player)
+    {
+
+    }
+
     public void SetHealth(float health)
     {
         GetNode<HealthBar>("Health").SetHealth(health);
