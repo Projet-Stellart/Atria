@@ -33,5 +33,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Client - ${{ matrix.platform.name }}
+          name: Atria-${{ matrix.platform.name }}
           path: ./build/
