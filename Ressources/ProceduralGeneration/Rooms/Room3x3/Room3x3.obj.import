@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bnf0k73l3d3wy"
+path="res://.godot/imported/Room3x3.obj-3e0f7f4a5f4fdd36cd9dda349cdf0231.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Room3x3.obj-3e0f7f4a5f4fdd36cd9dda349cdf0231.mesh"]
+
+source_file="res://Ressources/ProceduralGeneration/Rooms/Room3x3/Room3x3.obj"
+dest_files=["res://.godot/imported/Room3x3.obj-3e0f7f4a5f4fdd36cd9dda349cdf0231.mesh", "res://.godot/imported/Room3x3.obj-3e0f7f4a5f4fdd36cd9dda349cdf0231.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

@@ -156,6 +156,7 @@ _data = {
 }
 
 [node name="pulsar" type="Area3D"]
+collision_mask = 4
 script = ExtResource("1_4ujfg")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

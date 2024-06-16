@@ -6,7 +6,7 @@ public partial class Info : Control
 
     public void SetInfo(string d)
         {
-            var InfoRect = GetNode<RichTextLabel>("HB_BG/ColorRect/TextEdit");
+            var InfoRect = GetNode<RichTextLabel>("TextEdit");
 
             InfoRect.Text = "[center]" + d;
         }

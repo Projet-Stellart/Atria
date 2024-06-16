@@ -5,6 +5,7 @@
 [sub_resource type="SphereShape3D" id="SphereShape3D_qq73r"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_njo0a"]
+cull_mode = 2
 albedo_color = Color(0, 0, 0, 1)
 metallic = 0.96
 
@@ -157,6 +158,7 @@ _data = {
 }
 
 [node name="supernova" type="Area3D"]
+collision_mask = 4
 script = ExtResource("1_7ipvi")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

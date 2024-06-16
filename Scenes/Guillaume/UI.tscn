@@ -1,27 +1,33 @@
-[gd_scene load_steps=9 format=3 uid="uid://cthdwsw2b1hp6"]
+[gd_scene load_steps=12 format=3 uid="uid://cthdwsw2b1hp6"]
 
 [ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
-[ext_resource type="AudioStream" uid="uid://b0efel5c7odhb" path="res://Ressources/UI/Sci-Fi Sound Effects (mp3cut (mp3cut.net).mp3" id="3_41h6r"]
-[ext_resource type="Texture2D" uid="uid://2x54dyrtl6yq" path="res://Ressources/UI/UI-Elements/SmallEmptyButton.png" id="3_pga3l"]
-[ext_resource type="Texture2D" uid="uid://0iq52avqno4l" path="res://Ressources/UI/Fond.jpeg" id="4_0mpe5"]
+[ext_resource type="AudioStream" uid="uid://csf76jfs71xhc" path="res://Ressources/UI/Click.mp3" id="3_46j4r"]
 [ext_resource type="AudioStream" uid="uid://bisdnb3vq2dvx" path="res://Ressources/UI/Trap.mp3" id="4_7w28x"]
-[ext_resource type="Shortcut" uid="uid://bjmel41tvfycs" path="res://Ressources/UI/shortcat.tres" id="6_yjv84"]
+[ext_resource type="Texture2D" uid="uid://c8y5sbbjq55ge" path="res://Ressources/UI/Logo.png" id="4_plkpr"]
+[ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="5_obcn5"]
+[ext_resource type="Texture2D" uid="uid://dgxynxnhxc4of" path="res://Ressources/UI/Button_CLicked.png" id="7_tekix"]
+[ext_resource type="Texture2D" uid="uid://bxkcfq3dhpm75" path="res://Ressources/UI/Button_Moused.png" id="8_gcfsc"]
+[ext_resource type="PackedScene" path="res://Scenes/Guillaume/Keybindings.tscn" id="8_yv05f"]
 
-[sub_resource type="InputEventKey" id="InputEventKey_6sjdh"]
-keycode = 4194309
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_42bj2"]
+load_path = "res://.godot/imported/Fond1.jpeg-bca3c69e3ab3bf907eddae77f371710f.ctex"
 
-[sub_resource type="Shortcut" id="Shortcut_v1fvj"]
-events = [SubResource("InputEventKey_6sjdh")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fw5wk"]
+bg_color = Color(0.6, 0.6, 0.6, 0.392157)
 
-[node name="UI" type="CanvasLayer"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hiq8t"]
+
+[node name="UI" type="CanvasLayer" node_paths=PackedStringArray("ResolutionOptionButton", "FullscreenOptionButton")]
 script = ExtResource("1_mxrpx")
+ResolutionOptionButton = NodePath("Graphics/MarginContainer/VBoxContainer/HBoxContainer/Resolution")
+FullscreenOptionButton = NodePath("Graphics/MarginContainer/VBoxContainer/HBoxContainer2/WindowMode")
 
 [node name="SonFond" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_7w28x")
 volume_db = -20.0
 
 [node name="MenuSwitch" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_41h6r")
+stream = ExtResource("3_46j4r")
 volume_db = -10.0
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -30,7 +36,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_0mpe5")
+texture = SubResource("CompressedTexture2D_42bj2")
 expand_mode = 1
 
 [node name="Main" type="Control" parent="."]
@@ -41,104 +47,192 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer4" type="MarginContainer" parent="Main"]
+[node name="ColorRect2" type="ColorRect" parent="Main"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.03125
-anchor_top = 0.416667
-anchor_right = 0.109375
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
+anchor_left = 0.0195313
+anchor_top = 0.756944
+anchor_right = 0.136719
+anchor_bottom = 0.965278
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="Control" parent="Main/MarginContainer4"]
-layout_mode = 2
+[node name="ColorRect" type="TextureRect" parent="Main/ColorRect2"]
+layout_mode = 0
+anchor_left = 0.0666667
+anchor_top = 0.0666667
+anchor_right = 0.933333
+anchor_bottom = 0.933333
+texture = ExtResource("4_plkpr")
+expand_mode = 2
+metadata/_edit_use_anchors_ = true
 
-[node name="Options" type="Button" parent="Main/MarginContainer4/VBoxContainer"]
+[node name="Play" type="TextureButton" parent="Main"]
 custom_minimum_size = Vector2(0, 50)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Options"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-metadata/_edit_use_anchors_ = true
-
-[node name="MarginContainer" type="MarginContainer" parent="Main"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.03125
-anchor_top = 0.5
-anchor_right = 0.109375
-anchor_bottom = 0.583333
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="Control" parent="Main/MarginContainer"]
-layout_mode = 2
-
-[node name="Credits" type="Button" parent="Main/MarginContainer/VBoxContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Credits"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer2" type="MarginContainer" parent="Main"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.03125
-anchor_top = 0.833333
-anchor_right = 0.135156
-anchor_bottom = 0.944444
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer2"]
-layout_mode = 2
-
-[node name="Quit" type="Button" parent="Main/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-text = "Quit"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer3" type="MarginContainer" parent="Main"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.03125
 anchor_top = 0.0555556
-anchor_right = 0.226563
-anchor_bottom = 0.263889
+anchor_right = 0.254687
+anchor_bottom = 0.208333
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Play" type="RichTextLabel" parent="Main/Play"]
+custom_minimum_size = Vector2(0, 85)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 55
+bbcode_enabled = true
+text = "[center]Play"
+metadata/_edit_use_anchors_ = true
+
+[node name="Quit" type="TextureButton" parent="Main"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.805469
+anchor_top = 0.823611
+anchor_right = 0.960938
+anchor_bottom = 0.930556
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Quit" type="RichTextLabel" parent="Main/Quit"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]Quit"
+metadata/_edit_use_anchors_ = true
+
+[node name="Credits" type="TextureButton" parent="Main"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.03125
+anchor_top = 0.5125
+anchor_right = 0.155469
+anchor_bottom = 0.593056
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Credits" type="RichTextLabel" parent="Main/Credits"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Credits"
+metadata/_edit_use_anchors_ = true
+
+[node name="Options" type="TextureButton" parent="Main"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+anchor_left = 0.03125
+anchor_top = 0.416667
+anchor_right = 0.154687
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Options" type="RichTextLabel" parent="Main/Options"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Options"
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="TextureRect" parent="Main"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.679688
+anchor_top = 0.0694444
+anchor_right = 0.960938
+anchor_bottom = 0.736111
+texture = ExtResource("5_obcn5")
+expand_mode = 5
+stretch_mode = 6
+flip_v = true
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="Main/ColorRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.138889
+anchor_top = 0.1875
+anchor_right = 0.861111
+anchor_bottom = 0.854167
+grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Main/MarginContainer3"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/ColorRect/MarginContainer"]
 layout_mode = 2
+alignment = 1
 
-[node name="Play" type="Button" parent="Main/MarginContainer3/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 75
-shortcut = SubResource("Shortcut_v1fvj")
-text = "PLAY"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+bbcode_enabled = true
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
 
 [node name="Controls" type="Control" parent="."]
 visible = false
@@ -152,10 +246,10 @@ grow_vertical = 2
 [node name="MarginContainer" type="MarginContainer" parent="Controls"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.386719
-anchor_top = 0.0277778
-anchor_right = 0.613281
-anchor_bottom = 0.5
+anchor_left = 0.335938
+anchor_top = 0.0694444
+anchor_right = 0.664063
+anchor_bottom = 0.930556
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
@@ -163,67 +257,101 @@ metadata/_edit_use_anchors_ = true
 [node name="VBoxContainer" type="Control" parent="Controls/MarginContainer"]
 layout_mode = 2
 
-[node name="Mouse Settings" type="Button" parent="Controls/MarginContainer/VBoxContainer"]
+[node name="Mouse Settings2" type="TextureButton" parent="Controls/MarginContainer/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0689655
-anchor_top = 0.0588235
-anchor_right = 0.931035
+anchor_left = 0.083612
+anchor_top = 0.277539
+anchor_right = 0.916388
+anchor_bottom = 0.476395
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Mouse Settings" type="RichTextLabel" parent="Controls/MarginContainer/VBoxContainer/Mouse Settings2"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 22
-text = "Mouse Settings
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 25
+bbcode_enabled = true
+text = "[center]Mouse Settings"
 metadata/_edit_use_anchors_ = true
 
-[node name="Keyboard Settings" type="Button" parent="Controls/MarginContainer/VBoxContainer"]
+[node name="Keyboard Settings2" type="TextureButton" parent="Controls/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0689655
-anchor_top = 0.5
-anchor_right = 0.931035
-anchor_bottom = 0.941176
+anchor_left = 0.083612
+anchor_top = 0.519313
+anchor_right = 0.916388
+anchor_bottom = 0.718169
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 22
-text = "Keyboard Settings"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="MarginContainer2" type="MarginContainer" parent="Controls"]
+[node name="Keyboard Settings" type="RichTextLabel" parent="Controls/MarginContainer/VBoxContainer/Keyboard Settings2"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 25
+bbcode_enabled = true
+text = "[center]Keyboard Settings"
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="TextureButton" parent="Controls"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Controls/MarginContainer2"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Controls/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Exit" type="RichTextLabel" parent="Controls/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Credits" type="Control" parent="."]
 visible = false
@@ -275,32 +403,36 @@ layout_mode = 2
 text = "Luan Ray-Chagas
 "
 
-[node name="MarginContainer2" type="MarginContainer" parent="Credits"]
+[node name="Exit" type="TextureButton" parent="Credits"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Credits/MarginContainer2"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Credits/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Exit" type="RichTextLabel" parent="Credits/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Graphics" type="Control" parent="."]
 visible = false
@@ -337,41 +469,105 @@ metadata/_edit_use_anchors_ = true
 [node name="VBoxContainer" type="VBoxContainer" parent="Graphics/MarginContainer"]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Graphics/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "3D Resolution Scale :"
-fit_content = true
-
-[node name="HSlider" type="HSlider" parent="Graphics/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Graphics/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 6
-step = 10.0
-value = 100.0
 
-[node name="MarginContainer2" type="MarginContainer" parent="Graphics"]
+[node name="Label" type="Label" parent="Graphics/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Resolution: "
+
+[node name="Resolution" type="OptionButton" parent="Graphics/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+item_count = 2
+popup/item_0/text = "1920x1080"
+popup/item_0/id = 0
+popup/item_1/text = "1280x720"
+popup/item_1/id = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Graphics/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+
+[node name="Label" type="Label" parent="Graphics/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Window Mode: "
+
+[node name="WindowMode" type="OptionButton" parent="Graphics/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+item_count = 3
+popup/item_0/text = "Exclusive Fullscreen"
+popup/item_0/id = 4
+popup/item_1/text = "Borderless Fullscreen"
+popup/item_1/id = 3
+popup/item_2/text = "Windowed"
+popup/item_2/id = 0
+
+[node name="Exit" type="TextureButton" parent="Graphics"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Graphics/MarginContainer2"]
-layout_mode = 2
+[node name="Exit" type="RichTextLabel" parent="Graphics/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
 
-[node name="Exit" type="Button" parent="Graphics/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
+[node name="Ok" type="TextureButton" parent="Graphics"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.407031
+anchor_top = 0.75
+anchor_right = 0.592188
+anchor_bottom = 0.875
+offset_right = -6.10352e-05
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Ok" type="RichTextLabel" parent="Graphics/Ok"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]OK"
+metadata/_edit_use_anchors_ = true
 
 [node name="Sound" type="Control" parent="."]
 visible = false
@@ -440,30 +636,36 @@ alignment = 1
 icon_alignment = 1
 vertical_icon_alignment = 0
 
-[node name="MarginContainer4" type="MarginContainer" parent="Sound"]
+[node name="Exit" type="TextureButton" parent="Sound"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Sound/MarginContainer4"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Sound/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Exit" type="RichTextLabel" parent="Sound/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Play" type="Control" parent="."]
 visible = false
@@ -473,81 +675,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="MarginContainer3" type="MarginContainer" parent="Play"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer3"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Play/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer4" type="MarginContainer" parent="Play"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.15625
-anchor_top = 0.0277778
-anchor_right = 0.351563
-anchor_bottom = 0.236111
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer4"]
-layout_mode = 2
-
-[node name="Online" type="Button" parent="Play/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 30
-text = "
-Online
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer5" type="MarginContainer" parent="Play"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.648438
-anchor_top = 0.0277778
-anchor_right = 0.84375
-anchor_bottom = 0.236111
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Play/MarginContainer5"]
-layout_mode = 2
-
-[node name="Custom" type="Button" parent="Play/MarginContainer5/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 30
-text = "
-Custom
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
 [node name="MarginContainer6" type="MarginContainer" parent="Play"]
 layout_mode = 1
@@ -567,6 +694,103 @@ layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Username"
 scroll_fit_content_height = true
+
+[node name="Exit" type="TextureButton" parent="Play"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="RichTextLabel" parent="Play/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
+
+[node name="Custom" type="TextureButton" parent="Play"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.664063
+anchor_top = 0.0694444
+anchor_right = 0.960938
+anchor_bottom = 0.270833
+grow_horizontal = 2
+grow_vertical = 2
+disabled = true
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Custom" type="RichTextLabel" parent="Play/Custom"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]Custom"
+metadata/_edit_use_anchors_ = true
+
+[node name="Online" type="TextureButton" parent="Play"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0390625
+anchor_top = 0.0694444
+anchor_right = 0.335938
+anchor_bottom = 0.270833
+grow_horizontal = 2
+grow_vertical = 2
+disabled = true
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Online" type="RichTextLabel" parent="Play/Online"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]Online"
+metadata/_edit_use_anchors_ = true
 
 [node name="MatchMaker" type="Control" parent="."]
 visible = false
@@ -596,63 +820,67 @@ size_flags_vertical = 3
 placeholder_text = "MatchMaker IP"
 scroll_fit_content_height = true
 
-[node name="MarginContainer2" type="MarginContainer" parent="MatchMaker"]
+[node name="Exit" type="TextureButton" parent="MatchMaker"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MatchMaker/MarginContainer2"]
-layout_mode = 2
+[node name="Exit" type="RichTextLabel" parent="MatchMaker/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
 
-[node name="Exit" type="Button" parent="MatchMaker/MarginContainer2/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="MarginContainer3" type="MarginContainer" parent="MatchMaker"]
+[node name="Ok" type="TextureButton" parent="MatchMaker"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.125
-anchor_bottom = 0.972222
-offset_left = 550.0
-offset_top = -270.0
-offset_right = 550.0
-offset_bottom = -270.0
+anchor_left = 0.407031
+anchor_top = 0.491667
+anchor_right = 0.592188
+anchor_bottom = 0.616667
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MatchMaker/MarginContainer3"]
-layout_mode = 2
-
-[node name="OK" type="Button" parent="MatchMaker/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-OK
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Ok" type="RichTextLabel" parent="MatchMaker/Ok"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]OK"
 
 [node name="Options" type="Control" parent="."]
 visible = false
@@ -674,92 +902,164 @@ metadata/_edit_use_anchors_ = true
 [node name="VBoxContainer" type="Control" parent="Options/MarginContainer3"]
 layout_mode = 2
 
-[node name="Sound" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-anchor_left = 0.0666667
-anchor_top = 0.0285714
-anchor_right = 0.933333
-anchor_bottom = 0.242857
+[node name="MatchMaker" type="TextureButton" parent="Options/MarginContainer3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.083612
+anchor_top = 0.761087
+anchor_right = 0.916388
+anchor_bottom = 0.962804
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 30
-text = "Sound"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="Graphics" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-anchor_left = 0.0666667
-anchor_top = 0.271429
-anchor_right = 0.933333
-anchor_bottom = 0.485714
-offset_top = -1.52588e-05
-theme_override_font_sizes/font_size = 30
-text = "Graphics"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="MatchMaker" type="RichTextLabel" parent="Options/MarginContainer3/VBoxContainer/MatchMaker"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]MatchMaker"
 metadata/_edit_use_anchors_ = true
 
-[node name="Controls" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-anchor_left = 0.0666667
-anchor_top = 0.514286
-anchor_right = 0.933333
-anchor_bottom = 0.728571
-offset_top = -3.05176e-05
-offset_bottom = 3.05176e-05
-theme_override_font_sizes/font_size = 30
-text = "Binds"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
-metadata/_edit_use_anchors_ = true
-
-[node name="MatchMaker" type="Button" parent="Options/MarginContainer3/VBoxContainer"]
+[node name="Sound" type="TextureButton" parent="Options/MarginContainer3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0666667
-anchor_top = 0.757143
-anchor_right = 0.933333
-anchor_bottom = 0.971429
-theme_override_font_sizes/font_size = 30
-text = "MatchMaker"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+anchor_left = 0.083612
+anchor_top = 0.0343348
+anchor_right = 0.916388
+anchor_bottom = 0.234621
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="MarginContainer4" type="MarginContainer" parent="Options"]
+[node name="Sound" type="RichTextLabel" parent="Options/MarginContainer3/VBoxContainer/Sound"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]Sound"
+metadata/_edit_use_anchors_ = true
+
+[node name="Graphics" type="TextureButton" parent="Options/MarginContainer3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
+anchor_left = 0.083612
+anchor_top = 0.277539
+anchor_right = 0.916388
+anchor_bottom = 0.476395
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Options/MarginContainer4"]
-layout_mode = 2
+[node name="Graphics" type="RichTextLabel" parent="Options/MarginContainer3/VBoxContainer/Graphics"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]Graphics"
+metadata/_edit_use_anchors_ = true
 
-[node name="Exit" type="Button" parent="Options/MarginContainer4/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
+[node name="Controls" type="TextureButton" parent="Options/MarginContainer3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.083612
+anchor_top = 0.519313
+anchor_right = 0.916388
+anchor_bottom = 0.718169
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="Controls" type="RichTextLabel" parent="Options/MarginContainer3/VBoxContainer/Controls"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center]Controls"
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="TextureButton" parent="Options"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="RichTextLabel" parent="Options/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Online" type="Control" parent="."]
 visible = false
@@ -770,29 +1070,36 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer3" type="MarginContainer" parent="Online"]
+[node name="Exit" type="TextureButton" parent="Online"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.016
-anchor_top = 0.861
-anchor_right = 0.984
-anchor_bottom = 0.972
-offset_left = -0.480001
-offset_top = 0.0799561
-offset_right = 0.47998
-offset_bottom = 0.159973
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Online/MarginContainer3"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Online/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
+[node name="Exit" type="RichTextLabel" parent="Online/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
 
 [node name="Custom" type="Control" parent="."]
 visible = false
@@ -802,31 +1109,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="MarginContainer3" type="MarginContainer" parent="Custom"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.015625
-anchor_top = 0.861111
-anchor_right = 0.121094
-anchor_bottom = 0.972222
-metadata/_edit_use_anchors_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer3"]
-layout_mode = 2
-
-[node name="Exit" type="Button" parent="Custom/MarginContainer3/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-shortcut = ExtResource("6_yjv84")
-text = "
-Exit
-
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
 [node name="MarginContainer4" type="MarginContainer" parent="Custom"]
 layout_mode = 1
@@ -871,56 +1153,390 @@ text = "7308"
 placeholder_text = "Target Port : "
 scroll_fit_content_height = true
 
-[node name="MarginContainer6" type="MarginContainer" parent="Custom"]
+[node name="Exit" type="TextureButton" parent="Custom"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.402344
-anchor_top = 0.347222
-anchor_right = 0.597656
-anchor_bottom = 0.555556
-offset_top = 1.52588e-05
-offset_bottom = -3.05176e-05
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Custom/MarginContainer6"]
-layout_mode = 2
+[node name="Exit" type="RichTextLabel" parent="Custom/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
 
-[node name="Join" type="Button" parent="Custom/MarginContainer6/VBoxContainer"]
+[node name="Join" type="TextureButton" parent="Custom"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.407031
+anchor_top = 0.358333
+anchor_right = 0.592188
+anchor_bottom = 0.544444
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Join" type="RichTextLabel" parent="Custom/Join"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 35
+bbcode_enabled = true
+text = "[center]Join"
+metadata/_edit_use_anchors_ = true
+
+[node name="Keybinding" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Exit" type="TextureButton" parent="Keybinding"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0148437
+anchor_top = 0.909722
+anchor_right = 0.110937
+anchor_bottom = 0.979167
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_obcn5")
+texture_pressed = ExtResource("7_tekix")
+texture_hover = ExtResource("8_gcfsc")
+ignore_texture_size = true
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Exit" type="RichTextLabel" parent="Keybinding/Exit"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "[center]Exit"
+metadata/_edit_use_anchors_ = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Keybinding"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 100.0
+offset_right = 1180.0
+offset_bottom = 620.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_fw5wk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Keybinding/ScrollContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 30
-text = "
-Join
+metadata/_edit_use_anchors_ = true
 
-"
-icon = ExtResource("3_pga3l")
-flat = true
-icon_alignment = 1
-expand_icon = true
+[node name="InfoLabel0" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="InfoLabel00" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hiq8t")
+text = "Movements"
+horizontal_alignment = 1
+
+[node name="InfoLabel000" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer1" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "jump"
+ActionDisplayName = "Jump"
+
+[node name="InfoLabel1" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "crouch"
+ActionDisplayName = "Crouch"
+
+[node name="InfoLabel2" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer3" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "forward"
+ActionDisplayName = "Forward"
+
+[node name="InfoLabel3" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer4" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "backward"
+ActionDisplayName = "Backward"
+
+[node name="InfoLabel4" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer5" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "left"
+ActionDisplayName = "Left"
+
+[node name="InfoLabel5" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer6" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "right"
+ActionDisplayName = "Right"
+
+[node name="InfoLabel6" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer7" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "run"
+ActionDisplayName = "Run"
+
+[node name="InfoLabel7" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer8" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "sprint"
+ActionDisplayName = "Sprint"
+
+[node name="InfoLabel8" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="InfoLabel01" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hiq8t")
+text = "Gun Control"
+horizontal_alignment = 1
+
+[node name="InfoLabel800" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer9" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "fire"
+ActionDisplayName = "Fire"
+
+[node name="InfoLabel9" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer10" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "alt_fire"
+ActionDisplayName = "Scope / Throw"
+
+[node name="InfoLabel10" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer11" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "reload"
+ActionDisplayName = "Reload"
+
+[node name="InfoLabel11" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer12" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "inspect"
+ActionDisplayName = "Inspect"
+
+[node name="InfoLabel12" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer13" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "melee"
+ActionDisplayName = "Melee Weapon"
+
+[node name="InfoLabel13" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer14" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "primary"
+ActionDisplayName = "Primary Weapon"
+
+[node name="InfoLabel14" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer15" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "secondary"
+ActionDisplayName = "Secondary Weapon"
+
+[node name="InfoLabel15" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer16" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "previous_weapon"
+ActionDisplayName = "Previous Weapon"
+
+[node name="InfoLabel16" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer17" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "next_weapon"
+ActionDisplayName = "Next Weapon"
+
+[node name="InfoLabel17" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="InfoLabel02" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hiq8t")
+text = "Abilities"
+horizontal_alignment = 1
+
+[node name="InfoLabel1800" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer19" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "core_module"
+ActionDisplayName = "Core Module"
+
+[node name="InfoLabel19" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer20" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "rotate"
+ActionDisplayName = "Rotate"
+
+[node name="InfoLabel20" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer21" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "low_module"
+ActionDisplayName = "Low Module"
+
+[node name="InfoLabel21" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer22" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "medium_module"
+ActionDisplayName = "Medium Module"
+
+[node name="InfoLabel22" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer23" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "high_module"
+ActionDisplayName = "High Module"
+
+[node name="InfoLabel23" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="InfoLabel03" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hiq8t")
+text = "Miscellaneous"
+horizontal_alignment = 1
+
+[node name="InfoLabel2300" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer24" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "map"
+ActionDisplayName = "Map"
+
+[node name="InfoLabel24" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer25" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "exit"
+ActionDisplayName = "Exit"
+
+[node name="InfoLabel25" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer26" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+layout_mode = 2
+ActionName = "fullscreen"
+ActionDisplayName = "Fullscreen"
+
+[node name="InfoLabel26" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+layout_mode = 2
 
 [connection signal="finished" from="SonFond" to="." method="_on_son_fond_finished"]
-[connection signal="pressed" from="Main/MarginContainer4/VBoxContainer/Options" to="." method="_on_options_pressed"]
-[connection signal="pressed" from="Main/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
-[connection signal="pressed" from="Main/MarginContainer2/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="Main/MarginContainer3/VBoxContainer/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="Controls/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_controls"]
-[connection signal="pressed" from="Credits/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_credits"]
-[connection signal="pressed" from="Graphics/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_graphics"]
+[connection signal="pressed" from="Main/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Main/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="Main/Credits" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="Main/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="Controls/MarginContainer/VBoxContainer/Keyboard Settings2" to="." method="_on_keyboard_settings_2_pressed"]
+[connection signal="pressed" from="Controls/Exit" to="." method="_on_exit_pressed_controls"]
+[connection signal="pressed" from="Credits/Exit" to="." method="_on_exit_pressed_credits"]
+[connection signal="item_selected" from="Graphics/MarginContainer/VBoxContainer/HBoxContainer/Resolution" to="." method="_on_option_button_item_selected"]
+[connection signal="item_selected" from="Graphics/MarginContainer/VBoxContainer/HBoxContainer2/WindowMode" to="." method="_on_window_mode_item_selected"]
+[connection signal="pressed" from="Graphics/Exit" to="." method="_on_exit_pressed_graphics"]
+[connection signal="pressed" from="Graphics/Ok" to="." method="_on_ok_pressed_graphics"]
 [connection signal="value_changed" from="Sound/MarginContainer5/VBoxContainer/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="pressed" from="Sound/MarginContainer3/VBoxContainer/CheckButton" to="." method="_on_check_button_pressed"]
-[connection signal="pressed" from="Sound/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
-[connection signal="pressed" from="Play/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_play"]
-[connection signal="pressed" from="Play/MarginContainer4/VBoxContainer/Online" to="." method="_on_online_pressed"]
-[connection signal="pressed" from="Play/MarginContainer5/VBoxContainer/Custom" to="." method="_on_custom_pressed"]
+[connection signal="pressed" from="Sound/Exit" to="." method="_on_exit_pressed_sound"]
 [connection signal="text_changed" from="Play/MarginContainer6/VBoxContainer/UsernameInput" to="." method="_on_username_input_text_changed"]
+[connection signal="pressed" from="Play/Exit" to="." method="_on_exit_pressed_play"]
+[connection signal="pressed" from="Play/Custom" to="." method="_on_custom_pressed"]
+[connection signal="pressed" from="Play/Online" to="." method="_on_online_pressed"]
 [connection signal="text_changed" from="MatchMaker/MarginContainer6/VBoxContainer/MatchMakerIP" to="." method="_on_match_maker_ip_text_changed"]
-[connection signal="pressed" from="MatchMaker/MarginContainer2/VBoxContainer/Exit" to="." method="_on_exit_pressed_mm"]
-[connection signal="pressed" from="MatchMaker/MarginContainer3/VBoxContainer/OK" to="." method="_on_ok_pressed"]
+[connection signal="pressed" from="MatchMaker/Exit" to="." method="_on_exit_pressed_mm"]
+[connection signal="pressed" from="MatchMaker/Ok" to="." method="_on_ok_pressed"]
+[connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/MatchMaker" to="." method="_on_match_maker_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Sound" to="." method="_on_sound_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Graphics" to="." method="_on_graphics_pressed"]
 [connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
-[connection signal="pressed" from="Options/MarginContainer3/VBoxContainer/MatchMaker" to="." method="_on_match_maker_pressed"]
-[connection signal="pressed" from="Options/MarginContainer4/VBoxContainer/Exit" to="." method="_on_exit_pressed_options"]
-[connection signal="pressed" from="Online/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_online"]
-[connection signal="pressed" from="Custom/MarginContainer3/VBoxContainer/Exit" to="." method="_on_exit_pressed_custom"]
-[connection signal="pressed" from="Custom/MarginContainer6/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Options/Exit" to="." method="_on_exit_pressed_options"]
+[connection signal="pressed" from="Online/Exit" to="." method="_on_exit_pressed_online"]
+[connection signal="pressed" from="Custom/Exit" to="." method="_on_exit_pressed_custom"]
+[connection signal="pressed" from="Custom/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Keybinding/Exit" to="." method="_on_exit_pressed_kb"]

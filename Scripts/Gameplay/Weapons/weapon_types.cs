@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Godot;
 
 
@@ -13,11 +14,24 @@ public abstract partial class WeaponAmo : Weapon
 	public abstract float penetration {get; protected set;}
     public int currBullets;
 
-    public abstract void Reload();
+	//Common actions of a weapon amo
+    public virtual void Reload() { PlayAnimation("Swap"); }
     public abstract void onReload();
+	public virtual void Aim(bool aimDown) {
+		if (aimDown)
+			PlayAnimation("Aim");
+		else
+			animator.PlayBackwards("Aim");
+	}
 
 	public abstract void FireMeca();
 
+
+    public override bool canFire()
+    {
+        return base.canFire() && animator.CurrentAnimation != "FireAim";
+    }
+    //Calculating who to hit with the damages
     public override void CalculateFire(player Player) {
         var spaceState = GetWorld3D().DirectSpaceState;
 		Vector3 dir = Player.camera.GlobalBasis * new Vector3(0,0,-200);
@@ -59,7 +73,7 @@ public abstract partial class WeaponAmo : Weapon
 				if (currentPenetration > 0) {
 					//Spawning Decal - Back
 					if ((collider is enemy Enemy2 && Enemy2.IsInGroup("Enemy")) || (collider is not player))
-						Player.SpawnDecal((Node3D)exit["collider"], (Vector3)exit["position"], (Vector3)exit["normal"]);
+                        Player.SpawnDecal((Node3D)exit["collider"], (Vector3)exit["position"], (Vector3)exit["normal"]);
 
 					//Adding to filters of the query
 					rids.Add((Rid)collide["rid"]);
@@ -89,7 +103,7 @@ public abstract partial class WeaponAmo : Weapon
 
 	public virtual bool AffectTarget(player Player, Godot.Collections.Dictionary collide, Node3D collider, float currentPenetration, int damageDealt) {
 		if (collider is IDamagable Entity) {
-			if (Entity.Damaged(damageDealt) && collider is player)
+			if (Entity.Damaged(damageDealt, Player) && collider is player)
 				Player.EnergyBar += 50;
 
 			//Testing with Enemy - //TO REMOVE
@@ -104,23 +118,6 @@ public abstract partial class WeaponAmo : Weapon
 }
 
 
-/*--------------------°\
-|	  MELEE WEAPON	   |
-\°--------------------*/
-public abstract partial class WeaponMelee : Weapon
-{
-    public override bool canAimFire {get;} = true;
-}
-
-
-
-
-
-
-
-
-
-
 
 
 /*--------------------------------°\
@@ -133,7 +130,7 @@ public abstract partial class WeaponRadiation : WeaponAmo {
 				field.HitByAmmo(currentPenetration);
 				return false; //BULLET ABSORBED
 		} else if (collider is IDamagable Entity) {
-			Entity.Damaged(damageDealt);
+			Entity.Damaged(damageDealt, Player);
 
 			//Testing with Enemy - //TO REMOVE
 			if (Entity is enemy Enemy && Enemy.IsInGroup("Enemy"))
@@ -144,4 +141,55 @@ public abstract partial class WeaponRadiation : WeaponAmo {
 		}
 		return true;
 	}
+}
+
+
+
+
+
+
+
+
+
+
+
+/*--------------------°\
+|	  MELEE WEAPON	   |
+\°--------------------*/
+public abstract partial class WeaponMelee : Weapon
+{
+    public override bool canAimFire {get;} = false;
+	public override bool canDrop {get;set;}= false;
+	
+    public abstract int secondaryDamage {get; protected set;}
+	public int currentDamage {get; protected set;} = 0;
+
+    public override void Fire(player Owner) {PlayAnimation("Fire");}
+
+    public override bool canFire()
+    {
+        return base.canFire() && animator.CurrentAnimation != "AltFire";
+    }
+
+	//Calculating who to hit with the damages
+    public override void CalculateFire(player Player) {
+        var spaceState = GetWorld3D().DirectSpaceState;
+		Vector3 dir = Player.camera.GlobalBasis * new Vector3(0,0,-1.5f);
+		Godot.Collections.Array<Rid> rids = new Godot.Collections.Array<Rid>();
+
+		//Emitting RayCast and catching first object
+		var query = PhysicsRayQueryParameters3D.Create(Player.camera.GlobalPosition, Player.camera.GlobalPosition + dir, exclude: rids);
+		Godot.Collections.Dictionary collide = spaceState.IntersectRay(query);
+
+		//Breaking if no rid
+		if (!collide.Keys.Contains("rid"))
+			return;
+		
+		////Actions on first contact
+
+		var collider = (Node3D)collide["collider"];
+		if (collider is IDamagable damagable) {
+			damagable.Damaged(currentDamage, Player);
+		}
+    }
 }

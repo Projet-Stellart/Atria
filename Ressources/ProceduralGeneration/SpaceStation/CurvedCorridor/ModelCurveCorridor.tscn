@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://rtxkleqps5b3"]
+
+[ext_resource type="ArrayMesh" uid="uid://dq3gr165ldqaq" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/CurvedCorridor/CurvedCorridor.obj" id="1_34cky"]
+
+[node name="ModelCurveCorridor" type="Node3D"]
+
+[node name="CurvedCorridor" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_34cky")

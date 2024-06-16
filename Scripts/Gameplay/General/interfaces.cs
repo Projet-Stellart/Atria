@@ -12,7 +12,7 @@ using Godot;
 */
 
 public interface IDamagable {
-	public abstract bool Damaged(int damage);
+	public abstract bool Damaged(int damage, player player);
 }
 
 

@@ -4,6 +4,7 @@ using System;
 public partial class supernova : Area3D
 {
     public Vector3 origin;
+    public player owner;
 
     public override void _Ready()
     {
@@ -13,6 +14,6 @@ public partial class supernova : Area3D
 
     public void Damage(Node body) {
         if (body is IDamagable damagable)
-            damagable.Damaged(200);
+            damagable.Damaged(200, owner);
     }
 }

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bf7qggr6kywk0"]
+
+[ext_resource type="ArrayMesh" uid="uid://ddly63bkmjrbl" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/MultiLvlXCorridorHigh.obj" id="1_mbbod"]
+
+[node name="ModelMultiLvlXCorridorHigh" type="Node3D"]
+
+[node name="MultiLvlXCorridorHigh" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_mbbod")

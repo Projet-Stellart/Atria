@@ -1,6 +1,9 @@
 using System;
 using System.Diagnostics;
+using Atria.Scripts.ProceduralGeneration.Objects;
 using Godot;
+using Godot.Collections;
+using Microsoft.VisualBasic;
 
 public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDisable
 {
@@ -11,9 +14,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	//Nodes
 	public Node3D head;
 	public Camera3D camera;
-	AnimationPlayer primaryAnimator;
-	AnimationPlayer secondaryAnimator;
-	AnimationPlayer meleeAnimator;
+	SkeletonIK3D[] HandsReferences;
 
 	//Scenes
 
@@ -32,9 +33,10 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public float accel;
 	public const float JUMP_VELOCITY = 5.0f;
 
+    Interactible interaction;
 
-	//Vectors
-	Vector3 inputVect = new Vector3(); //Velocity Given by Input Events (user walking, robot walking, etc)
+    //Vectors
+    Vector3 inputVect = new Vector3(); //Velocity Given by Input Events (user walking, robot walking, etc)
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes
 	public Vector3 gravity = new(0,-ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle(),0);
@@ -61,7 +63,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 				energyBar = soldier.EnergyBar;
 			else
 				energyBar = value;
-            SyncEnergyServer();
+			if (Multiplayer.IsServer())
+				SyncEnergyServer();
         }
 	}
 
@@ -93,14 +96,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			return (WeaponAmo)Primary;
 		}
 	}
-	public AnimationPlayer focusAnimator {
-		get {
-			if (focus == WeaponClass.Melee)
-				return meleeAnimator;
-			else if (focus == WeaponClass.Secondary)
-				return secondaryAnimator;
-			return primaryAnimator;
-	}}
 	
 
 
@@ -108,11 +103,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	/*----------------------°\
 	|		Temporary	     |
 	\°----------------------*/
-	bool test = true; // TO REMOVE
 	
 	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
-	public string weaponTest = "res://Scenes/Nelson/Weapons/predator.tscn";
-	public string weaponTest2 = "res://Scenes/Nelson/Weapons/predator_test.tscn";
+	public string weaponTest = "res://Scenes/Nelson/Weapons/Predator/predator.tscn";
     public override string defaultWeapon => weaponTest;
 
 
@@ -139,9 +132,20 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		head = GetNode<Node3D>("Head");
 		camera = GetNode<Camera3D>("Head/Camera");
 
-		primaryAnimator = head.GetNode<AnimationPlayer>("Arms/PrimaryAnimator");
-		secondaryAnimator = head.GetNode<AnimationPlayer>("Arms/SecondaryAnimator");
-		meleeAnimator = head.GetNode<AnimationPlayer>("Arms/MeleeAnimator");
+		HandsReferences = new SkeletonIK3D[] {
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Hand_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger0_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger1_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger2_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger3_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger4_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Hand_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger0_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger1_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger2_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger3_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger4_IK")
+		};
 
 		InitSub();
 
@@ -151,17 +155,10 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		//GetWeaponClient((Weapon)weaponTest.Instantiate()); //TO REMOVE IN FUTURE
 	}
 
-	protected virtual void InitSub()
-	{
-
-	}
+	protected virtual void InitSub() { throw new NotImplementedException(); }
 
     public override void InputProcess(double delta)
 	{
-		/*if (test && Input.IsActionJustPressed("test")) {
-			test = false;
-			GetWeaponClient((Weapon)weaponTest2.Instantiate());
-		}*/
 
 		//[BUILD KEY CONTROLS]
 		KeyState fire = new KeyState("fire");
@@ -170,40 +167,46 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 		if (hasWeapon) {
 			if (Input.IsActionJustPressed("previous_weapon")) { //Cycling to Previous Weapon
-				if (focus == WeaponClass.Primary) {
-					if (Secondary != null) {
-						SwapWeapon(WeaponClass.Secondary);}
-					else if (Melee != null)
+				if (FocusState == FocusState.Weapon) {
+					if (focus == WeaponClass.Primary) {
+						if (Secondary != null) {
+							SwapWeapon(WeaponClass.Secondary);}
+						else if (Melee != null)
+							SwapWeapon(WeaponClass.Melee);
+					} else if (focus == WeaponClass.Secondary && Melee != null)
 						SwapWeapon(WeaponClass.Melee);
-				} else if (focus == WeaponClass.Secondary && Melee != null)
-					SwapWeapon(WeaponClass.Melee);
+				} else
+					SwapWeapon(focus);
 			} else if (Input.IsActionJustPressed("next_weapon")) {
-				if (focus == WeaponClass.Melee) {
-					if (Secondary != null)
-						SwapWeapon(WeaponClass.Secondary);
-					else if (Primary != null)
+				if (FocusState == FocusState.Weapon) {
+					if (focus == WeaponClass.Melee) {
+						if (Secondary != null)
+							SwapWeapon(WeaponClass.Secondary);
+						else if (Primary != null)
+							SwapWeapon(WeaponClass.Primary);
+					} else if (focus == WeaponClass.Secondary && Primary != null)
 						SwapWeapon(WeaponClass.Primary);
-				} else if (focus == WeaponClass.Secondary && Primary != null)
-					SwapWeapon(WeaponClass.Primary);
+				} else
+					SwapWeapon(focus);
 			}
 
 			//Swapping Weapons with shortcuts
-			if (Input.IsActionJustPressed("melee") && Melee != null && focus != WeaponClass.Melee)
+			if (Input.IsActionJustPressed("melee") && Melee != null && (focus != WeaponClass.Melee || FocusState != FocusState.Weapon))
 				SwapWeapon(WeaponClass.Melee);
-			else if (Input.IsActionJustPressed("secondary") && Secondary != null && focus != WeaponClass.Secondary)
+			else if (Input.IsActionJustPressed("secondary") && Secondary != null && (focus != WeaponClass.Secondary || FocusState != FocusState.Weapon))
 			    SwapWeapon(WeaponClass.Secondary);
-			else if (Input.IsActionJustPressed("primary") && Primary != null && focus != WeaponClass.Primary)
+			else if (Input.IsActionJustPressed("primary") && Primary != null && (focus != WeaponClass.Primary || FocusState != FocusState.Weapon))
 				SwapWeapon(WeaponClass.Primary);
 		}
 
 		if (FocusState == FocusState.Weapon) { //Actions Only Happening when weapon in hand
 			//[WEAPONS ACTIONS]
 			
-			//Firing Event (Or hitting if Melee Weapon)
-			_fire(fire);
-		
 			//Aiming Event
 			_alt_fire(altfire);
+
+			//Firing Event (Or hitting if Melee Weapon)
+			_fire(fire);
 	
 	
 			//Reload Event
@@ -213,19 +216,32 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			//Inspect Event
 			if (Input.IsActionJustPressed("inspect") && FocusState == FocusState.Weapon &&hasWeapon) {
 				_inspect();
+				SendInspectWeapon();
 			}
 
 
 			//[MODULES]
 			if (moduleEnable) {
 				if (Input.IsActionJustPressed("low_module"))
-					_ActivateModule(FocusState.LowModule);
+				{
+					SendActivateModule((int)FocusState.LowModule);
+                    _ActivateModule(FocusState.LowModule);
+                }
 				else if (Input.IsActionJustPressed("medium_module"))
-			    	_ActivateModule(FocusState.MediumModule);
+				{
+                    SendActivateModule((int)FocusState.MediumModule);
+                    _ActivateModule(FocusState.MediumModule);
+                }
 				else if (Input.IsActionJustPressed("high_module"))
-				    _ActivateModule(FocusState.HighModule);
+				{
+                    SendActivateModule((int)FocusState.HighModule);
+                    _ActivateModule(FocusState.HighModule);
+                }
 				else if (Input.IsActionJustPressed("core_module"))
-					_ActivateModule(FocusState.CoreModule);
+				{
+                    SendActivateModule((int)FocusState.CoreModule);
+                    _ActivateModule(FocusState.CoreModule);
+                }
 			}
 		
 		} else {
@@ -238,13 +254,16 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 					                                  new KeyState("core_module"); //Core Module
 			//Sending Updates to Modules
 			if (canUpdateModule(fire, altfire, rotate, module))
-				_UpdateModule(module, fire, altfire, rotate);
+			{
+                _UpdateModule(module, fire, altfire, rotate);
+				SendUpdateModule(module, fire, altfire, rotate);
+            }
 		}
 
 		//Crouching Event
 		if (Input.IsActionJustPressed("crouch")||Input.IsActionJustReleased("crouch")) {
 			_crouch();
-			SendCrouch(isCrouching);
+			SendCrouch(!isCrouching);
 		}
 
 
@@ -280,9 +299,53 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			}
 		}
 
-		// Add the gravity.
-		//Vector3 gravityVect = Velocity - inputVect; //Since inputVect is known, i extract gravity from velocity 
-		Velocity += gravity * (float)delta;
+        if (Input.IsActionJustPressed("interact"))
+        {
+            PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(camera.GlobalPosition, camera.GlobalPosition + (camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+            Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+            if (hit.ContainsKey("collider"))
+            {
+                Node obj = (Node)hit["collider"];
+                if (obj is Interactible inter)
+                {
+                    SendInteractionStart(inter);
+                    interaction = inter;
+                }
+            }
+        }
+        else if (Input.IsActionPressed("interact"))
+        {
+            if (interaction != null)
+            {
+                PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(camera.GlobalPosition, camera.GlobalPosition + (camera.GlobalBasis * new Vector3(0f, 0f, -1f) * 2f));
+                Dictionary hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+                if (hit.ContainsKey("collider"))
+                {
+                    if ((Node)hit["collider"] != interaction)
+                    {
+                        SendInteractionEnd();
+                        interaction = null;
+                    }
+                }
+                else
+                {
+                    SendInteractionEnd();
+                    interaction = null;
+                }
+            }
+        }
+        else
+        {
+            if (interaction != null)
+            {
+                SendInteractionEnd();
+                interaction = null;
+            }
+        }
+
+        // Add the gravity.
+        //Vector3 gravityVect = Velocity - inputVect; //Since inputVect is known, i extract gravity from velocity 
+        Velocity += gravity * (float)delta;
 		
 		//Damping gravity on axis with no actual gravity
 		/*if (gravity.X==0)
@@ -328,19 +391,13 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	////
 	////FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS
 	////
-	
+	///
 
 	//Gun Fire - Melee Weapon Hit
 	public void _fire(KeyState key) {
 		if (hasWeapon) { //Avoid error
-			var anim_name = focusAnimator.CurrentAnimation;
-			if (key.JustPressed && anim_name != "Fire" && anim_name != "Swap" && anim_name != "AimFire" && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
-				FireLocal(); //Calling Fire Calculations + On other players
-				Weapon.Fire(); //Adjusting the stats of the weapons (eg. bullets)
-				if (!Weapon.canAimFire || !isAiming) //Playing correct animation
-					ShowAnimation("Fire");
-				else
-					ShowAnimation("AimFire");
+			if (key.JustPressed && Weapon.canFire() && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
+				Weapon.Fire(this); //Adjusting the stats of the weapons (eg. bullets)
 				
 				if (isAiming && !Weapon.canAimFire) //Resetting aim if weapon cannot shoot and keep aim
 					isAiming = false;
@@ -351,16 +408,20 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	//Aim with Weapon
 	public void _alt_fire(KeyState key) {
 		if (hasWeapon) {
-			if (key.JustPressed && focusAnimator.CurrentAnimation != "Swap" && focusAnimator.CurrentAnimation != "Fire" && focusAnimator.CurrentAnimation != "FireAim") { //Aiming - SETTINGS: could change (holding for aim)
-				//Aiming
-				if (!isAiming) {
-					focusAnimator.Play("Aim");
-				}
-				//Not Aiming
-				else {
-					focusAnimator.PlayBackwards("Aim");
-				}
-				isAiming = !isAiming; //SETTINGS: could change
+			if (key.JustPressed && Weapon.canFire()) { //Aiming - SETTINGS: could change (holding for aim)
+				if (Weapon is WeaponAmo weaponAmo) {
+					//Aiming
+					if (!isAiming) {
+						weaponAmo.Aim(true);
+					}
+					//Stop Aiming
+					else {
+						weaponAmo.Aim(false);
+					}
+					isAiming = !isAiming; //SETTINGS: could change
+				} else
+					Weapon.AltFire(this);
+                SendAim(isAiming);
 			}
 		}
 	}
@@ -369,11 +430,12 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public void _reload() {
 		if (Weapon is WeaponAmo weapon)
 		{
-			if (weapon.currBullets < weapon.bulletPerMag && weapon.bullets > 0 && focusAnimator.CurrentAnimation != "Reload") //Checking if you can reload
+			if (weapon.currBullets < weapon.bulletPerMag && weapon.bullets > 0 && Weapon.animator.CurrentAnimation != "Reload") //Checking if you can reload
 			{
 				ReloadLocal();
 				/*weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
 				ShowAnimation("Reload");*/
+				weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
 				if (isAiming)
 					isAiming = false;
 			}
@@ -382,14 +444,13 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	//Inspect weapon
 	public void _inspect() {
-		Weapon.Inspect();
-		ShowAnimation("Inspect");
+		if (Weapon.animator.CurrentAnimation != "Inspect")
+			Weapon.Inspect();
 	}
 
 	//Death
-	public void _death(DeathCause cause) {
-		GameManager.singleton.PlayerDeath(this, cause);
-		GD.Print($"dead by {cause}");
+	public void _death(DeathCause cause, player player) {
+		GameManager.singleton.PlayerDeath(this, player, cause);
 	}
 
 	//Toggle Crouch Function
@@ -407,38 +468,45 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	}
 
 
-	//Show Any Animations
-	public override void ShowAnimation(string anim_name) {
-		focusAnimator.Play(anim_name);
-	}
-
-
 	//Damaging entities
     public override void CalculateFire() { //Finding what you hit
 		Weapon.CalculateFire(this);
 	}
 
 	//Decal - Will have to switch for a weapon dependant decal
-	public void SpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal) {
-		////Bullet Hole
-		var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
-		collider.AddChild(b); //Add child to collider
-		b.GlobalPosition = rayPosition; //Putting the bullet hole where we hit on the collider
-		var value = rayNormal.Dot(Vector3.Up);
-		if (value != 1) {
-			if (value != -1) {
-				var dir = rayPosition + rayNormal; //Calculating the direction
-				b.LookAt(dir, Vector3.Up);
-			} else {
-				b.RotationDegrees = new Vector3(-90,0,0);
-			}
-		} else {
-			b.RotationDegrees = new Vector3(90,0,0);
-		}
+	public void SpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal) 
+	{
+		if (Multiplayer.IsServer())
+			SpawnDecalServer(collider, rayPosition, rayNormal);
+        ActualSpawnDecal(collider, rayPosition, rayNormal);
+    }
 
-	}
+	public void ActualSpawnDecal(Node collider, Vector3 rayPosition, Vector3 rayNormal)
+	{
+        ////Bullet Hole
+        var b = (Node3D)bulletHole.Instantiate(); //Instance to variable to be able to modify it
+        collider.AddChild(b); //Add child to collider
+        b.GlobalPosition = rayPosition; //Putting the bullet hole where we hit on the collider
+        var value = rayNormal.Dot(Vector3.Up);
+        if (value != 1)
+        {
+            if (value != -1)
+            {
+                var dir = rayPosition + rayNormal; //Calculating the direction
+                b.LookAt(dir, Vector3.Up);
+            }
+            else
+            {
+                b.RotationDegrees = new Vector3(-90, 0, 0);
+            }
+        }
+        else
+        {
+            b.RotationDegrees = new Vector3(90, 0, 0);
+        }
+    }
 
-	//Camera
+    //Camera
     public override void InputLocalEvent(InputEvent @event)
     {
         if (@event is InputEventMouseMotion mouseEvent&&Input.MouseMode == Input.MouseModeEnum.Captured) {
@@ -464,41 +532,34 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	public override void SwapWeapon(WeaponClass weaponClass) {
 		isAiming = false;
-		/*if (FocusState == FocusState.Weapon) {
+		if (FocusState == FocusState.Weapon) {
 		    if (hasWeapon)
 				Weapon.StopAnimations();
-		} else if (FocusState == FocusState.LowModule)
-		    _lowModuleCancel();
-		else if (FocusState == FocusState.MediumModule)
-			_mediumModuleCancel();
-		else if (FocusState == FocusState.HighModule)
-			_highModuleCancel();
-		else
-			_coreModuleCancel();*/
+		} else
+		    _CancelModule();
 
 
 		//Quit all animations (weapons + modules)
 		if (focus == WeaponClass.Melee)
 		{
 			if (Melee != null) {
-				meleeAnimator.Stop();
 				Melee.Visible = false;
 			}
 		}
 		else if (focus == WeaponClass.Secondary)
 		{
 			if (Secondary != null) {
-				secondaryAnimator.Stop();
 				Secondary.Visible = false;
 			}
 		}
 		else
 		{
 			if (Primary != null) {
-				primaryAnimator.Stop();
 				Primary.Visible = false;
 			}
 		}
+		if (Weapon != null)
+			Weapon.animator.Stop();
 
 		//Spawn new animation
 		focus = weaponClass;
@@ -515,8 +576,13 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		{
 			Primary.Visible = true;
 		}
-		focusAnimator.Play("Swap");
+		NodePath[] positions = Weapon.GetHandsPlacements();
+		AttachHands(positions);
+
+		Weapon.animator.Play("Swap");
 		Weapon.Swap();
+		if (IsLocalPlayer)
+			SendSwapWeapon((int)weaponClass);
 	}
 
 	public override void GetWeaponClient(Weapon weapon) {
@@ -524,21 +590,16 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		//Instantiating it
 		GetNode<Node3D>("Head/Arms").AddChild(weapon);
 		//Assigning the new weapon to its slot
-		AnimationPlayer validPlayer;
 		if (type == WeaponClass.Melee) {
 		    Melee = weapon;
-			validPlayer = meleeAnimator;
 		}
 		else if (type == WeaponClass.Secondary) {
 		    Secondary = weapon;
-			validPlayer = secondaryAnimator;
 		}
 		else {
 			Primary = weapon;
-			validPlayer = primaryAnimator;
 		}
-		ClearAnimations(validPlayer);
-		validPlayer.AddAnimationLibrary("", weapon.animations);
+		weapon.Player = this;
 		SwapWeapon(weapon.info.WeaponClass); //Called by LocalEntity??
 		hasWeapon = true;
 		if (!(Melee is null))
@@ -551,10 +612,11 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	public void DropWeapon() {}
 
-	private void ClearAnimations(AnimationPlayer player) {
-		foreach (var anim_name in player.GetAnimationList()) {
-			Debug.Print(anim_name.ToString());
-			player.RemoveAnimationLibrary(anim_name);
+
+	public void AttachHands(NodePath[] positions) {
+		for (int i = 0; i < positions.Length && i < HandsReferences.Length ;i++) {
+			HandsReferences[i].TargetNode = positions[i];
+			HandsReferences[i].Start();
 		}
 	}
 
@@ -590,11 +652,20 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	|	  IMPORTED CLASSES FUNCTIONS	   |
 	\°------------------------------------*/
 
-	public bool Damaged(int damage) {
-		Health-=damage;
+	public bool Damaged(int damage, player player) {
+		if (!GameManager.singleton.CanHurt(player, this))
+			return false;
+        Health -=damage;
 		SyncHealth(Health);
 		if (Health <= 0) {
-			_death(DeathCause.Health);
+			if (player != null)
+			{
+                _death(DeathCause.Killed, player);
+            }
+			else
+			{
+                _death(DeathCause.Health, player);
+            }
 			return true;
 		}
 		return false;
@@ -648,6 +719,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public virtual void _UpdateModule(KeyState send, KeyState fire, KeyState altfire, KeyState rotate) {throw new NotImplementedException();}
 	//Module Cancel
 	public virtual void _CancelModule() {throw new NotImplementedException();}
+
+	public virtual void _UseModule(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
 }
 
 
@@ -751,6 +824,7 @@ public enum DeathCause
 {
 	DeathRegion,
 	Health,
+	Killed
 }
 
 public enum FocusState {
@@ -775,9 +849,9 @@ public enum SoldierRole {
 }
 
 public class KeyState {
-	public bool Pressed {get;}
-	public bool JustPressed {get;}
-	public bool JustReleased {get;}
+	public bool Pressed { get; set; }
+	public bool JustPressed { get; set; }
+	public bool JustReleased { get; set; }
 
 	public bool Active() {
 		return JustPressed || JustReleased;
@@ -792,4 +866,8 @@ public class KeyState {
 		JustPressed = Input.IsActionJustPressed(input_key);
 		JustReleased = Input.IsActionJustReleased(input_key);
 	}
+
+    public KeyState()
+    {
+    }
 }

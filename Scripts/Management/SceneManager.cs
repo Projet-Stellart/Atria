@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 public partial class SceneManager : Node
 {
@@ -32,12 +33,17 @@ public partial class SceneManager : Node
 	{
 		for (int i = 0; i < GetChildCount(); i++)
 		{
-			GetChild(i).QueueFree();
+            Node child = GetChild(i);
+            if (child is GameManager game)
+				game.CloseScene();
+			RemoveChild(child);
+            child.QueueFree();
 		}
 	}
 
 	public void LoadMainMenu(string[] args)
 	{
+		Input.MouseMode = Input.MouseModeEnum.Visible;
 		Debug.Print("MainMenu");
 		ClearChildren();
 		UI_Script mainMenu = GD.Load<PackedScene>(MainMenuScene).Instantiate<UI_Script>();
@@ -45,6 +51,13 @@ public partial class SceneManager : Node
 		//Connect hooks
 		mainMenu.OnPlay += (string username) =>
 		{
+			string? server = MultiplayerManager.GetPublicServer("127.0.0.1", 12345);
+
+			if (server == null)
+				return;
+
+			Debug.Print("Connect to server: " + server);
+
 			LoadGame(args, new PlayerData() { Username = username });
 		};
 
@@ -63,8 +76,10 @@ public partial class SceneManager : Node
 	{
 		ClearChildren();
 		GameManager gameScene = GD.Load<PackedScene>(GameScene).Instantiate<GameManager>();
-		AddChild(gameScene);
-		gameScene.localPlayerData = data;
+        AddChild(gameScene);
+        //gameScene.Name = GameScene.Split('/')[^1].Split('.')[0];
+		Debug.Print(gameScene.Name);
+        gameScene.localPlayerData = data;
 		gameScene.Init(loadParameters);
 	}
 

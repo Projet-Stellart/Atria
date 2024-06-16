@@ -20,11 +20,6 @@ public partial class EnergyBar : Control
 
     	energyRect.Position = new Vector2(energyRect.Position.X, energyRect.Size.Y - newHeight);
 
-		// if (energyRect != null && d > 0)
-		// {
-		// 	energyRect.Position = new Vector2(energyRect.Position.X, energyRect.Position.Y - (int)d);
-		// }
-
 	}
 
 	public override void _Process(double delta)

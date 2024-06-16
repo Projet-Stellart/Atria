@@ -1,32 +1,6 @@
-[gd_scene load_steps=23 format=3 uid="uid://dh3olwlvda6ut"]
+[gd_scene load_steps=2 format=3 uid="uid://dh3olwlvda6ut"]
 
 [ext_resource type="Script" path="res://Scripts/ProceduralGeneration/Tile/TileMeshGeneration.cs" id="1_47gua"]
-[ext_resource type="PackedScene" uid="uid://kfagsisbvgc5" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridor.tscn" id="2_k50b4"]
-[ext_resource type="PackedScene" uid="uid://cbk2wdcr4ei4l" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/CurvedCorridor/CurvedCorridor.tscn" id="3_s2kh5"]
-[ext_resource type="PackedScene" uid="uid://ceideumntlxel" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/TCorridor/TCorridor.tscn" id="4_rwr70"]
-[ext_resource type="PackedScene" uid="uid://c3mpm4ft5sjrk" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/XCorridor/XCorridor.tscn" id="5_ej41e"]
-[ext_resource type="PackedScene" uid="uid://q56qc2tujrp0" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/Space/Empty.tscn" id="6_0vhu6"]
-[ext_resource type="PackedScene" uid="uid://bea4i6d85n505" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/EndCorridor.tscn" id="6_aeu1b"]
-[ext_resource type="PackedScene" uid="uid://cp2k7ghni5rt4" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorHigh.tscn" id="7_f81mn"]
-[ext_resource type="PackedScene" uid="uid://dhe4pk44yu6l" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorLow.tscn" id="8_mfmig"]
-[ext_resource type="PackedScene" uid="uid://c1o14bivnd8qb" path="res://Scenes/Nelson/Soldiers/player.tscn" id="8_ntvs2"]
-[ext_resource type="PackedScene" uid="uid://bcfda48sknxyd" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLow.tscn" id="9_iif0w"]
-[ext_resource type="PackedScene" uid="uid://bc70yrulkw3sa" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHigh.tscn" id="10_sngcm"]
-[ext_resource type="Texture2D" uid="uid://bs5javsrf65mq" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StraitCorridor/StraitCorridorMap.png" id="13_vo813"]
-[ext_resource type="Texture2D" uid="uid://cl8lhxrxqa8m1" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/CurvedCorridor/CurvedCorridorMap.png" id="14_pgt3r"]
-[ext_resource type="Texture2D" uid="uid://cp1o3jtjnwjjk" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/Space/EmptyMap.png" id="15_omdf6"]
-[ext_resource type="Texture2D" uid="uid://cce56bxicvs8x" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/TCorridor/TCorridorMap.png" id="15_qkkk2"]
-[ext_resource type="Texture2D" uid="uid://ci1kw18qskc0s" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/XCorridor/XCorridorMap.png" id="16_41f3u"]
-[ext_resource type="Texture2D" uid="uid://cgvuaa5kdmp4i" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/EndCorridor/EndCorridorMap.png" id="17_krnui"]
-[ext_resource type="Texture2D" uid="uid://cknesoedsspgy" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorHighMap.png" id="18_sccs1"]
-[ext_resource type="Texture2D" uid="uid://doofrg8sbuiio" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/StairCorridor/StairCorridorLowMap.png" id="19_p1fc3"]
-[ext_resource type="Texture2D" uid="uid://cyrmgu6sfrvvn" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorLowMap.png" id="20_0sulw"]
-[ext_resource type="Texture2D" uid="uid://cjxqmw0dxwl48" path="res://Ressources/ProceduralGenerationTempRes/SpaceStation/MultiLvlXCorridor/Vented/MultiVentLvlXCorridorHighMap.png" id="21_s2tq3"]
 
 [node name="TileMapGenerator" type="Node3D"]
 script = ExtResource("1_47gua")
-metadata/TileTemplate = [ExtResource("2_k50b4"), ExtResource("3_s2kh5"), ExtResource("4_rwr70"), ExtResource("5_ej41e"), ExtResource("6_aeu1b"), ExtResource("7_f81mn"), ExtResource("8_mfmig"), ExtResource("9_iif0w"), ExtResource("10_sngcm"), ExtResource("6_0vhu6")]
-metadata/TileParams = ["StraitCorridor;75;0;0;corridor;corridor;space;space", "CurvedCorridor;60;0;0;space;corridor;corridor;space", "TCorridor;30;0;0;corridor;corridor;corridor;space", "XCorridor;1;0;0;corridor;corridor;corridor;corridor", "EndCorridor;1;0;0;space;corridor;space;space", "StairHighCorridor;10;-1;6;space;corridor;space;space", "StairLowCorridor;10;1;5;space;corridor;space;space", "MultiXVentLowCorridor;50;1;8;corridor;corridor;space;space", "MultiXVentHighCorridor;50;-1;7;space;space;corridor;corridor", "Empty;700;0;0;space;space;space;space"]
-metadata/PlayerTemplate = ExtResource("8_ntvs2")
-metadata/mapHeight = 3
-metadata/TileImage = [ExtResource("13_vo813"), ExtResource("14_pgt3r"), ExtResource("15_qkkk2"), ExtResource("16_41f3u"), ExtResource("17_krnui"), ExtResource("18_sccs1"), ExtResource("19_p1fc3"), ExtResource("20_0sulw"), ExtResource("21_s2tq3"), ExtResource("15_omdf6")]

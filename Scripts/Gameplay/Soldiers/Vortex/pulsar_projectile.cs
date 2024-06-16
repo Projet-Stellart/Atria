@@ -10,7 +10,7 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
     bool contact = false;
     PackedScene explosionScene = (PackedScene)GD.Load("res://Scenes/Nelson/Soldiers/Vortex/pulsar.tscn");
     bool customGravity = false;
-
+    public player owner;
 
     /*------------------°\
 	|	   Functions     |
@@ -44,6 +44,7 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
     private void on_animation_end(StringName anim_name) {
         //Instantiate Explosion
         pulsar explosion = (pulsar)explosionScene.Instantiate();
+        explosion.owner = owner;
         GetTree().Root.AddChild(explosion);
         explosion.GlobalPosition = GlobalPosition;
         QueueFree();
@@ -51,10 +52,10 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
 
     private void ExplosionDamage(Node body) {
         if (body is IDamagable damagable && body is not pulsar_projectile)
-            damagable.Damaged(15);
+            damagable.Damaged(15, owner);
     }
 
-    public bool Damaged(int damage) {
+    public bool Damaged(int damage, player player) {
         QueueFree();
         return true;
     }
