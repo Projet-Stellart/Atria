@@ -11,6 +11,7 @@ albedo_color = Color(0, 0, 1, 1)
 material = SubResource("StandardMaterial3D_2axgs")
 
 [node name="Warp_Projectile" type="RigidBody3D"]
+collision_mask = 5
 input_ray_pickable = false
 continuous_cd = true
 max_contacts_reported = 1

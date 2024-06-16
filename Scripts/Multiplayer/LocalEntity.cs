@@ -427,8 +427,6 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public abstract void CalculateFire();
 
-    public abstract void ShowAnimation(string anim_name);
-
     public abstract void SwapWeapon(WeaponClass weaponClass);
     public abstract void GetWeaponClient(Weapon weapon);
     

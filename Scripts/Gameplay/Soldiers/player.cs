@@ -14,9 +14,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	//Nodes
 	public Node3D head;
 	public Camera3D camera;
-	AnimationPlayer primaryAnimator;
-	AnimationPlayer secondaryAnimator;
-	AnimationPlayer meleeAnimator;
+	SkeletonIK3D[] HandsReferences;
 
 	//Scenes
 
@@ -98,14 +96,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			return (WeaponAmo)Primary;
 		}
 	}
-	public AnimationPlayer focusAnimator {
-		get {
-			if (focus == WeaponClass.Melee)
-				return meleeAnimator;
-			else if (focus == WeaponClass.Secondary)
-				return secondaryAnimator;
-			return primaryAnimator;
-	}}
 	
 
 
@@ -113,7 +103,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	/*----------------------°\
 	|		Temporary	     |
 	\°----------------------*/
-	bool test = true; // TO REMOVE
 	
 	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
 	public string weaponTest = "res://Scenes/Nelson/Weapons/predator.tscn";
@@ -144,9 +133,20 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		head = GetNode<Node3D>("Head");
 		camera = GetNode<Camera3D>("Head/Camera");
 
-		primaryAnimator = head.GetNode<AnimationPlayer>("Arms/PrimaryAnimator");
-		secondaryAnimator = head.GetNode<AnimationPlayer>("Arms/SecondaryAnimator");
-		meleeAnimator = head.GetNode<AnimationPlayer>("Arms/MeleeAnimator");
+		HandsReferences = new SkeletonIK3D[] {
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Hand_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger0_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger1_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger2_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger3_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/R_Finger4_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Hand_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger0_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger1_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger2_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger3_IK"),
+			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger4_IK")
+		};
 
 		InitSub();
 
@@ -160,10 +160,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
     public override void InputProcess(double delta)
 	{
-		/*if (test && Input.IsActionJustPressed("test")) {
-			test = false;
-			GetWeaponClient((Weapon)weaponTest2.Instantiate());
-		}*/
 
 		//[BUILD KEY CONTROLS]
 		KeyState fire = new KeyState("fire");
@@ -172,40 +168,46 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 		if (hasWeapon) {
 			if (Input.IsActionJustPressed("previous_weapon")) { //Cycling to Previous Weapon
-				if (focus == WeaponClass.Primary) {
-					if (Secondary != null) {
-						SwapWeapon(WeaponClass.Secondary);}
-					else if (Melee != null)
+				if (FocusState == FocusState.Weapon) {
+					if (focus == WeaponClass.Primary) {
+						if (Secondary != null) {
+							SwapWeapon(WeaponClass.Secondary);}
+						else if (Melee != null)
+							SwapWeapon(WeaponClass.Melee);
+					} else if (focus == WeaponClass.Secondary && Melee != null)
 						SwapWeapon(WeaponClass.Melee);
-				} else if (focus == WeaponClass.Secondary && Melee != null)
-					SwapWeapon(WeaponClass.Melee);
+				} else
+					SwapWeapon(focus);
 			} else if (Input.IsActionJustPressed("next_weapon")) {
-				if (focus == WeaponClass.Melee) {
-					if (Secondary != null)
-						SwapWeapon(WeaponClass.Secondary);
-					else if (Primary != null)
+				if (FocusState == FocusState.Weapon) {
+					if (focus == WeaponClass.Melee) {
+						if (Secondary != null)
+							SwapWeapon(WeaponClass.Secondary);
+						else if (Primary != null)
+							SwapWeapon(WeaponClass.Primary);
+					} else if (focus == WeaponClass.Secondary && Primary != null)
 						SwapWeapon(WeaponClass.Primary);
-				} else if (focus == WeaponClass.Secondary && Primary != null)
-					SwapWeapon(WeaponClass.Primary);
+				} else
+					SwapWeapon(focus);
 			}
 
 			//Swapping Weapons with shortcuts
-			if (Input.IsActionJustPressed("melee") && Melee != null && focus != WeaponClass.Melee)
+			if (Input.IsActionJustPressed("melee") && Melee != null && (focus != WeaponClass.Melee || FocusState != FocusState.Weapon))
 				SwapWeapon(WeaponClass.Melee);
-			else if (Input.IsActionJustPressed("secondary") && Secondary != null && focus != WeaponClass.Secondary)
+			else if (Input.IsActionJustPressed("secondary") && Secondary != null && (focus != WeaponClass.Secondary || FocusState != FocusState.Weapon))
 			    SwapWeapon(WeaponClass.Secondary);
-			else if (Input.IsActionJustPressed("primary") && Primary != null && focus != WeaponClass.Primary)
+			else if (Input.IsActionJustPressed("primary") && Primary != null && (focus != WeaponClass.Primary || FocusState != FocusState.Weapon))
 				SwapWeapon(WeaponClass.Primary);
 		}
 
 		if (FocusState == FocusState.Weapon) { //Actions Only Happening when weapon in hand
 			//[WEAPONS ACTIONS]
 			
-			//Firing Event (Or hitting if Melee Weapon)
-			_fire(fire);
-		
 			//Aiming Event
 			_alt_fire(altfire);
+
+			//Firing Event (Or hitting if Melee Weapon)
+			_fire(fire);
 	
 	
 			//Reload Event
@@ -401,14 +403,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	//Gun Fire - Melee Weapon Hit
 	public void _fire(KeyState key) {
 		if (hasWeapon) { //Avoid error
-			var anim_name = focusAnimator.CurrentAnimation;
-			if (key.JustPressed && IsAbleToFire()) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
-				FireLocal(!(!Weapon.canAimFire || !isAiming)); //Calling Fire Calculations + On other players
-				Weapon.Fire(); //Play anims
-				if (!Weapon.canAimFire || !isAiming) //Playing correct animation
-					ShowAnimation("Fire");
-				else
-					ShowAnimation("AimFire");
+			if (key.JustPressed && Weapon.canFire() && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
+				FireLocal(); //Calling Fire llations + On other players
+				Weapon.Fire(this); //Adjusting the stats of the weapons (eg. bullets)
 				
 				if (isAiming && !Weapon.canAimFire) //Resetting aim if weapon cannot shoot and keep aim
 					isAiming = false;
@@ -419,17 +416,20 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	//Aim with Weapon
 	public void _alt_fire(KeyState key) {
 		if (hasWeapon) {
-			if (key.JustPressed && focusAnimator.CurrentAnimation != "Swap" && focusAnimator.CurrentAnimation != "Fire" && focusAnimator.CurrentAnimation != "FireAim") { //Aiming - SETTINGS: could change (holding for aim)
-				//Aiming
-				if (!isAiming) {
-					focusAnimator.Play("Aim");
-				}
-				//Not Aiming
-				else {
-					focusAnimator.PlayBackwards("Aim");
-				}
+			if (key.JustPressed && Weapon.canFire()) { //Aiming - SETTINGS: could change (holding for aim)
+				if (Weapon is WeaponAmo weaponAmo) {
+					//Aiming
+					if (!isAiming) {
+						weaponAmo.Aim(true);
+					}
+					//Stop Aiming
+					else {
+						weaponAmo.Aim(false);
+					}
+					isAiming = !isAiming; //SETTINGS: could change
+				} else
+					Weapon.AltFire(this);
                 SendAim(isAiming);
-                isAiming = !isAiming; //SETTINGS: could change
 			}
 		}
 	}
@@ -438,11 +438,12 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public void _reload() {
 		if (Weapon is WeaponAmo weapon)
 		{
-			if (weapon.currBullets < weapon.bulletPerMag && weapon.bullets > 0 && focusAnimator.CurrentAnimation != "Reload") //Checking if you can reload
+			if (weapon.currBullets < weapon.bulletPerMag && weapon.bullets > 0 && Weapon.animator.CurrentAnimation != "Reload") //Checking if you can reload
 			{
 				ReloadLocal();
 				/*weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
 				ShowAnimation("Reload");*/
+				weapon.Reload(); //Adjusting the stats of the weapons (eg. bullets)
 				if (isAiming)
 					isAiming = false;
 			}
@@ -451,8 +452,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	//Inspect weapon
 	public void _inspect() {
-		Weapon.Inspect();
-		ShowAnimation("Inspect");
+		if (Weapon.animator.CurrentAnimation != "Inspect")
+			Weapon.Inspect();
 	}
 
 	//Death
@@ -472,12 +473,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			GetNode<AnimationPlayer>("Crouching").PlayBackwards("Crouch");
 		}
 		isCrouching = Input.IsActionPressed("crouch");
-	}
-
-
-	//Show Any Animations
-	public override void ShowAnimation(string anim_name) {
-		focusAnimator.Play(anim_name);
 	}
 
 
@@ -545,41 +540,34 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	public override void SwapWeapon(WeaponClass weaponClass) {
 		isAiming = false;
-		/*if (FocusState == FocusState.Weapon) {
+		if (FocusState == FocusState.Weapon) {
 		    if (hasWeapon)
 				Weapon.StopAnimations();
-		} else if (FocusState == FocusState.LowModule)
-		    _lowModuleCancel();
-		else if (FocusState == FocusState.MediumModule)
-			_mediumModuleCancel();
-		else if (FocusState == FocusState.HighModule)
-			_highModuleCancel();
-		else
-			_coreModuleCancel();*/
+		} else
+		    _CancelModule();
 
 
 		//Quit all animations (weapons + modules)
 		if (focus == WeaponClass.Melee)
 		{
 			if (Melee != null) {
-				meleeAnimator.Stop();
 				Melee.Visible = false;
 			}
 		}
 		else if (focus == WeaponClass.Secondary)
 		{
 			if (Secondary != null) {
-				secondaryAnimator.Stop();
 				Secondary.Visible = false;
 			}
 		}
 		else
 		{
 			if (Primary != null) {
-				primaryAnimator.Stop();
 				Primary.Visible = false;
 			}
 		}
+		if (Weapon != null)
+			Weapon.animator.Stop();
 
 		//Spawn new animation
 		focus = weaponClass;
@@ -596,7 +584,10 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		{
 			Primary.Visible = true;
 		}
-		focusAnimator.Play("Swap");
+		NodePath[] positions = Weapon.GetHandsPlacements();
+		AttachHands(positions);
+
+		Weapon.animator.Play("Swap");
 		Weapon.Swap();
 		if (IsLocalPlayer)
 			SendSwapWeapon((int)weaponClass);
@@ -607,22 +598,16 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		//Instantiating it
 		GetNode<Node3D>("Head/Arms").AddChild(weapon);
 		//Assigning the new weapon to its slot
-		AnimationPlayer validPlayer;
 		if (type == WeaponClass.Melee) {
 		    Melee = weapon;
-			validPlayer = meleeAnimator;
 		}
 		else if (type == WeaponClass.Secondary) {
 		    Secondary = weapon;
-			validPlayer = secondaryAnimator;
 		}
 		else {
 			Primary = weapon;
-			validPlayer = primaryAnimator;
 		}
 		weapon.Player = this;
-        ClearAnimations(validPlayer);
-		validPlayer.AddAnimationLibrary("", weapon.animations);
 		SwapWeapon(weapon.info.WeaponClass); //Called by LocalEntity??
 		hasWeapon = true;
 		if (!(Melee is null))
@@ -635,10 +620,11 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 	public void DropWeapon() {}
 
-	private void ClearAnimations(AnimationPlayer player) {
-		foreach (var anim_name in player.GetAnimationList()) {
-			Debug.Print(anim_name.ToString());
-			player.RemoveAnimationLibrary(anim_name);
+
+	public void AttachHands(NodePath[] positions) {
+		for (int i = 0; i < positions.Length && i < HandsReferences.Length ;i++) {
+			HandsReferences[i].TargetNode = positions[i];
+			HandsReferences[i].Start();
 		}
 	}
 

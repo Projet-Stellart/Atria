@@ -1,10 +1,10 @@
 [gd_scene load_steps=18 format=3 uid="uid://x24tmwyqvra3"]
 
 [ext_resource type="Script" path="res://Scripts/Gameplay/nelson_main.cs" id="1_11lc6"]
-[ext_resource type="PackedScene" uid="uid://di6enmgq6dgk1" path="res://Scenes/Nelson/Soldiers/Zenith/zenith.tscn" id="2_cw7fl"]
 [ext_resource type="PackedScene" uid="uid://d1uylk5l0echa" path="res://Scenes/Nelson/Testing/enemy.tscn" id="3_svfx5"]
 [ext_resource type="PackedScene" uid="uid://8robqvb6ylgx" path="res://Scenes/Nelson/Testing/block.tscn" id="4_3r4oh"]
 [ext_resource type="Texture2D" uid="uid://dtblxc1u6ps60" path="res://Ressources/GamePlay/Textures/quadrillage.png" id="4_7tast"]
+[ext_resource type="PackedScene" uid="uid://di6enmgq6dgk1" path="res://Scenes/Nelson/Soldiers/Zenith/zenith.tscn" id="5_st3mc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_us7bf"]
 
@@ -51,9 +51,6 @@ size = Vector3(1, 6, 10)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_11lc6")
-
-[node name="Zenith" parent="." instance=ExtResource("2_cw7fl")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0675, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_vyjxn")
@@ -163,6 +160,9 @@ shape = SubResource("BoxShape3D_a8hbi")
 [node name="MeshInstance3D" parent="NavigationRegion/Block6" index="1"]
 transform = Transform3D(1, 0, 2.98023e-08, -3.72529e-09, 1, 0, -1.49012e-08, 2.98023e-08, 1, 0, 0, 0)
 mesh = SubResource("BoxMesh_7f0v6")
+
+[node name="Zenith" parent="." instance=ExtResource("5_st3mc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.16914, 0)
 
 [connection signal="body_entered" from="Death Region" to="." method="_on_death_region_body_entered"]
 
