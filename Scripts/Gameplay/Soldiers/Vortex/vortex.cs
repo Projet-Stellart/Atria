@@ -105,7 +105,13 @@ public partial class vortex : player
         GetNode<SubViewportContainer>("3DHUDManager").Visible = false;
         GetNode<SubViewportContainer>("LayersManager").Visible = false;
         uint layer = (uint)(IsLocalPlayer ? 2 : 1);
-        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/arm").Layers = layer;
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Hand_L/Hand_L").Layers = layer;
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Arm_L_02/Arm_L_02").Layers = layer;
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Arm_L_01/Arm_L_01").Layers = layer;
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Hand_R/Hand_R").Layers = layer;
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Arm_R_02/Arm_R_02").Layers = layer;
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Arm_R_01/Arm_R_01").Layers = layer;
+        GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/body").Layers = layer;
         if (Weapon is null)
             return;
         Weapon.SetRenderLayer(layer);

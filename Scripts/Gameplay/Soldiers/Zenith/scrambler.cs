@@ -10,6 +10,7 @@ public partial class scrambler : CharacterBody3D
     Vector3 TargetPos;
     bool wayBack = false;
     bool hasTarget = false;
+    public player Owner;
 
     public override void _Ready()
     {
@@ -78,7 +79,7 @@ public partial class scrambler : CharacterBody3D
         foreach (var collision in results) {
             var collider = (Node3D)collision["collider"];
             if (collider is IDamagable damagable && collider is player Player && Player.IsInGroup("Enemy"))
-                damagable.Damaged(75);
+                damagable.Damaged(75, Owner);
         }
     }
 

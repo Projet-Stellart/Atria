@@ -90,17 +90,6 @@ public partial class predator : WeaponAmo
         currBullets--;
     }
 
-    public override void Fire() 
-    {
-        //Sound
-        PlaySound();
-        //Effects
-        Effects();
-    }
-
-
-
-
     /*----------------------°\
 	|	Inherited Functions  |
 	\°----------------------*/
@@ -140,5 +129,13 @@ public partial class predator : WeaponAmo
         inspectStream.Play(); //Sound
         
         base.Inspect();
+    }
+
+    public override void SetRenderLayer(uint layer)
+    {
+        GetNode<MeshInstance3D>("Skeleton3D/ScopeAttachment/Scope").Layers = layer;
+        GetNode<MeshInstance3D>("Skeleton3D/scifi_gun").Layers = layer;
+        GetNode<MeshInstance3D>("Skeleton3D/MainGripAttachment/Left_High_Cache").Layers = layer;
+        GetNode<GpuParticles3D>("Muzzle Flash/GPUParticles3D").Layers = layer;
     }
 }

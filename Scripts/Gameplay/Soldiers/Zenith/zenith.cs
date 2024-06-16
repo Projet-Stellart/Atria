@@ -106,6 +106,7 @@ public partial class zenith : player
                 EnergyBar -= soldier.HighModule.EnergyRequired;
 
                 scrambler ScramblerRobot = (scrambler)scramblerScene.Instantiate();
+                ScramblerRobot.Owner = this;
                 GetTree().Root.AddChild(ScramblerRobot);
                 ScramblerRobot.GlobalPosition = GlobalPosition + new Vector3(0,1,0);
                 ScramblerRobot.GlobalRotation = GlobalRotation;

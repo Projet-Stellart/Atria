@@ -82,6 +82,8 @@ public partial class ember_blade : WeaponMelee
     }
 
     private void onTimerEnd() { //Delay firelocak
+        if (!Player.IsLocalPlayer)
+            return;
         refer.FireLocal();
         refer = null;
         currentDamage = 0;
@@ -110,5 +112,11 @@ public partial class ember_blade : WeaponMelee
     public override bool canFire()
     {
         return base.canFire() && animator.CurrentAnimation != "Fire2";
+    }
+
+    public override void SetRenderLayer(uint layer)
+    {
+        GetNode<MeshInstance3D>("FirstBlade/ember_blade").Layers = layer;
+        GetNode<MeshInstance3D>("SecondBlade/ember_blade").Layers = layer;
     }
 }

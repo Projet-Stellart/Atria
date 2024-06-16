@@ -32,8 +32,8 @@ public partial class GameManager : Node
 
     public CharacterData[] characterDatas = new CharacterData[]
     {
-        new CharacterData() { index = 0, name = "Vortex", description = "Desc test for Vortex", image = "res://Ressources/UI/Fond1.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" },
-        new CharacterData() { index = 1,name = "Other", description = "Desc test for Other", image = "res://Ressources/UI/Fond0.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" }
+        new CharacterData() { index = 0, name = "Vortex", description = "Desc for Vortex", image = "res://Ressources/UI/Fond1.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Vortex/vortex.tscn" },
+        new CharacterData() { index = 1,name = "Zenith", description = "Desc for Zenith", image = "res://Ressources/UI/Fond0.jpeg", playerScene = "res://Scenes/Nelson/Soldiers/Zenith/zenith.tscn" }
     };
 
     public static Dictionary<ServerStatus, string> statusText = new Dictionary<ServerStatus, string>

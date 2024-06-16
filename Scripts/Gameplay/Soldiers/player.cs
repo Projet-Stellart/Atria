@@ -105,8 +105,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	\°----------------------*/
 	
 	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
-	public string weaponTest = "res://Scenes/Nelson/Weapons/predator.tscn";
-	public string weaponTest2 = "res://Scenes/Nelson/Weapons/predator_test.tscn";
+	public string weaponTest = "res://Scenes/Nelson/Weapons/Predator/predator.tscn";
     public override string defaultWeapon => weaponTest;
 
 
@@ -393,18 +392,11 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	////FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS - FUNCTIONS
 	////
 	///
-	
-	public bool IsAbleToFire()
-	{
-        var anim_name = focusAnimator.CurrentAnimation;
-        return anim_name != "Fire" && anim_name != "Swap" && anim_name != "AimFire" && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true);
-    }
 
 	//Gun Fire - Melee Weapon Hit
 	public void _fire(KeyState key) {
 		if (hasWeapon) { //Avoid error
 			if (key.JustPressed && Weapon.canFire() && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
-				FireLocal(); //Calling Fire llations + On other players
 				Weapon.Fire(this); //Adjusting the stats of the weapons (eg. bullets)
 				
 				if (isAiming && !Weapon.canAimFire) //Resetting aim if weapon cannot shoot and keep aim

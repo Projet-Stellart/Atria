@@ -429,21 +429,44 @@ public abstract partial class LocalEntity : CharacterBody3D
 
     public abstract void SwapWeapon(WeaponClass weaponClass);
     public abstract void GetWeaponClient(Weapon weapon);
-    
-    public void FireLocal(bool isAiming)
+
+    public void FireAnimLocal(string anim)
     {
-        if (!IsLocalPlayer)
-            return;
-        RpcId(1, "FireServerRpc", new Variant[] {Position, Rotation, isAiming});
-        //ShowFire();
+        RpcId(1, "FireAnimServerRpc", new Variant[] {  });
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void FireServerRpc(Variant pos, Variant rot, Variant isAiming)
+    public void FireAnimServerRpc()
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
-        if (!((player)this).IsAbleToFire())
+        foreach (int player in Multiplayer.GetPeers())
+        {
+            if (player == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(player, "ReplicateFireAnimRpc", new Variant[] {  });
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void ReplicateFireAnimRpc()
+    {
+        ((player)this).Weapon.Fire(((player)this));
+    }
+
+    public void FireLocal()
+    {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "FireServerRpc", new Variant[] {Position, Rotation });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void FireServerRpc(Variant pos, Variant rot)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        if (!((player)this).Weapon.canFire())
             return;
         Vector3 tPos = Position;
         Vector3 tRot = Rotation;
@@ -457,20 +480,20 @@ public abstract partial class LocalEntity : CharacterBody3D
             wa.FireMeca();
             SyncBulletsServer();
         }
-        foreach (int player in Multiplayer.GetPeers())
+        /*foreach (int player in Multiplayer.GetPeers())
         {
             if (player == Multiplayer.GetRemoteSenderId())
                 continue;
-            RpcId(player, "ReplicateFireRpc", new Variant[] { isAiming });
-        }
+            RpcId(player, "ReplicateFireRpc", new Variant[] {  });
+        }*/
     }
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void ReplicateFireRpc(Variant isAiming)
+    /*[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void ReplicateFireRpc(Variant anim)
     {
-        ((player)this).Weapon.Fire();
-        ShowAnimation(isAiming.AsBool() ? "AimFire" : "Fire");
-    }
+        ((player)this).Weapon.Fire((player)this);
+        ((player)this).Weapon.PlayAnimation(anim.AsString());
+    }*/
 
     public void GetDirectWeapon(string weaponPath)
     {
@@ -552,7 +575,6 @@ public abstract partial class LocalEntity : CharacterBody3D
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void SyncReload()
     {
-        ShowAnimation("Reload");
         if (((player)this).Weapon is WeaponAmo wa)
         {
             wa.Reload();
@@ -624,12 +646,12 @@ public abstract partial class LocalEntity : CharacterBody3D
     {
         if (!isAiming.AsBool())
         {
-            ((player)this).focusAnimator.Play("Aim");
+            ((player)this).Weapon.animator.Play("Aim");
         }
         //Not Aiming
         else
         {
-            ((player)this).focusAnimator.PlayBackwards("Aim");
+            ((player)this).Weapon.animator.PlayBackwards("Aim");
         }
         ((player)this).isAiming = isAiming.AsBool();
     }

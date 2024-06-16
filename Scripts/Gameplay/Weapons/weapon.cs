@@ -10,12 +10,14 @@ public abstract partial class Weapon : Node3D
     public abstract bool canDrop {get; set;}
     public abstract int damage {get; protected set;}
 
+    public player Player;
+
     public abstract Node3D[] HandsPlacement {get; protected set;}
 
 
     //Common actions of a weapon
     public virtual void Swap() { PlayAnimation("Swap"); }
-    public virtual void Fire(player Owner) { 
+    public virtual void Fire(player Owner) {
         Owner.FireLocal();
         PlayAnimation("Fire");
     }

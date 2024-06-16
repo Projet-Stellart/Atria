@@ -189,7 +189,7 @@ public abstract partial class WeaponMelee : Weapon
 
 		var collider = (Node3D)collide["collider"];
 		if (collider is IDamagable damagable) {
-			damagable.Damaged(currentDamage);
+			damagable.Damaged(currentDamage, Player);
 		}
     }
 }
