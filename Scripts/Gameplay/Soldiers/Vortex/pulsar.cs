@@ -11,6 +11,17 @@ public partial class pulsar : Area3D
         GetNode<AnimationPlayer>("animations").Play("burst");
     }
 
+    public void SyncPosServer()
+    {
+        Rpc("SyncPos", new Variant[] { Position });
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SyncPos(Variant pos)
+    {
+        Position = pos.AsVector3();
+    }
+
     public void onContact(Node body) {
         if (body is IDamagable damagable)
             damagable.Damaged(200, owner);

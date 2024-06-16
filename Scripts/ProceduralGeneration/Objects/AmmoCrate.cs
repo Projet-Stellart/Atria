@@ -19,8 +19,10 @@ public partial class AmmoCrate : Interactible
         GetNode<AnimationPlayer>("AnimationPlayer").AnimationFinished += (StringName animName) =>
         {
             Rpc("DestroyCrate");
-            wa.bullets += 10;
-            player.SyncBulletsServer();
+            /*wa.bullets += 10;
+            player.SyncBulletsServer();*/
+            player.EnergyBar += 100;
+            player.SyncEnergyServer();
         };
     }
 

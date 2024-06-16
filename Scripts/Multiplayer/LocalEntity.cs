@@ -28,16 +28,22 @@ public abstract partial class LocalEntity : CharacterBody3D
         RpcId(1, "SyncServerRot", new Variant[] { GetRotation() });
     }
 
-    public void Init()
+    public void Init(int team)
     {
         InitPlayer();
+
+        ((player)this).SetTeamColor(new StandardMaterial3D()
+        {
+            AlbedoColor = GameManager.singleton.TeamData[team].color
+        });
+
         if (IsLocalPlayer)
         {
             GameManager.singleton.hudManager.Visible = true;
             GameManager.singleton.hudManager.miniMap.HideMap();
             GameManager.singleton.hudManager.miniMap.LoadMap();
             GameManager.singleton.hudManager.subHud.SetHealth(1);
-            GameManager.singleton.hudManager.subHud.SetEnergy(((player)this).EnergyBar / ((player)this).energyMax);
+            GameManager.singleton.hudManager.subHud.SetEnergy(((player)this).EnergyBar / ((player)this).soldier.EnergyBar);
             GameManager.singleton.hudManager.subHud.SetBullets(0, 0);
             GameManager.singleton.hudManager.subHud.SetBannerVisiblity(false);
         }
@@ -377,8 +383,9 @@ public abstract partial class LocalEntity : CharacterBody3D
     [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void SyncDeathClient(Variant dead)
     {
-        GameManager.singleton.hudManager.subHud.Visible = dead.AsBool();
-        dead = dead.AsBool();
+        GameManager.singleton.hudManager.miniMap.Visible = !dead.AsBool();
+        GameManager.singleton.hudManager.subHud.Visible = !dead.AsBool();
+        GameManager.singleton.hudManager.GetNode<Control>("DeathScreen").Visible = dead.AsBool();
     }
 
     public void SendServerRot(Vector2 rotation)
@@ -430,13 +437,13 @@ public abstract partial class LocalEntity : CharacterBody3D
     public abstract void SwapWeapon(WeaponClass weaponClass);
     public abstract void GetWeaponClient(Weapon weapon);
 
-    public void FireAnimLocal(string anim)
+    public void SendFireAnim(bool alt, bool other)
     {
-        RpcId(1, "FireAnimServerRpc", new Variant[] {  });
+        RpcId(1, "FireAnimServerRpc", new Variant[] { alt, other });
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void FireAnimServerRpc()
+    public void FireAnimServerRpc(Variant alt, Variant other)
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
@@ -444,25 +451,32 @@ public abstract partial class LocalEntity : CharacterBody3D
         {
             if (player == Multiplayer.GetRemoteSenderId())
                 continue;
-            RpcId(player, "ReplicateFireAnimRpc", new Variant[] {  });
+            RpcId(player, "ReplicateFireAnimRpc", new Variant[] { alt, other });
         }
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void ReplicateFireAnimRpc()
+    public void ReplicateFireAnimRpc(Variant alt, Variant other)
     {
-        ((player)this).Weapon.Fire(((player)this));
+        if (alt.AsBool())
+        {
+            ((player)this).Weapon.AltFireAnim(((player)this), other.AsBool());
+        }
+        else
+        {
+            ((player)this).Weapon.FireAnim(((player)this));
+        }
     }
 
-    public void FireLocal()
+    public void SendFire(int damage)
     {
         if (!IsLocalPlayer)
             return;
-        RpcId(1, "FireServerRpc", new Variant[] {Position, Rotation });
+        RpcId(1, "FireServerRpc", new Variant[] {Position, Rotation, damage });
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void FireServerRpc(Variant pos, Variant rot)
+    public void FireServerRpc(Variant pos, Variant rot, Variant damage)
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
@@ -472,6 +486,8 @@ public abstract partial class LocalEntity : CharacterBody3D
         Vector3 tRot = Rotation;
         Position = pos.AsVector3();
         Rotation = rot.AsVector3();
+        if (((player)this).Weapon is WeaponMelee wm)
+            wm.currentDamage = damage.AsInt32();
         CalculateFire();
         Position = tPos;
         Rotation = tRot;
@@ -480,20 +496,7 @@ public abstract partial class LocalEntity : CharacterBody3D
             wa.FireMeca();
             SyncBulletsServer();
         }
-        /*foreach (int player in Multiplayer.GetPeers())
-        {
-            if (player == Multiplayer.GetRemoteSenderId())
-                continue;
-            RpcId(player, "ReplicateFireRpc", new Variant[] {  });
-        }*/
     }
-
-    /*[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void ReplicateFireRpc(Variant anim)
-    {
-        ((player)this).Weapon.Fire((player)this);
-        ((player)this).Weapon.PlayAnimation(anim.AsString());
-    }*/
 
     public void GetDirectWeapon(string weaponPath)
     {
@@ -594,7 +597,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         ((player)this).EnergyBar = energy.AsInt32();
         if (IsLocalPlayer)
         {
-            GameManager.singleton.hudManager.subHud.SetEnergy((float)energy.AsInt32() / ((player)this).energyMax);
+            GameManager.singleton.hudManager.subHud.SetEnergy((float)energy.AsInt32() / ((player)this).soldier.EnergyBar);
         }
     }
 
@@ -623,13 +626,13 @@ public abstract partial class LocalEntity : CharacterBody3D
         ((player)this)._crouch();
     }
 
-    public void SendAim(bool isAiming)
+    public void SendAltFire(bool way)
     {
-        RpcId(1, "SyncAimServer", new Variant[] { isAiming });
+        RpcId(1, "SyncAltServer", new Variant[] { way });
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncAimServer(Variant isAiming)
+    public void SyncAltServer(Variant way)
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
@@ -637,23 +640,15 @@ public abstract partial class LocalEntity : CharacterBody3D
         {
             if (peer == Multiplayer.GetRemoteSenderId())
                 continue;
-            RpcId(peer, "SyncAimClient", new Variant[] { isAiming });
+            RpcId(peer, "SyncAltClient", new Variant[] { way });
         }
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncAimClient(Variant isAiming)
+    public void SyncAltClient(Variant way)
     {
-        if (!isAiming.AsBool())
-        {
-            ((player)this).Weapon.animator.Play("Aim");
-        }
-        //Not Aiming
-        else
-        {
-            ((player)this).Weapon.animator.PlayBackwards("Aim");
-        }
-        ((player)this).isAiming = isAiming.AsBool();
+        ((player)this).Weapon.AltFireAnim(((player)this), !way.AsBool());
+        ((player)this).isAiming = way.AsBool();
     }
 
     public void SendSwapWeapon(int weaponClass)
@@ -720,6 +715,14 @@ public abstract partial class LocalEntity : CharacterBody3D
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
+
+        ((player)this)._UseModuleServer((FocusState)module.AsInt32(), args.As<Godot.Collections.Array<Variant>>());
+
+        SendUseModuleServer(module.AsInt32(), args.As<Godot.Collections.Array<Variant>>());
+    }
+
+    public void SendUseModuleServer(int module, Godot.Collections.Array<Variant> args)
+    {
         foreach (long peer in Multiplayer.GetPeers())
         {
             if (peer == Multiplayer.GetRemoteSenderId())
@@ -731,33 +734,41 @@ public abstract partial class LocalEntity : CharacterBody3D
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void SyncUseModuleClient(Variant module, Variant args)
     {
-        ((player)this)._UseModule((FocusState)module.AsInt32(), args.AsGodotArray<Variant>());
+        ((player)this)._UseModuleLocal((FocusState)module.AsInt32(), args.AsGodotArray<Variant>());
     }
 
-    public void SendCancelModule()
+    public void SendCancelModuleServerRpc(int module)
     {
         if (!IsLocalPlayer)
             return;
-        RpcId(1, "SyncCancelModuleServer", new Variant[] { });
+        RpcId(1, "SyncCancelModuleServer", new Variant[] { module });
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncCancelModuleServer()
+    public void SyncCancelModuleServer(Variant module)
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
+
+        ((player)this)._CancelModuleServer();
+
+        SendCancelModuleServer(module.AsInt32());
+    }
+
+    public void SendCancelModuleServer(int module)
+    {
         foreach (long peer in Multiplayer.GetPeers())
         {
             if (peer == Multiplayer.GetRemoteSenderId())
                 continue;
-            RpcId(peer, "SyncCancelModuleClient", new Variant[] {  });
+            RpcId(peer, "SyncCancelModuleClient", new Variant[] { module });
         }
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncCancelModuleClient()
+    public void SyncCancelModuleClient(Variant module)
     {
-        ((player)this)._CancelModule();
+        ((player)this)._CancelModuleClient((FocusState)module.AsInt32());
     }
 
     public void SendActivateModule(int module)
@@ -772,6 +783,8 @@ public abstract partial class LocalEntity : CharacterBody3D
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
+        FocusState focus = (FocusState)module.AsInt32();
+        ((player)this)._ActivateModuleServer(focus);
         foreach (long peer in Multiplayer.GetPeers())
         {
             if (peer == Multiplayer.GetRemoteSenderId())
@@ -783,54 +796,34 @@ public abstract partial class LocalEntity : CharacterBody3D
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void SyncActivateModuleClient(Variant module)
     {
-        ((player)this)._ActivateModule((FocusState)module.AsInt32());
+        ((player)this)._ActivateModuleClient((FocusState)module.AsInt32());
     }
 
-    public void SendUpdateModule(KeyState send, KeyState fire, KeyState altfire, KeyState rotate)
+    public void SendUpdateModule(int module)
     {
         if (!IsLocalPlayer)
             return;
-        RpcId(1, "SyncUpdateModuleServer", new Variant[] { KeyStateToArray(send), KeyStateToArray(fire), KeyStateToArray(altfire), KeyStateToArray(rotate) });
-    }
-
-    public Godot.Collections.Array KeyStateToArray(KeyState key)
-    {
-        return new Godot.Collections.Array() { key.JustPressed, key.Pressed, key.JustReleased };
-    }
-
-    public static KeyState KeyStateFromArray(Godot.Collections.Array key)
-    {
-        KeyState keyState = new KeyState();
-
-        keyState.JustPressed = key[0].AsBool();
-        keyState.Pressed = key[1].AsBool();
-        keyState.JustReleased = key[2].AsBool();
-
-        return keyState;
-    }
-
-    public static Godot.Collections.Array ConvertKeyState(KeyState key)
-    {
-        return new Godot.Collections.Array() { key.JustPressed, key.Pressed, key.JustReleased };
+        RpcId(1, "SyncUpdateModuleServer", new Variant[] { module });
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
-    public void SyncUpdateModuleServer(Variant send, Variant fire, Variant altfire, Variant rotate)
+    public void SyncUpdateModuleServer(Variant module)
     {
         if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
             return;
+        ((player)this)._UpdateModuleServer();
         foreach (long peer in Multiplayer.GetPeers())
         {
             if (peer == Multiplayer.GetRemoteSenderId())
                 continue;
-            RpcId(peer, "SyncUpdateModuleClient", new Variant[] { send, fire, altfire, rotate });
+            RpcId(peer, "SyncUpdateModuleClient", new Variant[] { module });
         }
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
-    public void SyncUpdateModuleClient(Variant send, Variant fire, Variant altfire, Variant rotate)
+    public void SyncUpdateModuleClient(Variant module)
     {
-        ((player)this)._UpdateModule(KeyStateFromArray(send.AsGodotArray()), KeyStateFromArray(fire.AsGodotArray()), KeyStateFromArray(altfire.AsGodotArray()), KeyStateFromArray(rotate.AsGodotArray()));
+        ((player)this)._UpdateModuleClient((FocusState)module.AsInt32());
     }
 
     public void SpawnDecalServer(Node collider, Vector3 rayPosition, Vector3 rayNormal)

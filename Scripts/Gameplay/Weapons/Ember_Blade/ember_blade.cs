@@ -67,8 +67,15 @@ public partial class ember_blade : WeaponMelee
     /*----------------------°\
 	|	Inherited Functions  |
 	\°----------------------*/
-    
-    public override void Fire(player Owner) {
+
+    public override void FireLocal(player Owner)
+    {
+        Owner.SendFireAnim(false, false);
+        FireAnim(Owner);
+        Owner.SendFire(currentDamage);
+    }
+
+    public override void FireAnim(player Owner) {
         fireStream.Play(); //Sound
         hitTime.Start();
         currentDamage = damage;
@@ -84,7 +91,7 @@ public partial class ember_blade : WeaponMelee
     private void onTimerEnd() { //Delay firelocak
         if (!Player.IsLocalPlayer)
             return;
-        refer.FireLocal();
+        refer.SendFire(currentDamage);
         refer = null;
         currentDamage = 0;
     }
@@ -101,7 +108,14 @@ public partial class ember_blade : WeaponMelee
         base.Inspect();
     }
 
-    public override void AltFire(player Owner) {
+    public override void AltFireLocal(player Owner, bool way)
+    {
+        Owner.SendFireAnim(true, false);
+    }
+
+    public override void AltFireAnim(player Owner, bool way) 
+    {
+        fireStream.Play();
         altfireStream.Play();
         althitTime.Start();
         PlayAnimation("AltFire");

@@ -53,18 +53,27 @@ public class ResourceCollection : Gamemode
         }
         ResetGen();
         UpdateHUDInfo();
+        foreach (long peer in GameManager.singleton.Multiplayer.GetPeers())
+            UpdateBottomHUDInfo(peer);
     }
 
     public void UpdateHUDInfo()
     {
-        string str = $"Team1: {teamScore[0]} vs {teamScore[1]} :Team2\nResources/{MaxRes} : ";
+        string str = $"Team{GameManager.singleton.TeamData[0].Name}: {teamScore[0]} vs {teamScore[1]} :Team{GameManager.singleton.TeamData[1].Name}\nResources/{MaxRes} : ";
 
         for (int i = 0; i < teamsRes.Length; i++)
         {
-            str += $"Team{(i+1)}: {teamsRes[i]}" + (i == teamsRes.Length - 1 ? "" : ", ");
+            str += $"Team{GameManager.singleton.TeamData[i].Name}: {teamsRes[i]}" + (i == teamsRes.Length - 1 ? "" : ", ");
         }
 
         GameManager.singleton.multiplayerManager.SendHUDInfoServer(str);
+    }
+
+    public void UpdateBottomHUDInfo(long id)
+    {
+        string str = $"{GameManager.singleton.characterDatas[GameManager.singleton.PlayerInfo[id].characterIndex].name} | Resources: {playerRes[id]}";
+
+        GameManager.singleton.multiplayerManager.SendBottomHUDInfoServer(str, id);
     }
 
     public override void BeginRound()
@@ -73,6 +82,8 @@ public class ResourceCollection : Gamemode
         RoundStarted = true;
         ResetGen();
         UpdateHUDInfo();
+        foreach (long peer in GameManager.singleton.Multiplayer.GetPeers())
+            UpdateBottomHUDInfo(peer);
     }
 
     public override void PlayerDeath(LocalEntity player, LocalEntity other, DeathCause cause)
@@ -89,6 +100,7 @@ public class ResourceCollection : Gamemode
         int team = GameManager.singleton.FindPlayerTeam(player.uid);
         playerRes[player.uid] += nb;
         Debug.Print($"[GameMode]: {GameManager.singleton.PlayerInfo[player.uid].Username} collected {nb} resources");
+        UpdateBottomHUDInfo(player.uid);
     }
 
     public void DepositeResources(player player)
@@ -99,6 +111,7 @@ public class ResourceCollection : Gamemode
         teamsRes[team] += playerRes[player.uid];
         Debug.Print($"[GameMode]: {GameManager.singleton.PlayerInfo[player.uid].Username} deposited {playerRes[player.uid]} resources for team {team + 1}");
         playerRes[player.uid] = 0;
+        UpdateBottomHUDInfo(player.uid);
         UpdateHUDInfo();
         if (teamsRes[team] >= MaxRes)
         {
@@ -161,7 +174,6 @@ public class ResourceCollection : Gamemode
 
     public override bool CanHurt(LocalEntity from, LocalEntity to)
     {
-        Debug.Print("Ok: " + RoundStarted);
         return RoundStarted;
     }
 }

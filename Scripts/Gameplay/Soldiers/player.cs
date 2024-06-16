@@ -16,18 +16,18 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public Camera3D camera;
 	SkeletonIK3D[] HandsReferences;
 
-	//Scenes
+    //Scenes
 
 
 
 
 
-	/*----------------------°\
+    /*----------------------°\
 	|		Variables	     |
 	\°----------------------*/
 
-	//Movements
-	public Acceleration accel_type = new Acceleration();
+    //Movements
+    public Acceleration accel_type = new Acceleration();
 	public Speed speed_type = new Speed();
 	public float speed;
 	public float accel;
@@ -78,8 +78,6 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public int Health = 100;
 	public bool moduleEnable = true;
 
-	public virtual int energyMax { get; } = 100;
-
 
     //Weapons
     public FocusState FocusState = FocusState.Weapon;
@@ -105,8 +103,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	\°----------------------*/
 	
 	public PackedScene bulletHole = GD.Load<PackedScene>("res://Scenes/Nelson/Weapons/bullet_decal.tscn"); //Switch Spawn Decal to Weapon
-	public string weaponTest = "res://Scenes/Nelson/Weapons/Predator/predator.tscn";
-    public override string defaultWeapon => weaponTest;
+    //public override string defaultWeapon => "res://Scenes/Nelson/Weapons/Predator/predator.tscn";
+    public override string defaultWeapon => "res://Scenes/Nelson/Weapons/Ember_Blade/ember_blade.tscn";
 
 
 
@@ -121,7 +119,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
     /*----------------------°\
 	|		FUNCTIONS	     |
 	\°----------------------*/
-	
+
     public override void InitPlayer()
 	{
 		//Initialize Default Values
@@ -147,15 +145,11 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			GetNode<SkeletonIK3D>("Head/Arms/rig/Skeleton3D/L_Finger4_IK")
 		};
 
-		InitSub();
-
         //Mouse in FPS
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
 		//GetWeaponClient((Weapon)weaponTest.Instantiate()); //TO REMOVE IN FUTURE
 	}
-
-	protected virtual void InitSub() { throw new NotImplementedException(); }
 
     public override void InputProcess(double delta)
 	{
@@ -225,22 +219,22 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 				if (Input.IsActionJustPressed("low_module"))
 				{
 					SendActivateModule((int)FocusState.LowModule);
-                    _ActivateModule(FocusState.LowModule);
+                    _ActivateModuleLocal(FocusState.LowModule);
                 }
 				else if (Input.IsActionJustPressed("medium_module"))
 				{
                     SendActivateModule((int)FocusState.MediumModule);
-                    _ActivateModule(FocusState.MediumModule);
+                    _ActivateModuleLocal(FocusState.MediumModule);
                 }
 				else if (Input.IsActionJustPressed("high_module"))
 				{
                     SendActivateModule((int)FocusState.HighModule);
-                    _ActivateModule(FocusState.HighModule);
+                    _ActivateModuleLocal(FocusState.HighModule);
                 }
 				else if (Input.IsActionJustPressed("core_module"))
 				{
                     SendActivateModule((int)FocusState.CoreModule);
-                    _ActivateModule(FocusState.CoreModule);
+                    _ActivateModuleLocal(FocusState.CoreModule);
                 }
 			}
 		
@@ -255,8 +249,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			//Sending Updates to Modules
 			if (canUpdateModule(fire, altfire, rotate, module))
 			{
-                _UpdateModule(module, fire, altfire, rotate);
-				SendUpdateModule(module, fire, altfire, rotate);
+                _UpdateModuleLocal(module, fire, altfire, rotate);
+				SendUpdateModule((int)FocusState);
             }
 		}
 
@@ -397,8 +391,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public void _fire(KeyState key) {
 		if (hasWeapon) { //Avoid error
 			if (key.JustPressed && Weapon.canFire() && (Weapon is WeaponAmo weaponAmo ? weaponAmo.currBullets > 0 : true)) { //Can Fire/Hit - This allow weapons with bullet per click, long press shooting and charge shooting
-				Weapon.Fire(this); //Adjusting the stats of the weapons (eg. bullets)
-				
+				Weapon.FireLocal(this); //Adjusting the stats of the weapons (eg. bullets)
+
 				if (isAiming && !Weapon.canAimFire) //Resetting aim if weapon cannot shoot and keep aim
 					isAiming = false;
 			}
@@ -420,8 +414,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 					}
 					isAiming = !isAiming; //SETTINGS: could change
 				} else
-					Weapon.AltFire(this);
-                SendAim(isAiming);
+					Weapon.AltFireAnim(this, isAiming);
+                SendAltFire(isAiming);
 			}
 		}
 	}
@@ -536,7 +530,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		    if (hasWeapon)
 				Weapon.StopAnimations();
 		} else
-		    _CancelModule();
+		    _CancelModuleLocal();
 
 
 		//Quit all animations (weapons + modules)
@@ -700,7 +694,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			timer.Connect("timeout", new Callable(this, nameof(Enable)));
 			moduleEnable = false;
 			if (FocusState != FocusState.Weapon)
-				_CancelModule();
+				_CancelModuleLocal();
 		}
 	}
 
@@ -708,19 +702,30 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		moduleEnable = true;
 	}
 
+	public virtual void SetTeamColor(Material m) { throw new NotImplementedException(); }
+
 
 	/*------------------------------------°\
 	|		SOLIDER CLASSES FUNCTIONS	   |
 	\°------------------------------------*/
 
 	//Module Activation
-	public virtual void _ActivateModule(FocusState module) {throw new NotImplementedException();}
-	//Module Update
-	public virtual void _UpdateModule(KeyState send, KeyState fire, KeyState altfire, KeyState rotate) {throw new NotImplementedException();}
-	//Module Cancel
-	public virtual void _CancelModule() {throw new NotImplementedException();}
+	public virtual void _ActivateModuleLocal(FocusState module) {throw new NotImplementedException();}
+	public virtual void _ActivateModuleServer(FocusState module) {throw new NotImplementedException();}
+	public virtual void _ActivateModuleClient(FocusState module) {throw new NotImplementedException();}
 
-	public virtual void _UseModule(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
+    //Module Update
+    public virtual void _UpdateModuleLocal(KeyState send, KeyState fire, KeyState altfire, KeyState rotate) {throw new NotImplementedException();}
+    public virtual void _UpdateModuleServer() { throw new NotImplementedException(); }
+    public virtual void _UpdateModuleClient(FocusState module) { throw new NotImplementedException(); }
+    //Module Cancel
+    public virtual void _CancelModuleLocal() {throw new NotImplementedException();}
+    public virtual void _CancelModuleServer() { throw new NotImplementedException(); }
+    public virtual void _CancelModuleClient(FocusState module) { throw new NotImplementedException(); }
+
+    public virtual void _UseModuleLocal(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
+    public virtual void _UseModuleServer(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
+    public virtual void _UseModuleClient(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
 }
 
 

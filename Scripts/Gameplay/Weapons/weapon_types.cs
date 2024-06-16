@@ -15,7 +15,7 @@ public abstract partial class WeaponAmo : Weapon
     public int currBullets;
 
 	//Common actions of a weapon amo
-    public virtual void Reload() { PlayAnimation("Swap"); }
+    public virtual void Reload() { PlayAnimation("Reload"); }
     public abstract void onReload();
 	public virtual void Aim(bool aimDown) {
 		if (aimDown)
@@ -162,9 +162,9 @@ public abstract partial class WeaponMelee : Weapon
 	public override bool canDrop {get;set;}= false;
 	
     public abstract int secondaryDamage {get; protected set;}
-	public int currentDamage {get; protected set;} = 0;
+	public int currentDamage {get; set;} = 0;
 
-    public override void Fire(player Owner) {PlayAnimation("Fire");}
+    public override void FireAnim(player Owner) {PlayAnimation("Fire");}
 
     public override bool canFire()
     {
@@ -184,12 +184,13 @@ public abstract partial class WeaponMelee : Weapon
 		//Breaking if no rid
 		if (!collide.Keys.Contains("rid"))
 			return;
-		
-		////Actions on first contact
 
-		var collider = (Node3D)collide["collider"];
+        ////Actions on first contact
+
+        var collider = (Node3D)collide["collider"];
 		if (collider is IDamagable damagable) {
-			damagable.Damaged(currentDamage, Player);
-		}
+			if (damagable.Damaged(currentDamage, Player))
+                Player.EnergyBar += 50;
+        }
     }
 }

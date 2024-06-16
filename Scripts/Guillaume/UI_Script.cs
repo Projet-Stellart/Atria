@@ -418,8 +418,8 @@ public partial class UI_Script : CanvasLayer
 		{
 			Debug.Print(e.Message);
 		}
-	}
-
+		catch (ObjectDisposedException){}
+    }
 }
 
 public class Release

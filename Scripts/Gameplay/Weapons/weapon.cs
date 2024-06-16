@@ -17,11 +17,13 @@ public abstract partial class Weapon : Node3D
 
     //Common actions of a weapon
     public virtual void Swap() { PlayAnimation("Swap"); }
-    public virtual void Fire(player Owner) {
-        Owner.FireLocal();
+    public virtual void FireLocal(player Owner){}
+    public virtual void FireAnim(player Owner) 
+    {
         PlayAnimation("Fire");
     }
-    public virtual void AltFire(player Owner) {}
+    public virtual void AltFireLocal(player Owner, bool way) { }
+    public virtual void AltFireAnim(player Owner, bool way) {}
     public virtual void Inspect() { PlayAnimation("Inspect"); }
 
 

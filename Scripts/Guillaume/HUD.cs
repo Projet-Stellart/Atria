@@ -28,4 +28,9 @@ public partial class HUD : Control
     {
         GetNode<Control>("TextureRect").Visible = visible;
     }
+
+    public void SetBottomInfo(string msg)
+    {
+        GetNode<RichTextLabel>("Info2/TextEdit").Text = msg;
+    }
 }

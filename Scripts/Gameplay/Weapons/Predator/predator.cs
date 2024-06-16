@@ -94,12 +94,39 @@ public partial class predator : WeaponAmo
 	|	Inherited Functions  |
 	\°----------------------*/
 
-    public override void Fire(player Owner) {
+    public override void FireLocal(player Owner)
+    {
+        Owner.SendFire(0);
+        Owner.SendFireAnim(false, false);
+        FireAnim(Owner);
+    }
+
+    public override void FireAnim(player Owner) {
         currBullets--; //Variables
         fireStream.Play(); //Sound
         muzzleFlash.Emitting = true; //Effects
 
-        base.Fire(Owner);
+        Owner.SendFire(0);
+
+        base.FireAnim(Owner);
+    }
+
+    public override void AltFireLocal(player Owner, bool way)
+    {
+        Owner.SendFireAnim(true, Owner.isAiming);
+    }
+
+    public override void AltFireAnim(player Owner, bool way)
+    {
+        if (!way)
+        {
+            animator.Play("Aim");
+        }
+        //Not Aiming
+        else
+        {
+            animator.PlayBackwards("Aim");
+        }
     }
 
     public override void Reload() {

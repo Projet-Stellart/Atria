@@ -83,7 +83,7 @@ tracks/5/keys = {
 
 [sub_resource type="Animation" id="Animation_8shqc"]
 resource_name = "explode"
-length = 3.0
+length = 5.0
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -91,9 +91,9 @@ tracks/0/path = NodePath("CollisionShape3D:scale:x")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 3)
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0, 0.01, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 3, 5)
 }
 tracks/1/type = "bezier"
 tracks/1/imported = false
@@ -102,9 +102,9 @@ tracks/1/path = NodePath("CollisionShape3D:scale:y")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 3)
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0, 0.01, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 3, 5)
 }
 tracks/2/type = "bezier"
 tracks/2/imported = false
@@ -113,9 +113,9 @@ tracks/2/path = NodePath("CollisionShape3D:scale:z")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 3)
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0, 0.01, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 3, 5)
 }
 tracks/3/type = "bezier"
 tracks/3/imported = false
@@ -124,9 +124,9 @@ tracks/3/path = NodePath("MeshInstance3D:scale:x")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 3)
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0, 0.01, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 3, 5)
 }
 tracks/4/type = "bezier"
 tracks/4/imported = false
@@ -135,9 +135,9 @@ tracks/4/path = NodePath("MeshInstance3D:scale:y")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 3)
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0, 0.01, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 3, 5)
 }
 tracks/5/type = "bezier"
 tracks/5/imported = false
@@ -146,9 +146,9 @@ tracks/5/path = NodePath("MeshInstance3D:scale:z")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 3)
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.01, -0.25, 0, 0.25, 0, 20, -0.25, 0, 0.25, 0, 0.01, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 3, 5)
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_aoq06"]
