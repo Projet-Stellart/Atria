@@ -343,18 +343,18 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public void _alt_fire(KeyState key) {
 		if (hasWeapon) {
 			if (key.JustPressed && Weapon.canFire()) { //Aiming - SETTINGS: could change (holding for aim)
-				if (Weapon is WeaponAmo) {
+				if (Weapon is WeaponAmo weaponAmo) {
 					//Aiming
 					if (!isAiming) {
-						Weapon.AltFire(true);
+						weaponAmo.Aim(true);
 					}
 					//Stop Aiming
 					else {
-						Weapon.AltFire(false);
+						weaponAmo.Aim(false);
 					}
 					isAiming = !isAiming; //SETTINGS: could change
 				} else
-					Weapon.AltFire(false);
+					Weapon.AltFire(this);
 			}
 		}
 	}

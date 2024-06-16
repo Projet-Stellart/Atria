@@ -19,7 +19,7 @@ public abstract partial class Weapon : Node3D
         Owner.FireLocal();
         PlayAnimation("Fire");
     }
-    public virtual void AltFire(bool aimDown) { PlayAnimation("Aim"); }
+    public virtual void AltFire(player Owner) {}
     public virtual void Inspect() { PlayAnimation("Inspect"); }
 
 

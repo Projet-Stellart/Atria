@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Godot;
 
 
@@ -16,6 +17,12 @@ public abstract partial class WeaponAmo : Weapon
 	//Common actions of a weapon amo
     public virtual void Reload() { PlayAnimation("Swap"); }
     public abstract void onReload();
+	public virtual void Aim(bool aimDown) {
+		if (aimDown)
+			PlayAnimation("Aim");
+		else
+			animator.PlayBackwards("Aim");
+	}
 
 
     public override bool canFire()
@@ -153,12 +160,34 @@ public abstract partial class WeaponMelee : Weapon
 	public override bool canDrop {get;set;}= false;
 	
     public abstract int secondaryDamage {get; protected set;}
+	public int currentDamage {get; protected set;} = 0;
 
     public override void Fire(player Owner) {PlayAnimation("Fire");}
 
-    public override void CalculateFire(player Player) {}
     public override bool canFire()
     {
         return base.canFire() && animator.CurrentAnimation != "AltFire";
+    }
+
+	//Calculating who to hit with the damages
+    public override void CalculateFire(player Player) {
+        var spaceState = GetWorld3D().DirectSpaceState;
+		Vector3 dir = Player.camera.GlobalBasis * new Vector3(0,0,-1.5f);
+		Godot.Collections.Array<Rid> rids = new Godot.Collections.Array<Rid>();
+
+		//Emitting RayCast and catching first object
+		var query = PhysicsRayQueryParameters3D.Create(Player.camera.GlobalPosition, Player.camera.GlobalPosition + dir, exclude: rids);
+		Godot.Collections.Dictionary collide = spaceState.IntersectRay(query);
+
+		//Breaking if no rid
+		if (!collide.Keys.Contains("rid"))
+			return;
+		
+		////Actions on first contact
+
+		var collider = (Node3D)collide["collider"];
+		if (collider is IDamagable damagable) {
+			damagable.Damaged(currentDamage);
+		}
     }
 }

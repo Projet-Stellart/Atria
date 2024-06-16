@@ -66,7 +66,7 @@ transform = Transform3D(-0.3, 0, -4.52987e-08, 0, 0.3, 0, 4.52987e-08, 0, -0.3, 
 script = ExtResource("1_b1v2p")
 
 [node name="FirstBlade" type="Skeleton3D" parent="."]
-transform = Transform3D(0.983342, 0.0506977, 0.174549, -0.10012, 0.952575, 0.287361, -0.151703, -0.30005, 0.941784, 1.59, 0, 0)
+transform = Transform3D(0.983342, 0.0506978, 0.17455, -0.10012, 0.952575, 0.287361, -0.151703, -0.30005, 0.941784, 1.59, 0, 0)
 bones/0/name = "Handle"
 bones/0/parent = -1
 bones/0/rest = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, 0.128937, 0)
@@ -146,7 +146,7 @@ transform = Transform3D(-0.771385, -0.572599, 0.277661, 0.577798, -0.813045, -0.
 transform = Transform3D(-0.581995, -0.609305, 0.538543, 0.809718, -0.373061, 0.45297, -0.0750878, 0.699695, 0.710485, 0.363922, 0.209459, -0.220284)
 
 [node name="SecondBlade" type="Skeleton3D" parent="."]
-transform = Transform3D(0.983342, -0.0506977, -0.174549, 0.10012, 0.952576, 0.287361, 0.151703, -0.30005, 0.941784, -1.59, 0, 0)
+transform = Transform3D(0.983342, -0.0506978, -0.17455, 0.10012, 0.952576, 0.287361, 0.151703, -0.30005, 0.941784, -1.59, 0, 0)
 bones/0/name = "Handle"
 bones/0/parent = -1
 bones/0/rest = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, 0.128937, 0)
@@ -243,3 +243,11 @@ stream = ExtResource("5_dhc5h")
 stream = ExtResource("6_ha1n3")
 
 [node name="Hit" type="Timer" parent="."]
+wait_time = 0.41
+one_shot = true
+
+[node name="AltHit" type="Timer" parent="."]
+wait_time = 0.66
+one_shot = true
+
+[connection signal="timeout" from="AltHit" to="." method="onTimerEnd"]

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class ember_blade : WeaponMelee
 {
@@ -28,6 +29,7 @@ public partial class ember_blade : WeaponMelee
     AudioStreamPlayer inspectStream;
     AudioStreamPlayer swapStream;
     Timer hitTime;
+    Timer althitTime;
     player refer;
 
 
@@ -43,6 +45,7 @@ public partial class ember_blade : WeaponMelee
         inspectStream = GetNode<AudioStreamPlayer>("InspectSound");
         altfireStream = GetNode<AudioStreamPlayer3D>("AltFireSound");
         hitTime = GetNode<Timer>("Hit");
+        althitTime = GetNode<Timer>("AltHit");
 
         HandsPlacement = new Node3D[] {
             GetNode<Node3D>("FirstBlade/HandleAttachment/FirstHand"),
@@ -68,6 +71,7 @@ public partial class ember_blade : WeaponMelee
     public override void Fire(player Owner) {
         fireStream.Play(); //Sound
         hitTime.Start();
+        currentDamage = damage;
 
         if (!fireSwitch)
             PlayAnimation("Fire");
@@ -80,6 +84,7 @@ public partial class ember_blade : WeaponMelee
     private void onTimerEnd() { //Delay firelocak
         refer.FireLocal();
         refer = null;
+        currentDamage = 0;
     }
 
     public override void Swap() {
@@ -94,9 +99,12 @@ public partial class ember_blade : WeaponMelee
         base.Inspect();
     }
 
-    public override void AltFire(bool aimDown) {
+    public override void AltFire(player Owner) {
         altfireStream.Play();
+        althitTime.Start();
         PlayAnimation("AltFire");
+        currentDamage = secondaryDamage;
+        refer = Owner;
     }
 
     public override bool canFire()
