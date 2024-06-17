@@ -322,7 +322,7 @@ public abstract partial class LocalEntity : CharacterBody3D
 
         GameManager.singleton.multiplayerManager.InstantiateObjectServer(weapon.info.PickableResPath, GameManager.singleton.GetNode("Objects"), drop.Name);
 
-        drop.Init(weapon, weapon.info.PickableResPath);
+        drop.Init(weapon);
 
         RpcId(uid, "SwapDropedWeaponClient", new Variant[] { (int)weapon.info.WeaponClass });
 

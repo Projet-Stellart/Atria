@@ -88,11 +88,15 @@ public partial class zenith : player
     public override void _ActivateModuleLocal(FocusState module) 
     {
         if (module == FocusState.MediumModule) {
-            if (EnergyBar >= soldier.MediumModule.EnergyRequired)
+            if (EnergyBar >= soldier.MediumModule.EnergyRequired) {
                 FocusState = FocusState.MediumModule;
+                GameManager.singleton.hudManager.subHud.SetVisibleModule(FocusState.MediumModule, true);
+            }
         } else if (module == FocusState.HighModule) {
-            if (EnergyBar >= soldier.HighModule.EnergyRequired)
+            if (EnergyBar >= soldier.HighModule.EnergyRequired) {
                 FocusState = FocusState.HighModule;
+                GameManager.singleton.hudManager.subHud.SetVisibleModule(FocusState.HighModule, true);
+            }
         }
     }
 
@@ -317,6 +321,7 @@ public partial class zenith : player
         if (FocusState == FocusState.HighModule) {
             //Make HUD Invisible
         }
+        GameManager.singleton.hudManager.subHud.SetVisibleModule(FocusState, false);
 
         if (FocusState != FocusState.Weapon) {
             FocusState = FocusState.Weapon;
