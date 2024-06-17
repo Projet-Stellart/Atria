@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Guillaume/UI_Script.cs" id="1_mxrpx"]
 [ext_resource type="AudioStream" uid="uid://csf76jfs71xhc" path="res://Ressources/UI/Click.mp3" id="3_46j4r"]
 [ext_resource type="AudioStream" uid="uid://bisdnb3vq2dvx" path="res://Ressources/UI/Trap.mp3" id="4_7w28x"]
-[ext_resource type="Texture2D" uid="uid://c8y5sbbjq55ge" path="res://Ressources/UI/Logo.png" id="4_plkpr"]
+[ext_resource type="Texture2D" uid="uid://ece5r20gc6fa" path="res://Ressources/UI/atria_logo_menu.png" id="4_8fkcp"]
 [ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="5_obcn5"]
 [ext_resource type="Texture2D" uid="uid://dgxynxnhxc4of" path="res://Ressources/UI/Button_CLicked.png" id="7_tekix"]
 [ext_resource type="Texture2D" uid="uid://bxkcfq3dhpm75" path="res://Ressources/UI/Button_Moused.png" id="8_gcfsc"]
@@ -47,22 +47,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect2" type="ColorRect" parent="Main"]
+[node name="ColorRect3" type="TextureRect" parent="Main"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0195313
-anchor_top = 0.756944
-anchor_right = 0.136719
-anchor_bottom = 0.965278
-metadata/_edit_use_anchors_ = true
-
-[node name="ColorRect" type="TextureRect" parent="Main/ColorRect2"]
-layout_mode = 0
-anchor_left = 0.0666667
-anchor_top = 0.0666667
-anchor_right = 0.933333
-anchor_bottom = 0.933333
-texture = ExtResource("4_plkpr")
+anchor_left = 0.03125
+anchor_top = 0.722222
+anchor_right = 0.15625
+anchor_bottom = 0.944444
+texture = ExtResource("4_8fkcp")
 expand_mode = 2
 metadata/_edit_use_anchors_ = true
 

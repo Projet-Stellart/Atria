@@ -143,7 +143,7 @@ public partial class predator : WeaponAmo
                 delta = bullets;
 
             bullets -= delta;
-            currBullets = delta;
+            currBullets += delta;
             Player.SyncBulletsServer();
         }
     }
