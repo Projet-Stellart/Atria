@@ -10,15 +10,13 @@ public partial class predator : WeaponAmo
     public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Primary, WeaponType.Normal, "Predator", "None", null) { dropable = true, ResPath = "res://Scenes/Nelson/Weapons/Predator/predator.tscn", PickableResPath = "res://Scenes/Nelson/Weapons/Predator/predator_drop.tscn" };
     public override bool canDrop {get;set;} = true;
 
-    [Export]
     public override int bullets {get; set;} = 16;
     public override double fallOff { get; protected set;} = 80;
    	public override float penetration {get; protected set;} = 3;
-    [Export]
+
     public override int bulletPerMag {get; protected set;} = 4;
 
-    [Export]
-    public override int damage {get; protected set;} = 20;
+    public override int damage {get; protected set;} = 100;
 
     public override bool canAimFire {get;} = false;
 

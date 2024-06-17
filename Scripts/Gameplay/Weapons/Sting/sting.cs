@@ -11,13 +11,11 @@ public partial class sting : WeaponAmo
     public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Secondary, WeaponType.Normal, "Sting", "None", null) { dropable = true, ResPath = "res://Scenes/Nelson/Weapons/Sting/sting.tscn", PickableResPath = "res://Scenes/Nelson/Weapons/Sting/sting_drop.tscn" };
     public override bool canDrop {get;set;} = true;
 
-    [Export]
     public override int bullets {get; set;} = 45;
    	public override float penetration {get; protected set;} = 0.5f;
-    [Export]
+
     public override int bulletPerMag {get; protected set;} = 15;
 
-    [Export]
     public override int damage {get; protected set;} = 17;
 
     public override bool canAimFire {get;} = true;
@@ -72,7 +70,8 @@ public partial class sting : WeaponAmo
         muzzleFlash = GetNode<GpuParticles3D>("Muzzle Flash/GPUParticles3D");
         reloadTime = GetNode<Timer>("Reload");
 
-        base._Ready();
+        bullets -= bulletPerMag;
+        currBullets = bulletPerMag;
     }
 
 
