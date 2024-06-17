@@ -29,9 +29,9 @@ public partial class UI_Script : CanvasLayer
 
 	private void LoadSettings()
 	{
-		var data = SaveManager.LoadSettings();
-		GetNode<CheckButton>("Sound/MarginContainer3/VBoxContainer/CheckButton").ButtonPressed = !data.mute;
-		GetNode<HSlider>("Sound/MarginContainer5/VBoxContainer/HSlider").Value = data.soundLevel;
+		SaveManager.LoadSettings();
+		GetNode<CheckButton>("Sound/MarginContainer3/VBoxContainer/CheckButton").ButtonPressed = !SaveManager.saveparam.mute;
+		GetNode<HSlider>("Sound/MarginContainer5/VBoxContainer/HSlider").Value = SaveManager.saveparam.soundLevel;
 	}
 
 	public override void _Process(double delta)
@@ -284,6 +284,8 @@ public partial class UI_Script : CanvasLayer
         {
             slider.Visible = false;
         }
+		SaveManager.saveparam.mute = button.ButtonPressed;
+		SaveManager.SaveSettings();
 	}
 
 	private void _on_h_slider_value_changed(float v)
@@ -291,6 +293,8 @@ public partial class UI_Script : CanvasLayer
 		var music_sounds = AudioServer.GetBusIndex("Master");
 		AudioServer.SetBusVolumeDb(music_sounds, ((v-100) * 0.5f));
 		GetNode<AudioStreamPlayer>("MenuSwitch").Play();
+		SaveManager.saveparam.soundLevel = v;
+		SaveManager.SaveSettings();
 	}
 
 	private void _on_son_fond_finished()
@@ -455,8 +459,8 @@ public partial class UI_Script : CanvasLayer
 			response.EnsureSuccessStatusCode();
 			string responseBody = await response.Content.ReadAsStringAsync();
 			Release release = JsonSerializer.Deserialize<Release>(responseBody);
-			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel").Text = "[center]Release Name:\n\n\n" + release.name;			
-			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel2").Text = "[center]Description:\n\n\n" + release.body;
+			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel").Text = "[center]" + release.name;			
+			GetNode<RichTextLabel>("Main/ColorRect/MarginContainer/VBoxContainer/RichTextLabel2").Text = "[center]Description:\n\n" + release.body;
 		}
 		catch (HttpRequestException e)
 		{

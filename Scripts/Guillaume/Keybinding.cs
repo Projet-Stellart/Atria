@@ -22,6 +22,7 @@ public partial class Keybinding : Control
         {
             GetNode<Button>("BindButton").Text = "Unassigned";
         }
+        GetNode<Button>("BindButton").FocusMode = FocusModeEnum.None;
     }
 
     public override void _Process(double delta)

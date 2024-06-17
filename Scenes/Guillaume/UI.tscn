@@ -199,9 +199,9 @@ metadata/_edit_use_anchors_ = true
 [node name="MarginContainer" type="MarginContainer" parent="Main/ColorRect"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.138889
+anchor_left = 0.089
 anchor_top = 0.1875
-anchor_right = 0.861111
+anchor_right = 0.911
 anchor_bottom = 0.854167
 grow_horizontal = 2
 grow_vertical = 2
@@ -212,13 +212,8 @@ layout_mode = 2
 alignment = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-size_flags_vertical = 3
-bbcode_enabled = true
-
-[node name="RichTextLabel3" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
 bbcode_enabled = true
 
 [node name="RichTextLabel2" type="RichTextLabel" parent="Main/ColorRect/MarginContainer/VBoxContainer"]
@@ -1250,11 +1245,12 @@ metadata/_edit_use_anchors_ = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Keybinding"]
 layout_mode = 0
-offset_left = 100.0
-offset_top = 100.0
-offset_right = 1180.0
-offset_bottom = 620.0
+anchor_left = 0.078125
+anchor_top = 0.138889
+anchor_right = 0.921875
+anchor_bottom = 0.861111
 theme_override_styles/panel = SubResource("StyleBoxFlat_fw5wk")
+metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Keybinding/ScrollContainer"]
 layout_mode = 2
@@ -1348,19 +1344,23 @@ horizontal_alignment = 1
 layout_mode = 2
 
 [node name="HBoxContainer9" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+visible = false
 layout_mode = 2
 ActionName = "fire"
 ActionDisplayName = "Fire"
 
 [node name="InfoLabel9" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer10" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+visible = false
 layout_mode = 2
 ActionName = "alt_fire"
 ActionDisplayName = "Scope / Throw"
 
 [node name="InfoLabel10" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer11" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
@@ -1404,19 +1404,23 @@ ActionDisplayName = "Secondary Weapon"
 layout_mode = 2
 
 [node name="HBoxContainer16" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+visible = false
 layout_mode = 2
 ActionName = "previous_weapon"
 ActionDisplayName = "Previous Weapon"
 
 [node name="InfoLabel16" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer17" parent="Keybinding/ScrollContainer/VBoxContainer" instance=ExtResource("8_yv05f")]
+visible = false
 layout_mode = 2
 ActionName = "next_weapon"
 ActionDisplayName = "Next Weapon"
 
 [node name="InfoLabel17" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="InfoLabel02" type="Label" parent="Keybinding/ScrollContainer/VBoxContainer"]
