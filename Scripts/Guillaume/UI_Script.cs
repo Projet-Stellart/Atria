@@ -374,8 +374,8 @@ public partial class UI_Script : CanvasLayer
                 seed = "",
                 mapHeight = 3,
                 startHeight = 1,
-                sizeX = 10,
-                sizeY = 10,
+                sizeX = 20,
+                sizeY = 20,
                 minRoom = 1,
                 maxRoom = 2,
             },
@@ -392,6 +392,7 @@ public partial class UI_Script : CanvasLayer
             publicAddress = "",
             matchMaker = "127.0.0.1:12345"
         };
+
         if (File.Exists(paramPath))
 		{
             gameData = JsonSerializer.Deserialize<GameData>(File.ReadAllText(paramPath));
