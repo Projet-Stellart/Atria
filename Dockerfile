@@ -26,4 +26,4 @@ RUN rm -rf ./sc
 
 EXPOSE 7308/udp
 
-ENTRYPOINT su appuser -c "./builds/server.sh --headless --server"
+ENTRYPOINT ./builds/server.sh --headless --server
