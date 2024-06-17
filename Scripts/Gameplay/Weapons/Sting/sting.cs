@@ -8,7 +8,7 @@ public partial class sting : WeaponAmo
 	|	 Class Properties    |
 	\°----------------------*/
 
-    public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Primary, WeaponType.Normal, "Sting", "None", null) { dropable = true, ResPath = "res://Scenes/Nelson/Weapons/Sting/sting.tscn", PickableResPath = "res://Scenes/Nelson/Weapons/Sting/sting_drop.tscn" };
+    public override WeaponInfo info { get; protected set;} = new WeaponInfo(WeaponClass.Secondary, WeaponType.Normal, "Sting", "None", null) { dropable = true, ResPath = "res://Scenes/Nelson/Weapons/Sting/sting.tscn", PickableResPath = "res://Scenes/Nelson/Weapons/Sting/sting_drop.tscn" };
     public override bool canDrop {get;set;} = true;
 
     [Export]
@@ -150,7 +150,7 @@ public partial class sting : WeaponAmo
                 delta = bullets;
 
             bullets -= delta;
-            currBullets = delta;
+            currBullets += delta;
             Player.SyncBulletsServer();
         }
     }

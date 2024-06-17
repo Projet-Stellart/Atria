@@ -334,9 +334,41 @@ public abstract partial class LocalEntity : CharacterBody3D
     {
         WeaponClass wC = (WeaponClass)wClass;
         player player = (player)this;
-        if (player.Weapon.info.WeaponClass == wC)
+        if (player.Weapon == null)
         {
-            SendSwapWeapon((int)(wC == WeaponClass.Melee ? WeaponClass.Primary : WeaponClass.Melee));
+            if (player.Primary != null)
+            {
+                if (Multiplayer.IsServer())
+                {
+                    SendSwapWeapon((int)WeaponClass.Primary);
+                }
+                else
+                {
+                    SwapWeapon(WeaponClass.Primary);
+                }
+            }
+            if (player.Secondary != null)
+            {
+                if (Multiplayer.IsServer())
+                {
+                    SendSwapWeapon((int)WeaponClass.Secondary);
+                }
+                else
+                {
+                    SwapWeapon(WeaponClass.Secondary);
+                }
+            }
+            if (player.Melee != null)
+            {
+                if (Multiplayer.IsServer())
+                {
+                    SendSwapWeapon((int)WeaponClass.Melee);
+                }
+                else
+                {
+                    SwapWeapon(WeaponClass.Melee);
+                }
+            }
         }
     }
 
@@ -436,6 +468,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         GameManager.singleton.hudManager.miniMap.Visible = !dead.AsBool();
         GameManager.singleton.hudManager.subHud.Visible = !dead.AsBool();
         GameManager.singleton.hudManager.GetNode<Control>("DeathScreen").Visible = dead.AsBool();
+        ((player)this).SetCollision(dead.AsBool());
     }
 
     public void SendServerRot(Vector2 rotation)
@@ -614,7 +647,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         {
             pwa.currBullets = pcurrBull.AsInt32();
             pwa.bullets = ptotBull.AsInt32();
-            if (IsLocalPlayer && ((player)this).Weapon == ((player)this).Primary)
+            if (IsLocalPlayer && ((player)this).Weapon.info.WeaponClass == WeaponClass.Primary)
             {
                 GameManager.singleton.hudManager.subHud.SetBullets(pwa.currBullets, pwa.bullets);
             }
@@ -623,7 +656,7 @@ public abstract partial class LocalEntity : CharacterBody3D
         {
             swa.currBullets = scurrBull.AsInt32();
             swa.bullets = stotBull.AsInt32();
-            if (IsLocalPlayer && ((player)this).Weapon == ((player)this).Primary)
+            if (IsLocalPlayer && ((player)this).Weapon.info.WeaponClass == WeaponClass.Secondary)
             {
                 GameManager.singleton.hudManager.subHud.SetBullets(swa.currBullets, swa.bullets);
             }

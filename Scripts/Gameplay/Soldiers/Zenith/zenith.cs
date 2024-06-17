@@ -69,6 +69,7 @@ public partial class zenith : player
         GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Arm_R_02/Arm_R_02").Layers = layer;
         GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/Arm_R_01/Arm_R_01").Layers = layer;
         GetNode<MeshInstance3D>("Head/Arms/rig/Skeleton3D/body").Layers = layer;
+        GetNode<OmniLight3D>("Head/OmniLight3D").Visible = layer == 2;
         if (Weapon is null)
             return;
         Weapon.SetRenderLayer(layer);

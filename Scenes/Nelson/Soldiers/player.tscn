@@ -123,6 +123,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.611, 0)
 cull_mask = 1048569
 near = 0.001
 
+[node name="OmniLight3D" type="OmniLight3D" parent="Head"]
+layers = 2
+omni_range = 3.0
+
 [node name="Crouching" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_mre02")

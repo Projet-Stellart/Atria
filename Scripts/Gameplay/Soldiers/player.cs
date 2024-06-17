@@ -447,6 +447,11 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		GameManager.singleton.PlayerDeath(this, player, cause);
 	}
 
+	public virtual void SetCollision(bool dead)
+	{
+        GetNode<CollisionShape3D>("CollisionShape3D").Disabled = dead;
+    }
+
 	//Toggle Crouch Function
 	public void _crouch() 
 	{
@@ -695,6 +700,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	\°------------------------------------*/
 
 	public bool Damaged(int damage, player player) {
+		if (dead)
+			return false;
 		if (!GameManager.singleton.CanHurt(player, this))
 			return false;
         Health -=damage;

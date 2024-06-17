@@ -527,6 +527,8 @@ public partial class GameManager : Node
         if (!Multiplayer.IsServer())
             return;
 
+        player.dead = true;
+
         if (cause == DeathCause.Killed)
             Debug.Print($"[GameManager]: {playerInfo[player.uid].Username} was killed by {playerInfo[from.uid].Username}");
         else
@@ -550,6 +552,8 @@ public partial class GameManager : Node
 
     public void RespawnPlayer(LocalEntity player)
     {
+        player.dead = false;
+
         Vector3 npos = tileMapGenerator.GetRandPlayerSpawn(FindPlayerTeam(player.uid), random);
         //Vector3 npos = tileMapGenerator.GetRandPoint(tileMapGenerator.tileMap, new Random());
         if (player is player playerScript)
