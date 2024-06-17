@@ -9,20 +9,17 @@ namespace Atria.Scripts.ProceduralGeneration.Objects;
 
 public partial class PickableWeapon : RigidBody3D, IInteractible
 {
-    private Weapon weapon;
+    private string res;
 
-    public void Init(Weapon _weapon, string modelPath)
+    public void Init(Weapon _weapon)
     {
-        weapon = _weapon;
+        res = _weapon.info.ResPath;
     }
 
     public void OnClickBegin(player player)
     {
-        if (weapon == null)
-            return;
-
-        player.GetDirectWeapon(weapon);
-        player.GetWeaponServer(weapon.info.ResPath);
+        player.GetDirectWeapon(GD.Load<PackedScene>(res).Instantiate<Weapon>());
+        player.GetWeaponServer(res);
 
         ((WeaponAmo)player.Primary).bullets = 20;
 

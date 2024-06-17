@@ -2,14 +2,14 @@
 
 [ext_resource type="Texture2D" uid="uid://dn342kqr1egp" path="res://Ressources/UI/force_field_icon.png" id="1_orto4"]
 [ext_resource type="Texture2D" uid="uid://d1bhwob7x7w2v" path="res://Ressources/UI/gravity_warp_icon.png" id="2_bkw6f"]
+[ext_resource type="Texture2D" uid="uid://80is62wtol1f" path="res://Ressources/UI/curved_launch_icon.png" id="2_ebxc2"]
 [ext_resource type="Texture2D" uid="uid://bomny4fx4yfdv" path="res://Ressources/UI/pulsar_icon.png" id="3_hvjwx"]
 [ext_resource type="Texture2D" uid="uid://da8shmkbw327a" path="res://Ressources/UI/click_icon.png" id="3_jinol"]
 [ext_resource type="Texture2D" uid="uid://bdpwl3hggto80" path="res://Ressources/UI/supernova_icon.png" id="4_friru"]
-[ext_resource type="Texture2D" uid="uid://du045x0tkto01" path="res://Ressources/UI/launch_icon.png" id="4_i3mge"]
 [ext_resource type="Texture2D" uid="uid://cfqpau8u2j0um" path="res://Ressources/UI/rotate_icon.png" id="5_yvlv6"]
 [ext_resource type="Texture2D" uid="uid://c2a3apsu36cj6" path="res://Ressources/UI/launch_straight_icon.png" id="7_gywpe"]
 
-[node name="Vortex_HUD" type="Control"]
+[node name="Module_HUD" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,305 +17,294 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Low_Module" type="Control" parent="."]
-anchors_preset = 0
-anchor_left = 0.265625
-anchor_top = 0.763889
-anchor_right = 0.359375
-anchor_bottom = 1.0
-offset_top = -50.0
-offset_bottom = -20.0
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.72
+anchor_right = 1.0
+anchor_bottom = 0.98
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 47
+alignment = 1
+
+[node name="Low_Module" type="Control" parent="HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="ModuleIcon" type="Control" parent="Low_Module"]
-anchors_preset = 0
-offset_top = 45.0
-offset_right = 120.0
-offset_bottom = 165.0
-metadata/_edit_use_anchors_ = true
-
-[node name="Icon" type="TextureRect" parent="Low_Module/ModuleIcon"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Low_Module"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+alignment = 1
+
+[node name="FillSpace" type="Control" parent="HBoxContainer/Low_Module/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="ShowKeybinds" type="Control" parent="HBoxContainer/Low_Module/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Low_Module/VBoxContainer/ShowKeybinds"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+offset_top = 4.0
+offset_right = 80.0
+offset_bottom = 34.0
+alignment = 1
+
+[node name="KeyAction" type="RichTextLabel" parent="HBoxContainer/Low_Module/VBoxContainer/ShowKeybinds"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+offset_top = 38.0
+offset_right = 80.0
+offset_bottom = 69.0
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "[center][HOLD]"
+scroll_active = false
+autowrap_mode = 0
+drag_and_drop_selection_enabled = false
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer/Low_Module/VBoxContainer"]
+layout_mode = 2
 texture = ExtResource("1_orto4")
-expand_mode = 3
+expand_mode = 4
 metadata/_edit_use_anchors_ = true
 
-[node name="ModuleKey" type="Control" parent="Low_Module"]
-anchors_preset = 0
-offset_top = 175.0
-offset_right = 120.0
-offset_bottom = 200.0
-metadata/_edit_use_anchors_ = true
-
-[node name="Key" type="RichTextLabel" parent="Low_Module/ModuleKey"]
-layout_mode = 0
-offset_right = 120.0
-offset_bottom = 25.0
+[node name="Key" type="RichTextLabel" parent="HBoxContainer/Low_Module/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
 bbcode_enabled = true
 text = "[center]A"
 scroll_active = false
 autowrap_mode = 0
 drag_and_drop_selection_enabled = false
 
-[node name="ModuleBindings" type="Control" parent="Low_Module"]
-anchors_preset = 0
-offset_right = 120.0
-offset_bottom = 45.0
-
-[node name="KeyBinds" type="RichTextLabel" parent="Low_Module/ModuleBindings"]
-layout_mode = 0
-offset_top = 10.0
-offset_right = 120.0
-offset_bottom = 35.0
-bbcode_enabled = true
-text = "[center][Hold]"
-scroll_active = false
-autowrap_mode = 0
-drag_and_drop_selection_enabled = false
-
-[node name="Medium_Module" type="Control" parent="."]
-anchors_preset = 0
-anchor_left = 0.390625
-anchor_top = 0.763889
-anchor_right = 0.484375
-anchor_bottom = 1.0
-offset_top = -50.0
-offset_bottom = -20.0
+[node name="Medium_Module" type="Control" parent="HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="ModuleIcon" type="Control" parent="Medium_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_top = 45.0
-offset_right = 120.0
-offset_bottom = 165.0
-metadata/_edit_use_anchors_ = true
-
-[node name="Icon" type="TextureRect" parent="Medium_Module/ModuleIcon"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Medium_Module"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_bkw6f")
+alignment = 1
+
+[node name="FillSpace" type="Control" parent="HBoxContainer/Medium_Module/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="ShowKeybinds" type="Control" parent="HBoxContainer/Medium_Module/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+alignment = 1
+
+[node name="LeftAction" type="TextureRect" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_ebxc2")
 expand_mode = 3
+
+[node name="RightAction" type="TextureRect" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("5_yvlv6")
+expand_mode = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+alignment = 1
+
+[node name="LeftClick" type="TextureRect" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("3_jinol")
+expand_mode = 2
+
+[node name="RightClick" type="TextureRect" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("3_jinol")
+expand_mode = 3
+flip_h = true
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer/Medium_Module/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_bkw6f")
+expand_mode = 4
 metadata/_edit_use_anchors_ = true
 
-[node name="ModuleKey" type="Control" parent="Medium_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_top = 175.0
-offset_right = 120.0
-offset_bottom = 200.0
-metadata/_edit_use_anchors_ = true
-
-[node name="Key" type="RichTextLabel" parent="Medium_Module/ModuleKey"]
-layout_mode = 0
-offset_right = 120.0
-offset_bottom = 25.0
+[node name="Key" type="RichTextLabel" parent="HBoxContainer/Medium_Module/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 bbcode_enabled = true
 text = "[center]C"
 scroll_active = false
 autowrap_mode = 0
 drag_and_drop_selection_enabled = false
 
-[node name="ModuleBindings" type="Control" parent="Medium_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 120.0
-offset_bottom = 45.0
-
-[node name="LeftClick" type="TextureRect" parent="Medium_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 20.0
-offset_right = 60.0
-offset_bottom = 40.0
-texture = ExtResource("3_jinol")
-expand_mode = 5
-
-[node name="RightClick" type="TextureRect" parent="Medium_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 60.0
-offset_right = 100.0
-offset_bottom = 40.0
-texture = ExtResource("3_jinol")
-expand_mode = 5
-flip_h = true
-
-[node name="LeftAction" type="TextureRect" parent="Medium_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = -40.0
-offset_right = 60.0
-texture = ExtResource("4_i3mge")
-expand_mode = 3
-
-[node name="RightAction" type="TextureRect" parent="Medium_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 60.0
-offset_top = -40.0
-offset_right = 100.0
-texture = ExtResource("5_yvlv6")
-expand_mode = 3
-
-[node name="High_Module" type="Control" parent="."]
-anchors_preset = 0
-anchor_left = 0.515625
-anchor_top = 0.763889
-anchor_right = 0.609375
-anchor_bottom = 1.0
-offset_top = -50.0
-offset_bottom = -20.0
+[node name="High_Module" type="Control" parent="HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="ModuleIcon" type="Control" parent="High_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_top = 45.0
-offset_right = 120.0
-offset_bottom = 165.0
-metadata/_edit_use_anchors_ = true
-
-[node name="Icon" type="TextureRect" parent="High_Module/ModuleIcon"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/High_Module"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_hvjwx")
-expand_mode = 3
-metadata/_edit_use_anchors_ = true
+alignment = 1
 
-[node name="ModuleKey" type="Control" parent="High_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_top = 175.0
-offset_right = 120.0
-offset_bottom = 200.0
-metadata/_edit_use_anchors_ = true
+[node name="FillSpace" type="Control" parent="HBoxContainer/High_Module/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
 
-[node name="Key" type="RichTextLabel" parent="High_Module/ModuleKey"]
-layout_mode = 0
-offset_right = 120.0
-offset_bottom = 25.0
-bbcode_enabled = true
-text = "[center]V"
-scroll_active = false
-autowrap_mode = 0
-drag_and_drop_selection_enabled = false
+[node name="ShowKeybinds" type="Control" parent="HBoxContainer/High_Module/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
 
-[node name="ModuleBindings" type="Control" parent="High_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 120.0
-offset_bottom = 45.0
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="LeftClick" type="TextureRect" parent="High_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 20.0
-offset_right = 60.0
-offset_bottom = 40.0
-texture = ExtResource("3_jinol")
-expand_mode = 5
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+alignment = 1
 
-[node name="RightClick" type="TextureRect" parent="High_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 60.0
-offset_right = 100.0
-offset_bottom = 40.0
-texture = ExtResource("3_jinol")
-expand_mode = 5
-flip_h = true
-
-[node name="LeftAction" type="TextureRect" parent="High_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = -40.0
-offset_right = 60.0
-texture = ExtResource("4_i3mge")
+[node name="LeftAction" type="TextureRect" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_ebxc2")
 expand_mode = 3
 
-[node name="RightAction" type="TextureRect" parent="High_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 100.0
-offset_top = -40.0
-offset_right = 140.0
-rotation = 1.5708
+[node name="RightAction" type="TextureRect" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer"]
+layout_mode = 2
 texture = ExtResource("7_gywpe")
 expand_mode = 3
 
-[node name="Core_Module" type="Control" parent="."]
-anchors_preset = 0
-anchor_left = 0.640625
-anchor_top = 0.763889
-anchor_right = 0.734375
-anchor_bottom = 1.0
-offset_top = -50.0
-offset_bottom = -20.0
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+alignment = 1
+
+[node name="LeftClick" type="TextureRect" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("3_jinol")
+expand_mode = 2
+
+[node name="RightClick" type="TextureRect" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("3_jinol")
+expand_mode = 3
+flip_h = true
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer/High_Module/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_hvjwx")
+expand_mode = 4
 metadata/_edit_use_anchors_ = true
 
-[node name="ModuleIcon" type="Control" parent="Core_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_top = 45.0
-offset_right = 120.0
-offset_bottom = 165.0
+[node name="Key" type="RichTextLabel" parent="HBoxContainer/High_Module/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "[center]V
+"
+scroll_active = false
+autowrap_mode = 0
+drag_and_drop_selection_enabled = false
+
+[node name="Core_Module" type="Control" parent="HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="Icon" type="TextureRect" parent="Core_Module/ModuleIcon"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Core_Module"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_friru")
+alignment = 1
+
+[node name="FillSpace" type="Control" parent="HBoxContainer/Core_Module/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="ShowKeybinds" type="Control" parent="HBoxContainer/Core_Module/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Core_Module/VBoxContainer/ShowKeybinds"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Core_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+alignment = 1
+
+[node name="LeftAction" type="TextureRect" parent="HBoxContainer/Core_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_ebxc2")
 expand_mode = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/Core_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+alignment = 1
+
+[node name="LeftClick" type="TextureRect" parent="HBoxContainer/Core_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("3_jinol")
+expand_mode = 2
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer/Core_Module/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("4_friru")
+expand_mode = 4
 metadata/_edit_use_anchors_ = true
 
-[node name="ModuleKey" type="Control" parent="Core_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_top = 175.0
-offset_right = 120.0
-offset_bottom = 200.0
-metadata/_edit_use_anchors_ = true
-
-[node name="Key" type="RichTextLabel" parent="Core_Module/ModuleKey"]
-layout_mode = 0
-offset_right = 120.0
-offset_bottom = 25.0
+[node name="Key" type="RichTextLabel" parent="HBoxContainer/Core_Module/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 bbcode_enabled = true
-text = "[center]G"
+text = "[center]G
+"
 scroll_active = false
 autowrap_mode = 0
 drag_and_drop_selection_enabled = false
-
-[node name="ModuleBindings" type="Control" parent="Core_Module"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 120.0
-offset_bottom = 45.0
-
-[node name="LeftClick" type="TextureRect" parent="Core_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 40.0
-offset_right = 80.0
-offset_bottom = 40.0
-texture = ExtResource("3_jinol")
-expand_mode = 5
-
-[node name="LeftAction" type="TextureRect" parent="Core_Module/ModuleBindings"]
-layout_mode = 0
-offset_left = 40.0
-offset_top = -40.0
-offset_right = 80.0
-texture = ExtResource("4_i3mge")
-expand_mode = 3

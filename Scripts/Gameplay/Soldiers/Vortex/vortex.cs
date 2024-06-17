@@ -171,7 +171,9 @@ public partial class vortex : player
             FocusState = FocusState.LowModule;
             forceField.Visible = true;
             forceField.GetNode<CollisionShape3D>("Collision").Disabled = false;
+            
             //SHOW PROGRESSION BAR HUD
+            GameManager.singleton.hudManager.subHud.SetVisibleModule(FocusState.LowModule, true);
         } else if (module == FocusState.MediumModule) {
             if (currentWarp != null)
             {//Manually activating current warp
@@ -187,16 +189,19 @@ public partial class vortex : player
                 }
                 departPoint.Visible = true;
                 FocusState = FocusState.MediumModule;
+                GameManager.singleton.hudManager.subHud.SetVisibleModule(FocusState.MediumModule, true);
             }
         } else if (module == FocusState.HighModule) {
             if (EnergyBar >= soldier.HighModule.EnergyRequired) {
                 FocusState = FocusState.HighModule;
                 //Make HUD Visible
+                GameManager.singleton.hudManager.subHud.SetVisibleModule(FocusState.HighModule, true);
             }
         } else if (module == FocusState.CoreModule) {
             if (EnergyBar >= soldier.EnergyBar && atria) {
                 FocusState = FocusState.CoreModule;
                 //Make HUD Visible
+                GameManager.singleton.hudManager.subHud.SetVisibleModule(FocusState.CoreModule, true);
             }
         }
     }
@@ -519,6 +524,7 @@ public partial class vortex : player
         } else if (FocusState == FocusState.CoreModule) {
             //Make HUD Invisible
         }
+        GameManager.singleton.hudManager.subHud.SetVisibleModule(FocusState, false);
 
         if (FocusState != FocusState.Weapon) {
             FocusState = FocusState.Weapon;
