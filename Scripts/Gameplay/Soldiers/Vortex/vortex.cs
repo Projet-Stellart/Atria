@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using Godot;
 
 public partial class vortex : player
