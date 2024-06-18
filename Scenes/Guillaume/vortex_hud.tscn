@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dn342kqr1egp" path="res://Ressources/UI/force_field_icon.png" id="1_orto4"]
 [ext_resource type="Texture2D" uid="uid://d1bhwob7x7w2v" path="res://Ressources/UI/gravity_warp_icon.png" id="2_bkw6f"]
-[ext_resource type="Texture2D" path="res://Ressources/UI/curved_launch_icon.tres" id="2_ebxc2"]
+[ext_resource type="Texture2D" uid="uid://dm6nrhy2kv0qi" path="res://Ressources/UI/curved_launch_icon.tres" id="2_ebxc2"]
 [ext_resource type="Texture2D" uid="uid://bomny4fx4yfdv" path="res://Ressources/UI/pulsar_icon.png" id="3_hvjwx"]
 [ext_resource type="Texture2D" uid="uid://da8shmkbw327a" path="res://Ressources/UI/click_icon.png" id="3_jinol"]
 [ext_resource type="Texture2D" uid="uid://bdpwl3hggto80" path="res://Ressources/UI/supernova_icon.png" id="4_friru"]
