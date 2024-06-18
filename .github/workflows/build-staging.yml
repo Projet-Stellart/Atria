@@ -14,8 +14,14 @@ jobs:
           - preset: Windows Desktop
             name: Windows-exe
             extention: ".exe"
+          - preset: Windows Dedicated
+            name: Windows-Dedicated-exe
+            extention: ".exe"
           - preset: Linux/X11
             name: Linux-x86
+            extention: ".x86_64"
+          - preset: Linux Docker
+            name: Linux-Dedicated-x86
             extention: ".x86_64"
     steps:
       - uses: actions/checkout@v2

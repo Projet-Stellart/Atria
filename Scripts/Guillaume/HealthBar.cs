@@ -8,7 +8,7 @@ public partial class HealthBar : Control
 
 	public void SetHealth(float d)
 	{
-		var healthRect = GetNode<ColorRect>("Health/HB_BG/ColorRect/HB/ColorRect");
+		var healthRect = GetNode<ColorRect>("HB_BG/ColorRect/HB/ColorRect");
 
 		healthRect.Position = new Vector2((d-1) * healthRect.Size.X, healthRect.Position.Y);
 
@@ -16,25 +16,23 @@ public partial class HealthBar : Control
 		{
 			healthRect.Position = new Vector2(healthRect.Position.X - (int)d, healthRect.Position.Y);
 		}
-		if (d < 0.5 && d > 0.15)
+		if (d >= 0.5)
 		{
-			healthRect.Color = new Color(1, 1, 0);
+			healthRect.Color = new Color(0, 255, 0);
 		}
-		else if (d >= 0.5)
+		else if (d <= 0.2)
 		{
-			healthRect.Color = new Color(0, 1, 0);
+			healthRect.Color = new Color(255, 0, 0);
 		}
-		else if (d <= 0.15)
+		else
 		{
-			healthRect.Color = new Color(1, 0, 0);
+			healthRect.Color = new Color(255, 255, 0);
 		}
-
 	}
 
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		var healthRect = GetNode<Control>("Health/HB_BG/ColorRect/HB/ColorRect");
+		var healthRect = GetNode<Control>("HB_BG/ColorRect/HB/ColorRect");
 		healthRect.Position = new Vector2(0, 0);
 	}
 }

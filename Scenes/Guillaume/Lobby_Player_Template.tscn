@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://cteoln2g8y5i7"]
+[gd_scene load_steps=2 format=3 uid="uid://cteoln2g8y5i7"]
+
+[ext_resource type="Texture2D" uid="uid://clb7dsod6opw2" path="res://Ressources/UI/Button_Classic.png" id="1_uteyt"]
 
 [node name="LobbyPlayerTemplate" type="Control"]
 custom_minimum_size = Vector2(0, 50)
@@ -9,36 +11,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("1_uteyt")
+expand_mode = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="RichTextLabel" type="RichTextLabel" parent="TextureRect"]
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 14
+anchor_top = 0.5
 anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = 5.0
-offset_right = -5.0
-offset_bottom = -5.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ColorRect" type="ColorRect" parent="MarginContainer"]
-layout_mode = 2
-color = Color(0.443137, 0.443137, 0.443137, 1)
-
-[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/ColorRect"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
 text = "Player"

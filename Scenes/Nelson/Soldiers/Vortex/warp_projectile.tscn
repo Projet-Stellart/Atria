@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://bj31aksiun6wa"]
+
+[ext_resource type="Script" path="res://Scripts/Gameplay/Soldiers/Vortex/warp_projectile.cs" id="1_mggsb"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_drrrm"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2axgs"]
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_5iube"]
+material = SubResource("StandardMaterial3D_2axgs")
+
+[node name="Warp_Projectile" type="RigidBody3D"]
+collision_mask = 5
+input_ray_pickable = false
+continuous_cd = true
+max_contacts_reported = 1
+contact_monitor = true
+script = ExtResource("1_mggsb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, -0.05, 0)
+shape = SubResource("CapsuleShape3D_drrrm")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, -0.05, 0)
+mesh = SubResource("CapsuleMesh_5iube")
+
+[node name="Inactive" type="Timer" parent="."]
+wait_time = 120.0
+one_shot = true
+
+[node name="SpawnWarp" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="Collision"]
+[connection signal="timeout" from="Inactive" to="." method="ImpactNotFound"]
+[connection signal="timeout" from="SpawnWarp" to="." method="SpawnWarp"]
