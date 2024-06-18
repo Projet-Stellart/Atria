@@ -530,7 +530,7 @@ public partial class MultiplayerManager : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void SyncServerStatusClientRpc(Variant statusIndex, Variant progressionVar)
+    private void SyncServerStatusClientRpc(Variant statusIndex, Variant progressionVar, Variant max)
     {
         if (GameManager.singleton.lobby == null)
             return;
@@ -538,7 +538,7 @@ public partial class MultiplayerManager : Node
         {
             { ServerStatus.Paused, "Paused" },
             { ServerStatus.Generating, "Generating map: " },
-            { ServerStatus.Waiting, "Waiting for players" },
+            { ServerStatus.Waiting, $"Waiting for players ({Mathf.FloorToInt(progressionVar.As<float>())}/{max.AsInt32()})" },
             { ServerStatus.Starting, "Starting" },
             { ServerStatus.Running, "Starting" },
         };

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://c2a3apsu36cj6" path="res://Ressources/UI/launch_straight_icon.png" id="2_to5ff"]
 [ext_resource type="Texture2D" uid="uid://b2nkgbo2doutq" path="res://Ressources/UI/injection_icon.png" id="2_vt5wg"]
 [ext_resource type="Texture2D" uid="uid://da8shmkbw327a" path="res://Ressources/UI/click_icon.png" id="3_cr0ye"]
-[ext_resource type="Texture2D" uid="uid://80is62wtol1f" path="res://Ressources/UI/curved_launch_icon.png" id="5_h7tgh"]
+[ext_resource type="Texture2D" path="res://Ressources/UI/curved_launch_icon.tres" id="5_h7tgh"]
 [ext_resource type="Texture2D" uid="uid://dd1yth47b0loe" path="res://Ressources/UI/scrambler_icon.png" id="6_7mr4g"]
 [ext_resource type="Texture2D" uid="uid://dmk0a3jgjp62p" path="res://Ressources/UI/override_icon.png" id="8_buxiy"]
 
@@ -13,6 +13,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -1.0
+offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 2
 

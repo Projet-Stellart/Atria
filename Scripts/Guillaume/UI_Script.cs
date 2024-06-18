@@ -20,17 +20,18 @@ public partial class UI_Script : CanvasLayer
 	
 	public override void _Ready()
 	{
-		GetNode<AudioStreamPlayer>("SonFond").Play();
+        SaveManager.LoadSettings();
+        GetNode<AudioStreamPlayer>("SonFond").Play();
         SetFullScreenIndicator();
         SetResolutionIndicator();
         GetGitHubDataAsync();
 		LoadSettings();
-	}
+		OnUpdateGraphic(SaveManager.saveparam.windowMode, SaveManager.saveparam.windowRes);
+    }
 
 	private void LoadSettings()
 	{
-		SaveManager.LoadSettings();
-		GetNode<CheckButton>("Sound/MarginContainer3/VBoxContainer/CheckButton").ButtonPressed = !SaveManager.saveparam.mute;
+        GetNode<CheckButton>("Sound/MarginContainer3/VBoxContainer/CheckButton").ButtonPressed = !SaveManager.saveparam.mute;
 		GetNode<HSlider>("Sound/MarginContainer5/VBoxContainer/HSlider").Value = SaveManager.saveparam.soundLevel;
 	}
 
@@ -353,7 +354,9 @@ public partial class UI_Script : CanvasLayer
 	private void _on_option_button_item_selected(int ind)
 	{
 		resolutionIndex = ind;
-	}
+        SaveManager.saveparam.windowRes = Resolutions[ind];
+        SaveManager.SaveSettings();
+    }
 
 	int[] Modes = new int[]
     {
@@ -365,6 +368,8 @@ public partial class UI_Script : CanvasLayer
     private void _on_window_mode_item_selected(int ind)
     {
 		index = ind;
+		SaveManager.saveparam.windowMode = ind;
+		SaveManager.SaveSettings();
     }
 
     private void _on_mm_ok_pressed()
@@ -417,38 +422,43 @@ public partial class UI_Script : CanvasLayer
 		int.TryParse(parts[0], out int width);
 		int.TryParse(parts[1], out int height);
 		DisplayServer.WindowSetSize(new Vector2I(width, height));
+		SaveManager.SaveSettings();
 	}
 
-	private void SetResolutionIndicator()
+    private void OnUpdateGraphic(int mode, string size)
+    {
+        GetWindow().Mode = (Window.ModeEnum)Modes[mode];
+        string selectedResolution = SaveManager.saveparam.windowRes;
+        string[] parts = selectedResolution.Split('x');
+        int.TryParse(parts[0], out int width);
+        int.TryParse(parts[1], out int height);
+        DisplayServer.WindowSetSize(new Vector2I(width, height));
+        SaveManager.SaveSettings();
+    }
+
+    private int SetResolutionIndicator()
 	{
-		Vector2I currentResolution = DisplayServer.WindowGetSize();
-        string currentResolutionString = $"{currentResolution.X}x{currentResolution.Y}";
-        for (int i = 0; i < Resolutions.Length; i++)
-        {
-            if (Resolutions[i] == currentResolutionString)
-            {
-                resolutionIndex = i;
-                break;
-            }
-        }
-        ResolutionOptionButton.Select(resolutionIndex);
+		string s = SaveManager.saveparam.windowRes;
+
+		int i;
+        for (i = 0; i < Resolutions.Length; i++)
+		{
+			if (Resolutions[i] == s)
+			{
+				break;
+			}
+		}
+
+        ResolutionOptionButton.Select(i);
+		return i;
 	}
 
 	private void SetFullScreenIndicator()
 	{
-		int currentMode = (int)GetWindow().Mode;
-        for (int i = 0; i < Modes.Length; i++)
-        {
-            if (Modes[i] == currentMode)
-            {
-                index = i;
-                break;
-            }
-        }
-        FullscreenOptionButton.Select(index);
+		FullscreenOptionButton.Select(SaveManager.saveparam.windowMode);
 	}
 
-	static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+    static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
 
 	private async void GetGitHubDataAsync()
 	{		

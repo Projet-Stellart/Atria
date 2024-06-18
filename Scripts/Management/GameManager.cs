@@ -54,12 +54,19 @@ public partial class GameManager : Node
     private void SetServerStatus(ServerStatus value)
     {
         _serverStatus = value;
-        multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)value, 0f });
+        if (value == ServerStatus.Waiting)
+        {
+            multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)value, (float)Multiplayer.GetPeers().Length + 0.1f, GameData.nbPlayer });
+        }
+        else
+        {
+            multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)value, 0f, 0 });
+        }
     }
 
     private void SyncServAdv(float adv)
     {
-        multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)_serverStatus, adv });
+        multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)_serverStatus, adv, 0 });
     }
 
     public const string lobbyTemplate = "res://Scenes/Guillaume/Lobby.tscn";
@@ -409,11 +416,11 @@ public partial class GameManager : Node
     {
         if (tileMapGenerator != null && tileMapGenerator.isGenerating)
         {
-            multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)serverStatus, tileMapGenerator.gridGenerationAdvencement });
+            multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)serverStatus, tileMapGenerator.gridGenerationAdvencement, 0 });
         }
         else
         {
-            multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)serverStatus, 0f });
+            multiplayerManager.Rpc("SyncServerStatusClientRpc", new Variant[] { (int)serverStatus, (float)Multiplayer.GetPeers().Length+0.1f, GameData.nbPlayer });
         }
         if (tileMapGenerator == null)
             return;
