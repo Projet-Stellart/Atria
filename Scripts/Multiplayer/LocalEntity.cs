@@ -3,6 +3,7 @@ using Godot;
 using Godot.NativeInterop;
 using System.Diagnostics;
 using Microsoft.VisualBasic;
+using System;
 
 public abstract partial class LocalEntity : CharacterBody3D
 {
@@ -826,129 +827,6 @@ public abstract partial class LocalEntity : CharacterBody3D
         ((player)this)._inspect();
     }
 
-    public void SendUseModule(int module, Godot.Collections.Array<Variant> args)
-    {
-        if (!IsLocalPlayer)
-            return;
-        RpcId(1, "SyncUseModuleServer", new Variant[] { module, args });
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncUseModuleServer(Variant module, Variant args)
-    {
-        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
-            return;
-
-        ((player)this)._UseModuleServer((FocusState)module.AsInt32(), args.As<Godot.Collections.Array<Variant>>());
-
-        SendUseModuleServer(module.AsInt32(), args.As<Godot.Collections.Array<Variant>>());
-    }
-
-    public void SendUseModuleServer(int module, Godot.Collections.Array<Variant> args)
-    {
-        foreach (long peer in Multiplayer.GetPeers())
-        {
-            if (peer == Multiplayer.GetRemoteSenderId())
-                continue;
-            RpcId(peer, "SyncUseModuleClient", new Variant[] { module, args });
-        }
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncUseModuleClient(Variant module, Variant args)
-    {
-        ((player)this)._UseModuleLocal((FocusState)module.AsInt32(), args.AsGodotArray<Variant>());
-    }
-
-    public void SendCancelModuleServerRpc(int module)
-    {
-        if (!IsLocalPlayer)
-            return;
-        RpcId(1, "SyncCancelModuleServer", new Variant[] { module });
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncCancelModuleServer(Variant module)
-    {
-        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
-            return;
-
-        ((player)this)._CancelModuleServer();
-
-        SendCancelModuleServer(module.AsInt32());
-    }
-
-    public void SendCancelModuleServer(int module)
-    {
-        foreach (long peer in Multiplayer.GetPeers())
-        {
-            if (peer == Multiplayer.GetRemoteSenderId())
-                continue;
-            RpcId(peer, "SyncCancelModuleClient", new Variant[] { module });
-        }
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncCancelModuleClient(Variant module)
-    {
-        ((player)this)._CancelModuleClient((FocusState)module.AsInt32());
-    }
-
-    public void SendActivateModule(int module)
-    {
-        if (!IsLocalPlayer)
-            return;
-        RpcId(1, "SyncActivateModuleServer", new Variant[] { module });
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncActivateModuleServer(Variant module)
-    {
-        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
-            return;
-        FocusState focus = (FocusState)module.AsInt32();
-        ((player)this)._ActivateModuleServer(focus);
-        foreach (long peer in Multiplayer.GetPeers())
-        {
-            if (peer == Multiplayer.GetRemoteSenderId())
-                continue;
-            RpcId(peer, "SyncActivateModuleClient", new Variant[] { module });
-        }
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SyncActivateModuleClient(Variant module)
-    {
-        ((player)this)._ActivateModuleClient((FocusState)module.AsInt32());
-    }
-
-    public void SendUpdateModule(int module)
-    {
-        if (!IsLocalPlayer)
-            return;
-        RpcId(1, "SyncUpdateModuleServer", new Variant[] { module });
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
-    public void SyncUpdateModuleServer(Variant module)
-    {
-        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
-            return;
-        ((player)this)._UpdateModuleServer();
-        foreach (long peer in Multiplayer.GetPeers())
-        {
-            if (peer == Multiplayer.GetRemoteSenderId())
-                continue;
-            RpcId(peer, "SyncUpdateModuleClient", new Variant[] { module });
-        }
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
-    public void SyncUpdateModuleClient(Variant module)
-    {
-        ((player)this)._UpdateModuleClient((FocusState)module.AsInt32());
-    }
-
     public void SpawnDecalServer(Node collider, Vector3 rayPosition, Vector3 rayNormal)
     {
         Rpc("SpawnDecalClient", new Variant[] { collider.GetPath(), rayPosition, rayNormal });
@@ -958,5 +836,143 @@ public abstract partial class LocalEntity : CharacterBody3D
     public void SpawnDecalClient(Variant collider, Variant rayPosition, Variant rayNormal)
     {
         ((player)this).ActualSpawnDecal(GetTree().Root.GetNode(collider.AsString()), rayPosition.AsVector3(), rayNormal.AsVector3());
+    }
+
+
+
+
+
+
+
+
+
+
+
+    ////MODULES
+    
+    //ActivateModule
+    public void SendActivateModule(int module)
+    {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "SyncActivateModuleServer", new Variant[] { module });
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncActivateModuleServer(Variant module)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        FocusState focus = (FocusState)module.AsInt32();
+        if (((player)this)._ActivateModuleServer(focus)) { //Only if can activate module
+            //Send activate module client to all peers
+            if (((player)this).ClientCalls[0, module.AsInt32() - 1])
+                SendModuleClients("SyncActivateModuleClient", new Variant[] { module });
+        } else { //Refusing request of activating module
+            foreach (long peer in Multiplayer.GetPeers())
+            {
+                if (peer == Multiplayer.GetRemoteSenderId()) {
+                    RpcId(peer, "SyncCancelModuleLocal", new Variant[] {module.AsInt32()});
+                    break;
+                }
+            }
+        }
+    }
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncActivateModuleClient(Variant module)
+    {
+        ((player)this).FocusState = (FocusState)module.AsInt32();
+        ((player)this)._ActivateModuleClient();
+    }
+
+
+    //updateModule
+    public void SendUpdateModule(int module)
+    {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "SyncUpdateModuleServer", new Variant[] { module });
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    public void SyncUpdateModuleServer(Variant module)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+        ((player)this)._UpdateModuleServer();
+        if (((player)this).ClientCalls[1, module.AsInt32() - 1])
+            SendModuleClients("SyncUpdateModuleClient", new Variant[] { module });
+    }
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    public void SyncUpdateModuleClient(Variant module)
+    {
+        ((player)this)._UpdateModuleClient((FocusState)module.AsInt32());
+    }
+
+    //CancelModule
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncCancelModuleLocal(Variant module) {
+        ((player)this)._CancelModuleLocal((FocusState)module.AsInt32());
+    }
+    public void SendCancelModule(int module)
+    {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "SyncCancelModuleServer", new Variant[] { module });
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncCancelModuleServer(Variant module)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+
+        ((player)this)._CancelModuleServer();
+
+        if (((player)this).ClientCalls[2, module.AsInt32() - 1])
+            SendModuleClients("SyncCancelModuleClient", new Variant[] { module.AsInt32() });
+    }
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncCancelModuleClient(Variant module)
+    {
+        ((player)this)._CancelModuleClient((FocusState)module.AsInt32());
+    }
+
+    
+    //UseModule
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncUseModuleLocal(Variant module, Variant args) {
+        ((player)this)._UseModuleLocal((FocusState)module.AsInt32(), args.As<Godot.Collections.Array<Variant>>());
+    }
+    public void SendUseModule(int module, Godot.Collections.Array<Variant> args)
+    {
+        if (!IsLocalPlayer)
+            return;
+        RpcId(1, "SyncUseModuleServer", new Variant[] { module, args });
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncUseModuleServer(Variant module, Variant args)
+    {
+        if (GameManager.singleton.multiplayerManager.playersControler[Multiplayer.GetRemoteSenderId()] != this)
+            return;
+
+        ((player)this)._UseModuleServer((FocusState)module.AsInt32(), args.As<Godot.Collections.Array<Variant>>());
+
+        if (((player)this).ClientCalls[3, module.AsInt32() - 1])
+            SendModuleClients("SyncUseModuleClient", new Variant[] { module.AsInt32(), args.As<Godot.Collections.Array<Variant>>() });
+    }
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SyncUseModuleClient(Variant module, Variant args)
+    {
+        ((player)this)._UseModuleClient((FocusState)module.AsInt32(), args.AsGodotArray<Variant>());
+    }
+
+
+
+    //GENERAL FUNCTIONS
+    public void SendModuleClients(StringName function, Variant[] arguments) {
+        foreach (long peer in Multiplayer.GetPeers())
+        {
+            if (peer == Multiplayer.GetRemoteSenderId())
+                continue;
+            RpcId(peer, function, arguments);
+        }
     }
 }

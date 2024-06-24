@@ -48,6 +48,12 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	public float cam_shake = 0.3f;
 	public bool cam_lock = false;
 
+	/*----------------------°\
+	|	 Class Properties    |
+	\°----------------------*/
+
+	public virtual bool[,] ClientCalls {get;} = new bool[4,4];
+
 
 	/*----------------------°\
 	|		Properties	     |
@@ -217,25 +223,13 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			//[MODULES]
 			if (moduleEnable) {
 				if (Input.IsActionJustPressed("low_module"))
-				{
-					SendActivateModule((int)FocusState.LowModule);
                     _ActivateModuleLocal(FocusState.LowModule);
-                }
 				else if (Input.IsActionJustPressed("medium_module"))
-				{
-                    SendActivateModule((int)FocusState.MediumModule);
                     _ActivateModuleLocal(FocusState.MediumModule);
-                }
 				else if (Input.IsActionJustPressed("high_module"))
-				{
-                    SendActivateModule((int)FocusState.HighModule);
                     _ActivateModuleLocal(FocusState.HighModule);
-                }
 				else if (Input.IsActionJustPressed("core_module"))
-				{
-                    SendActivateModule((int)FocusState.CoreModule);
                     _ActivateModuleLocal(FocusState.CoreModule);
-                }
 			}
 		
 		} else {
@@ -248,10 +242,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 					                                  new KeyState("core_module"); //Core Module
 			//Sending Updates to Modules
 			if (canUpdateModule(fire, altfire, rotate, module))
-			{
                 _UpdateModuleLocal(module, fire, altfire, rotate);
-				SendUpdateModule((int)FocusState);
-            }
 		}
 
 		//Crouching Event
@@ -534,8 +525,8 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 		if (FocusState == FocusState.Weapon) {
 		    if (hasWeapon && Weapon != null)
 				Weapon.StopAnimations();
-		} else
-		    _CancelModuleLocal();
+		} else if (!Multiplayer.IsServer())
+			_CancelModuleLocal(FocusState);
 
 
 		//Quit all animations (weapons + modules)
@@ -583,8 +574,9 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 
 		Weapon.animator.Play("Swap");
 		Weapon.Swap();
-		if (IsLocalPlayer)
+		if (IsLocalPlayer) {
 			SendSwapWeapon((int)weaponClass);
+		}
 	}
 
 	public override void GetWeaponClient(Weapon weapon) {
@@ -749,7 +741,7 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 			timer.Connect("timeout", new Callable(this, nameof(Enable)));
 			moduleEnable = false;
 			if (FocusState != FocusState.Weapon)
-				_CancelModuleLocal();
+				_CancelModuleLocal(FocusState);
 		}
 	}
 
@@ -764,23 +756,25 @@ public partial class player : LocalEntity, IDamagable, IPhysicsModifier, ITechDi
 	|		SOLIDER CLASSES FUNCTIONS	   |
 	\°------------------------------------*/
 
-	//Module Activation
+	//Module Activation - To activate one of its module
 	public virtual void _ActivateModuleLocal(FocusState module) {throw new NotImplementedException();}
-	public virtual void _ActivateModuleServer(FocusState module) {throw new NotImplementedException();}
-	public virtual void _ActivateModuleClient(FocusState module) {throw new NotImplementedException();}
+	public virtual bool _ActivateModuleServer(FocusState module) {throw new NotImplementedException();}
+	public virtual void _ActivateModuleClient() { }
 
-    //Module Update
+    //Module Update - To Modify its current module
     public virtual void _UpdateModuleLocal(KeyState send, KeyState fire, KeyState altfire, KeyState rotate) {throw new NotImplementedException();}
-    public virtual void _UpdateModuleServer() { throw new NotImplementedException(); }
-    public virtual void _UpdateModuleClient(FocusState module) { throw new NotImplementedException(); }
-    //Module Cancel
-    public virtual void _CancelModuleLocal() {throw new NotImplementedException();}
-    public virtual void _CancelModuleServer() { throw new NotImplementedException(); }
-    public virtual void _CancelModuleClient(FocusState module) { throw new NotImplementedException(); }
+    public virtual void _UpdateModuleServer() { }
+    public virtual void _UpdateModuleClient(FocusState module) { }
+    
+	//Module Cancel - To Cancel its current module
+    public virtual void _CancelModuleLocal(FocusState module) { }
+    public virtual void _CancelModuleServer() { }
+    public virtual void _CancelModuleClient(FocusState module) { }
 
-    public virtual void _UseModuleLocal(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
-    public virtual void _UseModuleServer(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
-    public virtual void _UseModuleClient(FocusState module, Godot.Collections.Array<Variant> args) { throw new NotImplementedException(); }
+	//Module Use - To Use its current module
+    public virtual void _UseModuleLocal(FocusState module, Array<Variant> args) { }
+    public virtual void _UseModuleServer(FocusState module, Array<Variant> args) { }
+    public virtual void _UseModuleClient(FocusState module, Array<Variant> args) { }
 }
 
 

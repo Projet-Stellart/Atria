@@ -23,13 +23,15 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
     public override void _Process(double delta)
     {
         if (Multiplayer.IsServer())
-            Rpc("SyncPosVeloClient", new Variant[] { Position, Rotation });
+            Rpc("SyncPosVeloClient", new Variant[] { Position, Rotation, LinearVelocity, AngularVelocity });
         base._Process(delta);
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
-    private void SyncPosVeloClient(Variant pos, Variant rot)
+    private void SyncPosVeloClient(Variant pos, Variant rot, Variant linearVelo, Variant angularVelo)
     {
+        LinearVelocity = linearVelo.AsVector3();
+        AngularVelocity = angularVelo.AsVector3();
         Position = pos.AsVector3();
         Rotation = rot.AsVector3();
     }
@@ -59,6 +61,12 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
             return;
         //Animate the explosion
         animations.Play("pulsate");
+        Rpc("SyncAnimation");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
+    private void SyncAnimation() {
+        animations.Play("pulsate");
     }
 
     private void on_animation_end(StringName anim_name) {
@@ -80,7 +88,7 @@ public partial class pulsar_projectile : RigidBody3D, IDamagable, IPhysicsModifi
     private void ExplosionDamage(Node body) {
         if (!Multiplayer.IsServer())
             return;
-        if (body is IDamagable damagable && body is not pulsar_projectile)
+        if (body is IDamagable damagable && body != this)
             damagable.Damaged(15, owner);
     }
 

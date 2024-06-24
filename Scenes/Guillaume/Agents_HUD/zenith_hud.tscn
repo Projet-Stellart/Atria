@@ -1,12 +1,12 @@
 [gd_scene load_steps=8 format=3 uid="uid://b23vw3siq0i54"]
 
-[ext_resource type="Texture2D" uid="uid://bskg40i7hay6c" path="res://Ressources/UI/jammer_icon.png" id="1_jdtwa"]
-[ext_resource type="Texture2D" uid="uid://c2a3apsu36cj6" path="res://Ressources/UI/launch_straight_icon.png" id="2_to5ff"]
-[ext_resource type="Texture2D" uid="uid://b2nkgbo2doutq" path="res://Ressources/UI/injection_icon.png" id="2_vt5wg"]
-[ext_resource type="Texture2D" uid="uid://da8shmkbw327a" path="res://Ressources/UI/click_icon.png" id="3_cr0ye"]
-[ext_resource type="Texture2D" uid="uid://dm6nrhy2kv0qi" path="res://Ressources/UI/curved_launch_icon.tres" id="5_h7tgh"]
-[ext_resource type="Texture2D" uid="uid://dd1yth47b0loe" path="res://Ressources/UI/scrambler_icon.png" id="6_7mr4g"]
-[ext_resource type="Texture2D" uid="uid://dmk0a3jgjp62p" path="res://Ressources/UI/override_icon.png" id="8_buxiy"]
+[ext_resource type="Texture2D" uid="uid://bskg40i7hay6c" path="res://Ressources/UI/jammer_icon.png" id="1_i3jqw"]
+[ext_resource type="Texture2D" uid="uid://c2a3apsu36cj6" path="res://Ressources/UI/launch_straight_icon.png" id="2_uu4lg"]
+[ext_resource type="Texture2D" uid="uid://b2nkgbo2doutq" path="res://Ressources/UI/injection_icon.png" id="3_3d821"]
+[ext_resource type="Texture2D" uid="uid://dd1yth47b0loe" path="res://Ressources/UI/scrambler_icon.png" id="4_c5s5d"]
+[ext_resource type="Texture2D" path="res://Ressources/UI/curved_launch_icon.tres" id="5_otctw"]
+[ext_resource type="Texture2D" uid="uid://da8shmkbw327a" path="res://Ressources/UI/click_icon.png" id="6_5kgll"]
+[ext_resource type="Texture2D" uid="uid://dmk0a3jgjp62p" path="res://Ressources/UI/override_icon.png" id="7_f5aht"]
 
 [node name="Module_HUD" type="Control"]
 layout_mode = 3
@@ -54,7 +54,7 @@ layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer/Low_Module/VBoxContainer"]
 layout_mode = 2
-texture = ExtResource("1_jdtwa")
+texture = ExtResource("1_i3jqw")
 expand_mode = 4
 metadata/_edit_use_anchors_ = true
 
@@ -105,7 +105,7 @@ alignment = 1
 
 [node name="Action" type="TextureRect" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-texture = ExtResource("2_to5ff")
+texture = ExtResource("2_uu4lg")
 expand_mode = 3
 
 [node name="KeyAction" type="RichTextLabel" parent="HBoxContainer/Medium_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
@@ -120,13 +120,13 @@ drag_and_drop_selection_enabled = false
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer/Medium_Module/VBoxContainer"]
 layout_mode = 2
-texture = ExtResource("2_vt5wg")
+texture = ExtResource("3_3d821")
 expand_mode = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="Key" type="RichTextLabel" parent="HBoxContainer/Medium_Module/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-size_flags_vertical = 3
 bbcode_enabled = true
 text = "[center]C"
 scroll_active = false
@@ -171,7 +171,7 @@ alignment = 1
 
 [node name="Action" type="TextureRect" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-texture = ExtResource("2_to5ff")
+texture = ExtResource("2_uu4lg")
 expand_mode = 3
 
 [node name="KeyAction" type="RichTextLabel" parent="HBoxContainer/High_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
@@ -186,13 +186,13 @@ drag_and_drop_selection_enabled = false
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer/High_Module/VBoxContainer"]
 layout_mode = 2
-texture = ExtResource("6_7mr4g")
+texture = ExtResource("4_c5s5d")
 expand_mode = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="Key" type="RichTextLabel" parent="HBoxContainer/High_Module/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-size_flags_vertical = 3
 bbcode_enabled = true
 text = "[center]V
 "
@@ -238,7 +238,7 @@ alignment = 1
 
 [node name="LeftAction" type="TextureRect" parent="HBoxContainer/Core_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-texture = ExtResource("5_h7tgh")
+texture = ExtResource("5_otctw")
 expand_mode = 3
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/Core_Module/VBoxContainer/ShowKeybinds/VBoxContainer"]
@@ -248,18 +248,18 @@ alignment = 1
 
 [node name="LeftClick" type="TextureRect" parent="HBoxContainer/Core_Module/VBoxContainer/ShowKeybinds/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
-texture = ExtResource("3_cr0ye")
-expand_mode = 2
+texture = ExtResource("6_5kgll")
+expand_mode = 3
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer/Core_Module/VBoxContainer"]
 layout_mode = 2
-texture = ExtResource("8_buxiy")
+texture = ExtResource("7_f5aht")
 expand_mode = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="Key" type="RichTextLabel" parent="HBoxContainer/Core_Module/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-size_flags_vertical = 3
 bbcode_enabled = true
 text = "[center]G
 "

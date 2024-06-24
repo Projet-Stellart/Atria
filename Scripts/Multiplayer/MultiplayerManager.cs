@@ -221,7 +221,6 @@ public partial class MultiplayerManager : Node
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void InstantiateObjectClient(Variant pathRes, Variant parent, Variant name)
     {
-        
         Node parentNode = GetTree().Root.GetNode(parent.AsString());
         Node objectNode = GD.Load<PackedScene>(pathRes.AsString()).Instantiate();
 

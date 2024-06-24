@@ -5,15 +5,16 @@ public partial class HUD : Control
 {
     public void Init(player player)
     {
-        if (player is vortex Vortex) {
-            var packedScene = GD.Load<PackedScene>("res://Scenes/Guillaume/vortex_hud.tscn");
-            var instance = packedScene.Instantiate();
-            AddChild(instance);
-        } else if (player is zenith Zenith) {
-            var packedScene = GD.Load<PackedScene>("res://Scenes/Guillaume/zenith_hud.tscn");
-            var instance = packedScene.Instantiate();
-            AddChild(instance);
-        }
+        string path;
+        if (player is vortex)
+            path ="res://Scenes/Guillaume/Agents_HUD/vortex_hud.tscn";
+        else if (player is zenith)
+            path = "res://Scenes/Guillaume/Agents_HUD/zenith_hud.tscn";
+        else
+            throw new NullReferenceException("Player does not have an agent."); //HUD can only be load when using an agent. By pass this by putting the content of this function in comments.
+        var packedScene = GD.Load<PackedScene>(path);
+        var instance = packedScene.Instantiate();
+        AddChild(instance);
     }
 
     public void SetVisibleModule(FocusState module, bool visible) {

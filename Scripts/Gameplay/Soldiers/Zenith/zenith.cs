@@ -100,49 +100,46 @@ public partial class zenith : player
         }
     }
 
-    public override void _ActivateModuleServer(FocusState module)
+    public override bool _ActivateModuleServer(FocusState module)
     {
         if (module == FocusState.LowModule)
         {
-
+            return false;
         }
         else if (module == FocusState.MediumModule)
         {
             if (EnergyBar < soldier.MediumModule.EnergyRequired)
-            {
-                SendCancelModuleServer((int)module);
-            }
+                return false;
             FocusState = FocusState.MediumModule;
         }
         else if (module == FocusState.HighModule)
         {
             if (EnergyBar < soldier.HighModule.EnergyRequired)
-            {
-                SendCancelModuleServer((int)module);
-            }
+                return false;
             FocusState = FocusState.HighModule;
         }
         else if (module == FocusState.CoreModule)
         {
-
+            return false;
         }
+        return true;
     }
 
-    public override void _ActivateModuleClient(FocusState module)
+    public override void _ActivateModuleClient()
     {
-        if (module == FocusState.LowModule)
+        if (FocusState == FocusState.LowModule)
         {
 
         }
-        else if (module == FocusState.MediumModule)
+        else if (FocusState == FocusState.MediumModule)
         {
 
         }
-        else if (module == FocusState.HighModule)
+        else if (FocusState == FocusState.HighModule)
         {
 
         }
-        else if (module == FocusState.CoreModule)
+        else if (FocusState == FocusState.CoreModule)
         {
 
         }
@@ -215,14 +212,14 @@ public partial class zenith : player
             EnergyBar -= soldier.MediumModule.EnergyRequired;
             GameManager.singleton.hudManager.subHud.SetEnergy(EnergyBar);
 
-            _CancelModuleLocal();
+            _CancelModuleLocal(FocusState);
         }
         else if (module == FocusState.HighModule)
         {
             EnergyBar -= soldier.HighModule.EnergyRequired;
             GameManager.singleton.hudManager.subHud.SetEnergy(EnergyBar);
 
-            _CancelModuleLocal();
+            _CancelModuleLocal(FocusState);
         }
         else if (module == FocusState.CoreModule)
         {
@@ -241,7 +238,7 @@ public partial class zenith : player
             //args = {GlobalPosition}
             if (EnergyBar < soldier.MediumModule.EnergyRequired)
             {
-                SendCancelModuleServer((int)module);
+                SendCancelModule((int)module);
                 return;
             }
 
@@ -273,7 +270,7 @@ public partial class zenith : player
             //args = {GlobalPosition, GlobalRotation}
             if (EnergyBar < soldier.HighModule.EnergyRequired)
             {
-                SendCancelModuleServer((int)module);
+                SendCancelModule((int)module);
                 return;
             }
 
@@ -317,7 +314,10 @@ public partial class zenith : player
     }
 
     //Module Cancel
-    public override void _CancelModuleLocal() { 
+    public override void _CancelModuleLocal(FocusState module) { 
+        if (FocusState != module)
+            return; //Error, module already cancelled
+        
         if (FocusState == FocusState.HighModule) {
             //Make HUD Invisible
         }

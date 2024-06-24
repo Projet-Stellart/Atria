@@ -13,7 +13,7 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
     //Projectile Properties:
     public float Speed = 20;
     bool attached = false;
-    public player Parent;
+    public vortex Parent;
     bool customGravity = false;
 
     //Projectile References
@@ -25,6 +25,7 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
 
     //Scenes
     PackedScene WarpScene = GD.Load<PackedScene>("res://Scenes/Nelson/Soldiers/Vortex/warp.tscn");
+    PackedScene warpProjectile = GD.Load<PackedScene>("res://Scenes/Nelson/Soldiers/Vortex/warp_projectile.tscn");
 
 
 
@@ -41,21 +42,23 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
 
     public override void _Process(double delta)
     {
-        if (Multiplayer.IsServer())
-            Rpc("SyncPosVeloClient", new Variant[] { Position, Rotation });
+        if (Multiplayer.IsServer() && !attached)
+            Rpc("SyncPosVeloClient", new Variant[] { Position, Rotation, LinearVelocity, AngularVelocity });
         base._Process(delta);
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
-    private void SyncPosVeloClient(Variant pos, Variant rot)
+    private void SyncPosVeloClient(Variant pos, Variant rot, Variant linearVelo, Variant angularVelo)
     {
         Position = pos.AsVector3();
         Rotation = rot.AsVector3();
+        LinearVelocity = linearVelo.AsVector3();
+        AngularVelocity = angularVelo.AsVector3();
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state)
     {
-        if (!Multiplayer.IsServer())
+        if (!Multiplayer.IsServer() || attached)
             return;
         if (state.GetContactCount() == 1) {
             localCollisionPos = state.GetContactLocalPosition(0);
@@ -75,40 +78,85 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
     public void Attach(Node body) {
         if (!Multiplayer.IsServer())
             return;
+
         //Changing Physics Process
         Freeze = true;
             
-            //Notifying
-            Inactive.Stop();
-            attached = true;
+        //Notifying
+        Inactive.Stop();
+        attached = true;
 
-            //Adding to the collider
-            GetParent().RemoveChild(this);
-            body.AddChild(this);
-            GlobalPosition = localCollisionPos;
-
-            //Changing Rotation
-            var collisionShape = GetNode<CollisionShape3D>("CollisionShape3D");
-            var meshInstance = GetNode<MeshInstance3D>("MeshInstance3D");
-            collisionShape.Position = new Vector3(0,0,-0.05f);
-            collisionShape.RotationDegrees = new Vector3(90,0,0);
-            meshInstance.Position = new Vector3(0,0,-0.05f);
-            meshInstance.RotationDegrees = new Vector3(90,0,0);
-
-            var value = localCollisionNormal.Dot(Vector3.Up);
-		    if (value != 1) {
-			    if (value != -1) {
-				    var dir = localCollisionPos + localCollisionNormal; //Calculating the direction
-				    LookAt(dir, Vector3.Up);
-			    } else {
-				    GlobalRotationDegrees = new Vector3(-90,0,0);
-			    }
-		    } else {
-			    GlobalRotationDegrees = new Vector3(90,0,0);
+        GlobalPosition = localCollisionPos;
+        //Calculating variables
+        var value = localCollisionNormal.Dot(Vector3.Up);
+		if (value != 1) {
+		    if (value != -1) {
+			    var dir = localCollisionPos + localCollisionNormal; //Calculating the direction
+			    LookAt(dir, Vector3.Up);
+			} else {
+			    GlobalRotationDegrees = new Vector3(-90,0,0);
 		    }
+	    } else {
+		    GlobalRotationDegrees = new Vector3(90,0,0);
+	    }
 
-            //Launch Timer to Spawn Warp
-            GetNode<Timer>("SpawnWarp").Start();
+        //Spawn new projectile attached
+        warp_projectile projectile = (warp_projectile)warpProjectile.Instantiate();
+        body.AddChild(projectile);
+        GameManager.singleton.multiplayerManager.InstantiateObjectServer(warpProjectile.ResourcePath, body, projectile.Name);
+
+        projectile.FinalPhaseServer(Parent, Warp_Angle, localCollisionPos, GlobalRotation);
+
+        //Delete this projectile
+        GameManager.singleton.multiplayerManager.DeleteObjectServer(this);
+        QueueFree();
+    }
+
+    public void FinalPhaseServer(vortex parent, Vector3 warpAngle, Vector3 pos, Vector3 rot) {
+        Parent = parent;
+        Parent.currentWarp = this;
+        Warp_Angle = warpAngle;
+        var collisionShape = GetNode<CollisionShape3D>("CollisionShape3D");
+        var meshInstance = GetNode<MeshInstance3D>("MeshInstance3D");
+        collisionShape.Position = new Vector3(0,0,-0.05f);
+        collisionShape.RotationDegrees = new Vector3(90,0,0);
+        meshInstance.Position = new Vector3(0,0,-0.05f);
+        meshInstance.RotationDegrees = new Vector3(90,0,0);
+        
+        GlobalPosition = pos;
+        GlobalRotation = rot;
+        
+        Freeze = true;
+
+        //Stop Timer
+        Inactive.Stop();
+        attached = true;
+
+        //Launch Timer to Spawn Warp
+        GetNode<Timer>("SpawnWarp").Start();
+        Rpc("FinalPhaseClient", new Variant[] {parent.GetPath().ToString(), warpAngle, GlobalPosition, GlobalRotation});
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void FinalPhaseClient(Variant parent, Variant angle, Variant pos, Variant rot) {
+        Parent = GetTree().Root.GetNode<vortex>(parent.AsString());
+        Parent.currentWarp = this;
+        Warp_Angle = angle.AsVector3();
+        var collisionShape = GetNode<CollisionShape3D>("CollisionShape3D");
+        var meshInstance = GetNode<MeshInstance3D>("MeshInstance3D");
+        collisionShape.Position = new Vector3(0,0,-0.05f);
+        collisionShape.RotationDegrees = new Vector3(90,0,0);
+        meshInstance.Position = new Vector3(0,0,-0.05f);
+        meshInstance.RotationDegrees = new Vector3(90,0,0);
+        
+        GlobalPosition = pos.AsVector3();
+        GlobalRotation = rot.AsVector3();
+
+        Freeze = true;
+
+        //Stop Timer
+        Inactive.Stop();
+        attached = true;
     }
 
     public void SpawnWarp() {//Spawn Warp
@@ -122,7 +170,7 @@ public partial class warp_projectile : RigidBody3D, IDamagable, IPhysicsModifier
         Warp.GlobalPosition = GlobalPosition;
         Warp.GlobalRotation = Warp_Angle;
 
-        Warp.angle = Warp.GlobalBasis * new Vector3(0, 1, 0) * Warp.Balance * Warp.GravityScale + GlobalPosition; //Converting to GlobalPositions
+        Warp.angle = Warp.GlobalBasis * new Vector3(0, 1, 0) * Warp.Balance * Warp.GravityScale; //Converting to GlobalPositions
 
         Warp.SyncDataServer();
         
